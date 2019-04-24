@@ -1,0 +1,1 @@
+﻿get-windowsfeature |  where {$_.SubFeatures.count -eq 0}

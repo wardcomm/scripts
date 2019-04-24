@@ -1,0 +1,42 @@
+---
+  - name: Captures the OS version/release from /etc/redhat-release file.
+    shell: cat /etc/redhat-release | sed s/.*release\ // | sed s/\ .*//
+    register: os
+    tags:
+      - ttu
+
+  - name: Installs the libstdc++.so.6 rpm only for OL6.
+    yum: name=libstdc++.so.6 state=present
+    when: "{{ os.stdout | version_compare('6.0', '>=') }}"
+    tags:
+      - ttu
+
+  - name: Installs the sssd-client only for OL6.
+    yum: name=sssd-client state=present
+    when: "{{ os.stdout | version_compare('6.0', '>=') }}"
+    tags:
+      - ttu
+
+  - name: Creates the directory, if it doesn't exist.
+    file: path="{{ rpm_dest }}" state=directory mode=0755
+    tags:
+      - ttu
+
+  # Getting stats on the ttu archive file, to make the conditionals work.
+  - name: Get the stats for the ttu.tar.gz file.
+    stat: path="{{ temp_dest }}/ttu.tar.gz"
+    register: ttu_archive
+    tags:
+      - ttu
+
+  # Copies the ttu archive file containing all the rpms, .dat files and .so file.
+  - name: Copies the ttu tar.
+    copy: src="ttu.tar.gz" dest="{{ temp_dest }}/ttu.tar.gz"
+    when: ttu_archive.stat.exists == False
+    tags:
+      - ttu
+
+  # Unarchives the ttu tar file.
+  - name: Unarchives the ttu tar file.
+    unarchive: src="{{ temp_dest }}/ttu.tar.gz" dest="{{ rpm_dest }}" copy=no
+    tags:

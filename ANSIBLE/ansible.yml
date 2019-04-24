@@ -1,0 +1,19 @@
+---
+- hosts: windows
+  tasks:
+
+  - name: Run Gather Facts
+    setup:
+
+#   - name: test
+    # win_mapped_drive:
+    #     letter: undefined # required. The letter of the network path to map to.,This letter must not already be in use with Windows.
+    #     username: undefined # not required. Credentials to map the drive with.,The username MUST include the domain or servername like SERVER\user, see the example for more information.
+    #     path: undefined # not required. The UNC path to map the drive to.,This is required if C(state=present).,If C(state=absent) and path is not set, the module will delete the mapped drive regardless of the target.,If C(state=absent) and the path is set, the module will throw an error if path does not match the target of the mapped drive.
+    #     state: absent # not required. choices: absent;present. If C(present) will ensure the mapped drive exists.,If C(absent) will ensure the mapped drive does not exist.
+    #     password: undefined # not required. The password for C(username).
+    #     - name: Save the result of 'whoami' in 'whoami_out'
+    
+  - name: ipconfig 
+    win_command: ipconfig /all
+    register: ipconfig_out

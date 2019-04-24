@@ -1,0 +1,4 @@
+---
+# file: tasks/main.yml
+# created-on: 2017-07-17
+- include: dotnetcore_install.yml

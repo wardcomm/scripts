@@ -1,0 +1,1 @@
+﻿winrs -r:http://server:5985/wsman -u:Username -p:Password ipconfig
