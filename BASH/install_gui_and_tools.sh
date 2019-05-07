@@ -45,7 +45,7 @@ systemctl enable --now snapd.socket
 ln -sfn /var/lib/snapd/snap /snap
 snap install code-insiders
 systemctl isolate graphical.target
-yum install code-insiders
+#yum install code-insiders
 git config --global credential.helper cache
 git config --global credential.helper 'cache --timeout=10800'
 #init 5
