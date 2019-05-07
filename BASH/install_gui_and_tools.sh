@@ -8,7 +8,7 @@ yum install perl gcc dkms kernel-devel kernel-headers make bzip2 wget git curl -
 yum groupinstall "Development Tools" -y
 yum install gettext-devel openssl-devel perl-CPAN perl-devel zlib-devel -y
 yum install ansible -y
-yum remove git
+yum remove git -y
 yum install https://centos7.iuscommunity.org/ius-release.rpm -y
 yum install git2u-all
 mkdir /REPO
