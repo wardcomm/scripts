@@ -43,6 +43,7 @@ ln -sfn /var/lib/snapd/snap /snap
 snap install code-insiders --classic
 systemctl isolate graphical.target
 yum install code-insiders --classic
+git config --global credential.helper cache
 #init 5
 #systemctl halt
 #shutdown -h now
