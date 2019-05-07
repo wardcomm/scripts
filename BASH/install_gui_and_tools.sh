@@ -7,6 +7,7 @@ yum install epel-release -y
 yum install perl gcc dkms kernel-devel kernel-headers make bzip2 wget git curl -y
 yum groupinstall "Development Tools" -y
 yum install gettext-devel openssl-devel perl-CPAN perl-devel zlib-devel -y
+yum install ansible -y
 mkdir /REPO
 cd /REPO
 yum install https://centos7.iuscommunity.org/ius-release.rpm -y
