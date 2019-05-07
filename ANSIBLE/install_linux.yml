@@ -22,7 +22,7 @@
      - ansible-lint
      - python-pip
      - code
-     - nddu
+     - ncdu
      - htop
      - git2u-all
      - perl

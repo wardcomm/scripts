@@ -43,9 +43,9 @@ yum check-update -y
 #yum install snapd -y
 systemctl enable --now snapd.socket
 ln -sfn /var/lib/snapd/snap /snap
-snap install code-insiders --classic
+snap install code-insiders
 systemctl isolate graphical.target
-yum install code-insiders --classic
+yum install code-insiders
 git config --global credential.helper cache
 #init 5
 #systemctl halt
