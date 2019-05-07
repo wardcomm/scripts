@@ -8,17 +8,20 @@ yum install perl gcc dkms kernel-devel kernel-headers make bzip2 wget git curl -
 yum groupinstall "Development Tools" -y
 yum install gettext-devel openssl-devel perl-CPAN perl-devel zlib-devel -y
 yum install ansible -y
+yum remove git
+yum install https://centos7.iuscommunity.org/ius-release.rpm -y
+yum install git2u-all
 mkdir /REPO
 cd /REPO
-yum install https://centos7.iuscommunity.org/ius-release.rpm -y
+
 yum install htop ncdu -y
 yum install code-insiders
 yum upgrade git
-yum install git2u-all
+
 git --version
 git clone https://github.com/wardcomm/scripts.git
 cd /REPO/scripts/ANSIBLE
-ansible-playbook all /REPO/scripts/ANSIBLE/install_linux.yml
+ansible-playbook  /REPO/scripts/ANSIBLE/install_linux.yml
 #wget https://go.microsoft.com/fwlink/?LinkID=760866
 #yum localinstall code-insiders*x86_64.rpm
 
@@ -32,15 +35,16 @@ systemctl isolate graphical.target
 systemctl set-default graphical.target
 yum groupinstall "MATE Desktop" -y
 update-alternatives --config x-session-manager
+yum install https://centos.pkgs.org/7/epel-x86_64/ansible-lint-3.5.1-1.el7.noarch.rpm -y
 yum check-update -y
 yum install snapd -y
 systemctl enable --now snapd.socket
-ln -s /var/lib/snapd/snap /snap
+ln -sfn /var/lib/snapd/snap /snap
 snap install code-insiders --classic
 systemctl isolate graphical.target
 yum install code-insiders --classic
 #init 5
 #systemctl halt
-shutdown -h now
+#shutdown -h now
 #reboot
 
