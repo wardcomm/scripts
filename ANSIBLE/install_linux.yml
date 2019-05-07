@@ -12,49 +12,70 @@
       description: EPEL YUM repo
       baseurl: https://download.fedoraproject.org/pub/epel/$releasever/$basearch/
  
-  - name: install multple apps
-    yum:
-      name: "{{ item }}"
-      state: latest
-    loop:
+#   - name: install multple apps
+#     yum:
+#       name: "{{ item }}"
+#       state: latest
+#     loop:
      
-     - chrome
-     - firefox
-     - yumex 
-     - python-devel
-     - ansible-lint
-     - python-pip
-     - code
-     - ncdu
-     - htop
-     - git2u-all
-     - perl
-     - gcc
-     - dkms
-     - kernel-devel
-     - kernel-headers
-     - make
-     - bzip2
-     - wget
-     - curl
-     - gettext-devel
-     - openssl-devel
-     - perl-CPAN
-     - perl-devel
-     - zlib-devel
-     - snapd
+#  #    - chrome
+#      - firefox
+#      - yumex 
+#      - python-devel
+#      - ansible-lint
+#      - python-pip
+#      - code
+#      - ncdu
+#      - htop
+#      - git2u-all
+#      - perl
+#      - gcc
+#      - dkms
+#      - kernel-devel
+#      - kernel-headers
+#      - make
+#      - bzip2
+#      - wget
+#      - curl
+#      - gettext-devel
+#      - openssl-devel
+#      - perl-CPAN
+#      - perl-devel
+#      - zlib-devel
+#     - snapd
  #    - code-insiders
  
+  - name: install multi packages with pip
+    pip:
+      name:
+        - yamllint
+      
   - name: update the system
     yum:
       name: "*"
       state: latest
 
-  - git:
-      repo: "{{ iten }}"
+  - name: clone git repos
+    git:
+      repo: "{{ item }}"
       dest: /REPO
+      force: yes
       clone: yes
       update: yes
     loop:
-    -   https://github.com/wardcomm/linux_ansible_control.git
-    -
+    - https://github.com/wardcomm/linux_ansible_control.git
+    - https://github.com/wardcomm/windows_update.git
+    - https://github.com/wardcomm/windows_pm.git
+    - https://github.com/wardcomm/azure_custom.git
+    - https://github.com/wardcomm/azure_terraform.git
+
+  - name: Download chrome browser
+    get_url:
+      url: https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm
+      dest: /tmp/google-chrome-stable_current_x86_64.rpm
+      mode: 0777
+
+  - name: install chrome
+    yum:
+      name: /tmp/google-chrome-stable_current_x86_64.rpm
+      state: present
