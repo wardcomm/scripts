@@ -17,6 +17,9 @@
       name: "{{ item }}"
       state: latest
     loop:
+     
+     - chrome
+     - firefox
      - yumex 
      - python-devel
      - ansible-lint
@@ -46,3 +49,12 @@
     yum:
       name: "*"
       state: latest
+
+  - git:
+      repo: "{{ iten }}"
+      dest: /REPO
+      clone: yes
+      update: yes
+    loop:
+    -   https://github.com/wardcomm/linux_ansible_control.git
+    -
