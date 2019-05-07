@@ -1,0 +1,20 @@
+---
+- hosts: localhost 
+  tasks:
+  - name: install the latest version of git
+    yum:
+      name: git
+      state: latest
+  
+  - name: install multple apps
+    yum:
+      name: "{{ item }}"
+      state: latest
+    with_items:
+     - git
+     - code
+     - code-insiders
+  - name: update the system
+    yum:
+      name: "*"
+      state: latest

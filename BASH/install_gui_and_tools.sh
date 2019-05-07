@@ -7,13 +7,17 @@ yum install epel-release -y
 yum install perl gcc dkms kernel-devel kernel-headers make bzip2 wget git curl -y
 yum groupinstall "Development Tools" -y
 yum install gettext-devel openssl-devel perl-CPAN perl-devel zlib-devel -y
+mkdir /REPO
+cd /REPO
 yum install https://centos7.iuscommunity.org/ius-release.rpm -y
 yum install htop ncdu -y
 yum install code-insiders
 yum upgrade git
 yum install git2u-all
 git --version
-
+git clone https://github.com/wardcomm/scripts.git
+cd /REPO/scripts/ANSIBLE
+ansible-playbook all /REPO/scripts/ANSIBLE/install_linux.yml
 #wget https://go.microsoft.com/fwlink/?LinkID=760866
 #yum localinstall code-insiders*x86_64.rpm
 
