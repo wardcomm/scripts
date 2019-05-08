@@ -12,12 +12,14 @@
       description: EPEL YUM repo
       baseurl: https://download.fedoraproject.org/pub/epel/$releasever/$basearch/
 
-  # - name: Adding google repository
-  #   yum_repository:
-  #     name: google-chrome
-  #     description: google chrome YUM repo
-  #     baseurl: https://download.fedoraproject.org/pub/epel/$releasever/$basearch/
-
+  - name: Adding google repository
+    yum_repository:
+      name: google-chrome
+      description: google chrome YUM repo
+      baseurl: http://dl.google.com/linux/chrome/rpm/stable/x86_64
+      gpgcheck: yes
+      enabled: yes
+      gpgkey: https://dl.google.com/linux/linux_signing_key.pub
 
   - name: install multple apps
     yum:
@@ -26,6 +28,7 @@
     loop:
 
       - chromium
+      - google-chrome
     #  - firefox
     #  - yumex
     #  - python-devel
@@ -69,7 +72,7 @@
   - name: clone git repos
     git:
       repo: "{{ item.repo }}"
-      dest: /REPO/"{{ item.name }}"
+      dest: /REPO/{{ item.name }}
       force: yes
       clone: yes
       update: yes
