@@ -22,7 +22,10 @@
       gpgkey: https://dl.google.com/linux/linux_signing_key.pub
 
   - name: install homebrew
-    shell: h -c "$(curl -fsSL https://raw.githubusercontent.com/Linuxbrew/install/master/install.sh)"
+    shell: sh -c "$(curl -fsSL https://raw.githubusercontent.com/Linuxbrew/install/master/install.sh)"
+
+  - name: install terraform with homebrew
+    shell: brew install terraform
 
   - name: install multple apps
     yum:
