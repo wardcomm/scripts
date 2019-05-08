@@ -21,6 +21,9 @@
       enabled: yes
       gpgkey: https://dl.google.com/linux/linux_signing_key.pub
 
+  - name: install homebrew
+    shell: h -c "$(curl -fsSL https://raw.githubusercontent.com/Linuxbrew/install/master/install.sh)"
+
   - name: install multple apps
     yum:
       name: "{{ item }}"
