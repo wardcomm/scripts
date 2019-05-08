@@ -21,11 +21,11 @@
       enabled: yes
       gpgkey: https://dl.google.com/linux/linux_signing_key.pub
 
-  - name: install homebrew
-    shell: sh -c "$(curl -fsSL https://raw.githubusercontent.com/Linuxbrew/install/master/install.sh)"
+  - name: install terraform
+    shell: sh -c "$(curl -fsSL https://github.com/wardcomm/scripts/blob/master/BASH/install_terraform.sh)"
 
-  - name: install terraform with homebrew
-    shell: wget https://releases.hashicorp.com/terraform/0.12.0-rc1/terraform_0.12.0-rc1_linux_amd64.zip
+  - name: install homebrew
+    shell: sh -c "$(curl -fsSL "https://github.com/wardcomm/scripts/blob/master/BASH/install_homebrew.sh"
 
   - name: install multple apps
     yum:
