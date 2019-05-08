@@ -12,13 +12,20 @@
       description: EPEL YUM repo
       baseurl: https://download.fedoraproject.org/pub/epel/$releasever/$basearch/
 
+  # - name: Adding google repository
+  #   yum_repository:
+  #     name: google-chrome
+  #     description: google chrome YUM repo
+  #     baseurl: https://download.fedoraproject.org/pub/epel/$releasever/$basearch/
+
+
   - name: install multple apps
     yum:
       name: "{{ item }}"
       state: latest
     loop:
 
- #    - chrome
+      - chromium
     #  - firefox
     #  - yumex
     #  - python-devel
@@ -46,8 +53,8 @@
     #  - zip
     #  - snapd
     #  - nmap
-     - p7zip
- #    - code-insiders
+      - p7zip
+    #    - code-insiders
 
   - name: install multi packages with pip
     pip:
@@ -73,12 +80,6 @@
       - { repo: 'https://github.com/wardcomm/azure_custom.git' , name: 'azure_custom' }
       - { repo: 'https://github.com/wardcomm/azure_terraform.git' , name: 'azure_terraform' }
 
-    list:
-    - linux_ansible_control
-    - windows_update
-    - windows_pm
-    - azure_custom
-    - azure_terraform
   - name: Download chrome browser
     get_url:
       url: https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm
