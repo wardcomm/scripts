@@ -62,7 +62,7 @@
      - zip
      - snapd
      - nmap
-      -p7zip
+     - p7zip
     #    - code-insiders
 
   - name: install multi packages with pip
