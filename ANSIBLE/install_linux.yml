@@ -35,33 +35,33 @@
 
       - chromium
       - google-chrome
-    #  - firefox
-    #  - yumex
-    #  - python-devel
-    #  - ansible-lint
-    #  - python-pip
-    #  - code
-    #  - ncdu
-    #  - htop
-    #  - git2u-all
-    #  - perl
-    #  - gcc
-    #  - dkms
-    #  - kernel-devel
-    #  - kernel-headers
-    #  - make
-    #  - bzip2
-    #  - wget
-    #  - curl
-    #  - gettext-devel
-    #  - openssl-devel
-    #  - perl-CPAN
-    #  - perl-devel
-    #  - zlib-devel
-    #  - screen
-    #  - zip
-    #  - snapd
-    #  - nmap
+     - firefox
+     - yumex
+     - python-devel
+     - ansible-lint
+     - python-pip
+     - code
+     - ncdu
+     - htop
+     - git2u-all
+     - perl
+     - gcc
+     - dkms
+     - kernel-devel
+     - kernel-headers
+     - make
+     - bzip2
+     - wget
+     - curl
+     - gettext-devel
+     - openssl-devel
+     - perl-CPAN
+     - perl-devel
+     - zlib-devel
+     - screen
+     - zip
+     - snapd
+     - nmap
       - p7zip
     #    - code-insiders
 
