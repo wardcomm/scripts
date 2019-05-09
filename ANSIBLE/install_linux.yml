@@ -23,13 +23,14 @@
   
   - name: Adding lynis repository
     yum_repository:
-      name: CISOfy Software - Lynis package
-      description: EPEL YUM repo
+      name: CISOfy-Software-Lynis-package
+      description: CISOfy YUM repo
       baseurl: https://packages.cisofy.com/community/lynis/rpm/
       gpgcheck: yes
       enabled: yes
       gpgkey: https://packages.cisofy.com/keys/cisofy-software-rpms-public.key
-  - name: install terraform
+
+S      - name: install terraform
     command: bash /REPO/scripts/BASH/install_terraform.sh
 
   - name: install homebrew
