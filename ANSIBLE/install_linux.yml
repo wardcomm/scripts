@@ -20,7 +20,7 @@
       gpgcheck: yes
       enabled: yes
       gpgkey: https://dl.google.com/linux/linux_signing_key.pub
-  
+
   - name: Adding lynis repository
     yum_repository:
       name: CISOfy-Software-Lynis-package
@@ -30,7 +30,7 @@
       enabled: yes
       gpgkey: https://packages.cisofy.com/keys/cisofy-software-rpms-public.key
 
-S      - name: install terraform
+  - name: install terraform
     command: bash /REPO/scripts/BASH/install_terraform.sh
 
   - name: install homebrew
