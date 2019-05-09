@@ -10,7 +10,7 @@ yum install ansible -y
 yum groupinstall "Development Tools" -y
 #yum install gettext-devel openssl-devel perl-CPAN perl-devel zlib-devel -y
 
-#yum remove git -y
+yum remove git -y
 yum install https://centos7.iuscommunity.org/ius-release.rpm -y
 #yum install git2u-all -y
 #yum install https://code.visualstudio.com/docs/?dv=linux64_rpm&build=insiders/code-insiders-1.34.0-1557206804.el7.x86_64.rpm -y
