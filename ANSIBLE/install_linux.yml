@@ -63,6 +63,10 @@
      - snapd
      - nmap
      - p7zip
+     - python36u
+     - python36u-libs
+     - python36u-devel
+     - python36u-pip
     #    - code-insiders
 
   - name: install multi packages with pip
