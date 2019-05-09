@@ -20,7 +20,15 @@
       gpgcheck: yes
       enabled: yes
       gpgkey: https://dl.google.com/linux/linux_signing_key.pub
-
+  
+  - name: Adding lynis repository
+    yum_repository:
+      name: CISOfy Software - Lynis package
+      description: EPEL YUM repo
+      baseurl: https://packages.cisofy.com/community/lynis/rpm/
+      gpgcheck: yes
+      enabled: yes
+      gpgkey: https://packages.cisofy.com/keys/cisofy-software-rpms-public.key
   - name: install terraform
     command: bash /REPO/scripts/BASH/install_terraform.sh
 
@@ -67,6 +75,7 @@
      - python36u-libs
      - python36u-devel
      - python36u-pip
+     - lynis
     #    - code-insiders
 
   - name: install multi packages with pip
