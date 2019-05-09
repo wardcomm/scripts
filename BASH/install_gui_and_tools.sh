@@ -48,6 +48,8 @@ systemctl isolate graphical.target
 #yum install code-insiders
 git config --global credential.helper cache
 git config --global credential.helper 'cache --timeout=10800'
+ausearch -c 'snapd' --raw | audit2allow -M my-snapd
+semodule -i my-snapd.pp
 #init 5
 #systemctl halt
 #shutdown -h now
