@@ -40,7 +40,7 @@
      - python-devel
      - ansible-lint
      - python-pip
-     - code
+#     - code
      - ncdu
      - htop
      - git2u-all
