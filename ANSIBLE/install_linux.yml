@@ -96,7 +96,9 @@
 
   - name: install multi packages with pip
     pip:
-      name:
+      name: "{{ item }}"
+      state: latest
+    loop:
         - yamllint
 
   - name: update the system
