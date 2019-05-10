@@ -94,7 +94,8 @@
      - awscli
      - ntp 
     #    - code-insiders
-
+   
+  
   - name: install multi packages with pip
     pip:
       name: "{{ item }}"
@@ -122,7 +123,7 @@
       - { repo: 'https://github.com/wardcomm/azure_terraform.git' , name: 'azure_terraform' }
 
   - name: set timezone
-    shell: timedatectl set-timezone America/New York
+    shell: timedatectl set-timezone America/New_York
 
   - name: Download chrome browser
     get_url:
