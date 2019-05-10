@@ -117,6 +117,10 @@
       - { repo: 'https://github.com/wardcomm/azure_custom.git' , name: 'azure_custom' }
       - { repo: 'https://github.com/wardcomm/azure_terraform.git' , name: 'azure_terraform' }
 
+  - name: set timezone to America/New_York
+    timezone:
+    name: America/New_York
+
   - name: Download chrome browser
     get_url:
       url: https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm

@@ -49,8 +49,8 @@ if [[ $iatest > 0 ]]; then bind "set completion-ignore-case on"; fi
 if [[ $iatest > 0 ]]; then bind "set show-all-if-ambiguous On"; fi
 
 # Set the default editor
-export EDITOR=nano
-export VISUAL=nano
+export EDITOR=vi
+export VISUAL=vi
 alias pico='edit'
 alias spico='sedit'
 alias nano='edit'
@@ -643,8 +643,8 @@ function __setprompt
 	fi
 
 	# Date
-	PS1+="\[${DARKGRAY}\](\[${CYAN}\]\$(date +%a) $(date +%b-'%-m')" # Date
-	PS1+="${BLUE} $(date +'%-I':%M:%S%P)\[${DARKGRAY}\])-" # Time
+	PS1+="\[${DARKGRAY}\](\[${CYAN}\]\$(date '+%a THE %d OF %B OF THE YEAR %Y')" # Date
+    PS1+="${BLUE} $(date +'%-I':%M:%S%P)\[${DARKGRAY}\])-" # Time
 
 	# CPU
 	PS1+="(\[${MAGENTA}\]CPU $(cpu)%"
