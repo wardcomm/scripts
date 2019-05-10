@@ -18,7 +18,14 @@
       enabled: yes
       gpgkey: https://packages.microsoft.com/keys/microsoft.asc
 
-
+  - name: Adding docker repository
+    yum_repository:
+      name: docker-ce
+      description: docker-ce stable YUM repo
+      baseurl: https://download.docker.com/linux/centos/7/$basearch/stable
+      gpgcheck: yes
+      enabled: yes
+      gpgkey: https://download.docker.com/linux/centos/gpg
 
   - name: Adding epel repository
     yum_repository:
@@ -92,7 +99,10 @@
      - python36u-pip
      - lynis
      - awscli
-     - ntp 
+     - ntp
+     - yum-utils
+     - device-mapper-persistent-data lvm2
+
     #    - code-insiders
    
   
