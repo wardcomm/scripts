@@ -91,7 +91,8 @@
      - python36u-devel
      - python36u-pip
      - lynis
-     - awscli 
+     - awscli
+     - ntp 
     #    - code-insiders
 
   - name: install multi packages with pip
