@@ -101,7 +101,8 @@
      - awscli
      - ntp
      - yum-utils
-     - device-mapper-persistent-data lvm2
+     - device-mapper-persistent-data
+     - lvm2
 
     #    - code-insiders
    
