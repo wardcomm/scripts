@@ -6,6 +6,20 @@
   #     name: git
   #     state: latest
 
+  - name: Install microsoft repo key for azure cli
+    shell: sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
+
+  - name: Adding microsoft repository
+    yum_repository:
+      name: azure-cli
+      description: azure cli YUM repo
+      baseurl: https://packages.microsoft.com/yumrepos/azure-cli
+      gpgcheck: yes
+      enabled: yes
+      gpgkey: https://packages.microsoft.com/keys/microsoft.asc
+
+
+
   - name: Adding epel repository
     yum_repository:
       name: epel
@@ -41,7 +55,7 @@
       name: "{{ item }}"
       state: latest
     loop:
-
+     - azure-cli 
      - chromium
      - google-chrome
      - firefox
