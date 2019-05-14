@@ -6,6 +6,27 @@
   #     name: git
   #     state: latest
 
+  - name: Install microsoft repo key for azure cli
+    shell: sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
+
+  - name: Adding microsoft repository
+    yum_repository:
+      name: azure-cli
+      description: azure cli YUM repo
+      baseurl: https://packages.microsoft.com/yumrepos/azure-cli
+      gpgcheck: yes
+      enabled: yes
+      gpgkey: https://packages.microsoft.com/keys/microsoft.asc
+
+  - name: Adding docker repository
+    yum_repository:
+      name: docker-ce
+      description: docker-ce stable YUM repo
+      baseurl: https://download.docker.com/linux/centos/7/$basearch/stable
+      gpgcheck: yes
+      enabled: yes
+      gpgkey: https://download.docker.com/linux/centos/gpg
+
   - name: Adding epel repository
     yum_repository:
       name: epel
@@ -41,7 +62,7 @@
       name: "{{ item }}"
       state: latest
     loop:
-
+     - azure-cli 
      - chromium
      - google-chrome
      - firefox
@@ -77,11 +98,20 @@
      - python36u-devel
      - python36u-pip
      - lynis
-    #    - code-insiders
+     - awscli
+     - ntp
+     - yum-utils
+     - device-mapper-persistent-data
+     - lvm2
 
+    #    - code-insiders
+   
+  
   - name: install multi packages with pip
     pip:
-      name:
+      name: "{{ item }}"
+      state: latest
+    loop:
         - yamllint
 
   - name: update the system
@@ -102,6 +132,9 @@
       - { repo: 'https://github.com/wardcomm/windows_pm.git' , name: 'windows_pm' }
       - { repo: 'https://github.com/wardcomm/azure_custom.git' , name: 'azure_custom' }
       - { repo: 'https://github.com/wardcomm/azure_terraform.git' , name: 'azure_terraform' }
+
+  - name: set timezone
+    shell: timedatectl set-timezone America/New_York
 
   - name: Download chrome browser
     get_url:

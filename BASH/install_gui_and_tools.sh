@@ -41,6 +41,7 @@ update-alternatives --config x-session-manager
 #yum install https://centos.pkgs.org/7/epel-x86_64/ansible-lint-3.5.1-1.el7.noarch.rpm -y
 yum check-update -y
 #yum install snapd -y
+pip install --upgrade pip
 systemctl enable --now snapd.socket
 ln -sfn /var/lib/snapd/snap /snap
 snap install code-insiders --classic

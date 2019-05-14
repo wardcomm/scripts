@@ -1,2 +1,4 @@
 BASH/.install_gui_and_tools.sh.swp
 ANSIBLE/install_linux.retry
+ANSIBLE/my-snapd.pp
+ANSIBLE/my-snapd.te
