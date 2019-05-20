@@ -37,7 +37,16 @@ systemctl get-default graphical.target
 systemctl isolate graphical.target
 systemctl set-default graphical.target
 yum groupinstall "MATE Desktop" -y
+yum --enablerepo=epel -y groups install "MATE Desktop"
+​echo "exec /usr/bin/mate-session" >> ~/.xinitrc
+yum  groups install "KDE Plasma Workspaces" -y
+#echo "exec startkde" >> ~/.xinitrc
+yum groupinstall X11 -y
+​yum --enablerepo=epel groups install "Xfce" -y
+​#echo "exec /usr/bin/xfce4-session" >> ~/.xinitrc
 update-alternatives --config x-session-manager
+yum --enablerepo=epel groups install "MATE Desktop" -y
+​echo "exec /usr/bin/mate-session" >> ~/.xinitrc
 #yum install https://centos.pkgs.org/7/epel-x86_64/ansible-lint-3.5.1-1.el7.noarch.rpm -y
 yum check-update -y
 #yum install snapd -y
@@ -51,6 +60,7 @@ git config --global credential.helper cache
 git config --global credential.helper 'cache --timeout=10800'
 ausearch -c 'snapd' --raw | audit2allow -M my-snapd
 semodule -i my-snapd.pp
+
 #init 5
 #systemctl halt
 #shutdown -h now
