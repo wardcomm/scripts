@@ -62,6 +62,7 @@
       name: "{{ item }}"
       state: latest
     loop:
+     - monitorix
      - azure-cli 
      - chromium
      - google-chrome
