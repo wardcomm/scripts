@@ -62,6 +62,7 @@
       name: "{{ item }}"
       state: latest
     loop:
+     - grsync
      - monitorix
      - azure-cli 
      - chromium
