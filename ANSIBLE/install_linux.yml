@@ -106,6 +106,8 @@
      - device-mapper-persistent-data
      - lvm2
      - graphviz
+     - xrdp
+     - tigervnc-server
 
     #    - code-insiders
    
