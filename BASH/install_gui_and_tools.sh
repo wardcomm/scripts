@@ -1,7 +1,16 @@
 #!/bin/bash
+yum install epel-release -y
+yum install https://centos7.iuscommunity.org/ius-release.rpm -y
 yum update yum -y
 yum update * -y
 
+pkg="ansible"
+if rpm -q $pkg
+then
+    echo "$pkg installed && yum remove ansible -y && yum install ansible -y"
+else
+    echo "$pkg NOT installed &&  yum install ansible -y && yum install ansible-lint "
+fi
 yum groupinstall "GNOME Desktop" "Graphical Administration Tools" "Server with GUI" -y
 yum install epel-release -y
 yum install https://centos7.iuscommunity.org/ius-release.rpm -y
