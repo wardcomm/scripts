@@ -34,6 +34,7 @@ git clone https://github.com/wardcomm/scripts.git
 cd /REPO/scripts/ANSIBLE
 git pull
  ansible-playbook  /REPO/scripts/ANSIBLE/install_linux.yml
+ ansible-playbook /REPO/scripts/ANSIBLE/linux_update.yml
 #wget https://go.microsoft.com/fwlink/?LinkID=760866
 #yum localinstall code-insiders*x86_64.rpm
 mkdir -p ~/.vscode/extensions
