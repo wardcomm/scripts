@@ -38,19 +38,22 @@ ansible-playbook  /REPO/scripts/ANSIBLE/install_linux.yml
 
 snap install code-insiders
 snap refresh code-insiders
-code-insiders --install odezombiech.gitignore
-code-insiders --install fabiospampinato.vscode-open-in-marketplace
-code-insiders --install haaaad.ansible
-code-insiders --install mauve.terraform
-code-insiders --install michelemelluso.gitignore
-code-insiders --install mindginative.terraform-snippets
-code-insiders --install ms-azuretools.vscode-azureterraform
-code-insiders --install ms-vscode.azure-account
-code-insiders --install sourcepirate.hclfmt
-code-insiders --install timonwong.ansible-autocomplete
-code-insiders --install vscoss.vscode-ansible
-code-insiders --install wholroyd.HCL
-code-insiders --install zikalino.azure-rest-for-ansible
+app_dir = ~/.code-insiders
+
+code-insiders $app_dir --install odezombiech.gitignore
+code-insiders $app_dir --install fabiospampinato.vscode-open-in-marketplace
+code-insiders $app_dir --install haaaad.ansible
+code-insiders $app_dir --install mauve.terraform
+code-insiders $app_dir --install michelemelluso.gitignore
+code-insiders $app_dir --install mindginative.terraform-snippets
+code-insiders $app_dir --install ms-azuretools.vscode-azureterraform
+code-insiders $app_dir --install ms-vscode.azure-account
+code-insiders $app_dir --install sourcepirate.hclfmt
+code-insiders $app_dir --install timonwong.ansible-autocomplete
+code-insiders $app_dir --install vscoss.vscode-ansible
+code-insiders $app_dir --install wholroyd.HCL
+code-insiders $app_dir --install zikalino.azure-rest-for-ansible
+code-insiders $app_dir --install davidhouchin.whitespace-plus
 # rpm --import https://packages.microsoft.com/keys/microsoft.asc
 # sh -c 'echo -e "[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" > /etc/yum.repos.d/vscode.repo'
 
