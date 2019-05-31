@@ -110,7 +110,7 @@
      - graphviz
      - xrdp
      - tigervnc-server
-
+     - jq
     #    - code-insiders
    
   
