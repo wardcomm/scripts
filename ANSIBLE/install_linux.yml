@@ -118,6 +118,7 @@
       state: latest
     loop:
         - yamllint
+        - ansible-lint
 
   - name: update the system
     yum:

@@ -32,29 +32,31 @@ cd /REPO
 git --version
 git clone https://github.com/wardcomm/scripts.git
 cd /REPO/scripts/ANSIBLE
-# ansible-playbook  /REPO/scripts/ANSIBLE/install_linux.yml
+git pull
+ ansible-playbook  /REPO/scripts/ANSIBLE/install_linux.yml
 #wget https://go.microsoft.com/fwlink/?LinkID=760866
 #yum localinstall code-insiders*x86_64.rpm
 mkdir -p ~/.vscode/extensions
+mkdir -p ~/.vscode-insiders/extensions
 snap install code-insiders
 snap refresh code-insiders
 #var
-app_dir = --user-data-dir ~/.code-insiders
+# app_dir = --user-data-dir ~/.code-insiders
 
-code-insiders $app_dir --install odezombiech.gitignore
-code-insiders $app_dir --install fabiospampinato.vscode-open-in-marketplace
-code-insiders $app_dir --install haaaad.ansible
-code-insiders $app_dir --install mauve.terraform
-code-insiders $app_dir --install michelemelluso.gitignore
-code-insiders $app_dir --install mindginative.terraform-snippets
-code-insiders $app_dir --install ms-azuretools.vscode-azureterraform
-code-insiders $app_dir --install ms-vscode.azure-account
-code-insiders $app_dir --install sourcepirate.hclfmt
-code-insiders $app_dir --install timonwong.ansible-autocomplete
-code-insiders $app_dir --install vscoss.vscode-ansible
-code-insiders $app_dir --install wholroyd.HCL
-code-insiders $app_dir --install zikalino.azure-rest-for-ansible
-code-insiders $app_dir --install davidhouchin.whitespace-plus
+# code-insiders $app_dir --install odezombiech.gitignore
+# code-insiders $app_dir --install fabiospampinato.vscode-open-in-marketplace
+# code-insiders $app_dir --install haaaad.ansible
+# code-insiders $app_dir --install mauve.terraform
+# code-insiders $app_dir --install michelemelluso.gitignore
+# code-insiders $app_dir --install mindginative.terraform-snippets
+# code-insiders $app_dir --install ms-azuretools.vscode-azureterraform
+# code-insiders $app_dir --install ms-vscode.azure-account
+# code-insiders $app_dir --install sourcepirate.hclfmt
+# code-insiders $app_dir --install timonwong.ansible-autocomplete
+# code-insiders $app_dir --install vscoss.vscode-ansible
+# code-insiders $app_dir --install wholroyd.HCL
+# code-insiders $app_dir --install zikalino.azure-rest-for-ansible
+# code-insiders $app_dir --install davidhouchin.whitespace-plus
 # rpm --import https://packages.microsoft.com/keys/microsoft.asc
 # sh -c 'echo -e "[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" > /etc/yum.repos.d/vscode.repo'
 
@@ -65,6 +67,8 @@ systemctl set-default graphical.target
 yum groupinstall "MATE Desktop" -y
 yum --enablerepo=epel -y groups install "MATE Desktop"
 ​echo "exec /usr/bin/mate-session" >> ~/.xinitrc
+echo "mate-session" > ~/.Xclients
+chmod a+x ~/.Xclients
 yum  groups install "KDE Plasma Workspaces" -y
 #echo "exec startkde" >> ~/.xinitrc
 yum groupinstall X11 -y
