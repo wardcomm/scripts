@@ -38,7 +38,8 @@ ansible-playbook  /REPO/scripts/ANSIBLE/install_linux.yml
 
 snap install code-insiders
 snap refresh code-insiders
-app_dir = ~/.code-insiders
+#var
+app_dir = --user-data-dir ~/.code-insiders
 
 code-insiders $app_dir --install odezombiech.gitignore
 code-insiders $app_dir --install fabiospampinato.vscode-open-in-marketplace
