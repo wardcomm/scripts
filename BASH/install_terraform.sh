@@ -33,7 +33,7 @@ function terraform-install() {
   if [[ -z $(grep 'export PATH=${HOME}/bin:${PATH}' ~/.bashrc) ]]; then
   	echo 'export PATH=${HOME}/bin:${PATH}' >> ~/.bashrc
   fi
-  
+  rm -rf /tmp/terra*
   echo "Installed: `${HOME}/bin/terraform version`"
   
   cat - << EOF 
