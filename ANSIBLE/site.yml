@@ -1,0 +1,31 @@
+---
+- hosts: localhost
+  vars:
+    logrotate_scripts:
+      - name: "nginx-paths"
+        rules:
+          - paths:
+              - /var/log/nginx/path1.log
+              - /var/log/nginx/path2.log
+              - /var/log/nginx/path3.log
+            options:
+              - daily
+              - rotate 7
+            scripts:
+              postrotate: "echo test"
+      - name: "nginx-rules"
+        rules:
+          - comment: daily
+            paths:
+              - /var/log/nginx/rule1.log
+            options:
+              - daily
+          - comment: weekly
+            paths:
+              - /var/log/nginx/rule2.log
+            options:
+              - weekly
+
+  roles:
+    - role: linux_logrotate
+
