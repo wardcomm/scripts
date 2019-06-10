@@ -1,0 +1,18 @@
+---
+- name: Include OS-specific variables.
+  include_vars: "{{ ansible_os_family }}.yml"
+
+- name: Install logrotate
+  package:
+    name: logrotate
+    state: present
+  when: logrotate_scripts is defined and logrotate_scripts|length > 0
+
+- name: Setup logrotate.d scripts
+  template:
+    src: logrotate.j2
+    dest: "{{ logrotate_conf_dir }}/{{ item.name }}"
+  with_items: "{{ logrotate_scripts }}"
+  when: logrotate_scripts is defined
+
+- include_tasks: create_logfiles.yml

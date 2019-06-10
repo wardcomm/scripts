@@ -1,0 +1,24 @@
+---
+galaxy_info:
+  role_name: Log_rotate
+  author: wardcomm
+  description: Role to configure a logrotate script
+  license: MIT
+  min_ansible_version: 2.7
+  platforms:
+    - name: Debian
+      versions:
+        - stretch
+    - name: EL
+      versions:
+        - 7
+    - name: Ubuntu
+      versions:
+        - bionic
+  categories:
+    - system
+    - log
+    - rotate
+    - logrotate
+dependencies: []
+  
