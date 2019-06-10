@@ -62,6 +62,7 @@
       name: "{{ item }}"
       state: latest
     loop:
+     - system-config-lvm
      - wireshark-gnome
      - authconfig-gtk
      - grsync
