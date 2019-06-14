@@ -4,3 +4,9 @@ ANSIBLE/my-snapd.pp
 ANSIBLE/my-snapd.te
 BASH/vault_1.1.3_linux_amd64.zip
 BASH/vault_1.1.3_linux_amd64.zip.1
+
+
+vault write aws/config/root \
+    access_key=AKIAI4SGLQPBX6CSENIQ \
+    secret_key=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 \
+    region=us-east-1

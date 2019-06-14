@@ -62,6 +62,7 @@
       name: "{{ item }}"
       state: latest
     loop:
+     - inxi 
      - kdiff3
       #     - system-config-lvm
      - wireshark-gnome
