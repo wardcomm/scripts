@@ -1,0 +1,1 @@
+﻿Get-AzureRmResource | ? {$_.ResourceGroupName -eq "RG-Network-Core" } | ft name,ResourceType

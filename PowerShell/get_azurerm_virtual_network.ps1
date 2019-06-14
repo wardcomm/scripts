@@ -1,0 +1,1 @@
+﻿Get-AzureRmVirtualNetwork -Name vn-use2-core-01 -ResourceGroupName RG-Network-Core
