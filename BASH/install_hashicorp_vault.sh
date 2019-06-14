@@ -17,7 +17,7 @@ echo "* Extracting $ZIP into $INSTALL_DIR"
 unzip -o ${INSTALL_DIR}/$ZIP -d $INSTALL_DIR && rm -v ${INSTALL_DIR}/$ZIP
 rm -rf /root/bin/${APP}
 mv /opt/${APP}/${APP} /root/bin/${APP}
-${APP} h
+${APP} version
 
 # vault -h
 # mkdir -p /opt/${APP}/
