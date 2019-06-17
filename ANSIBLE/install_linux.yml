@@ -65,7 +65,7 @@
   - name: install homebrew
     shell: bash /REPO/scripts/BASH/install_homebrew.sh
 
-  - name: install multple apps
+  - name: install multiple Apps
     yum:
       name: "{{ item }}"
       state: latest
