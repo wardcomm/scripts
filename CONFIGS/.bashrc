@@ -1,5 +1,13 @@
 #!/bin/bash
 iatest=$(expr index "$-" i)
+#Terraform
+alias tf='terraform fmt'
+alias tp='terraform plan'
+alias tv='terraform validate'
+alias ts='terraform show'
+alias tr='terraform refresh'
+alias tsl'terraform state list'
+alias ta='terraform fmt && terraform refresh && terraform show && terraform state list && terraform plan'
 
 #######################################################
 # SOURCED ALIAS'S AND SCRIPTS BY jchadward.com
