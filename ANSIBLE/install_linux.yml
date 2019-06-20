@@ -54,8 +54,8 @@
   - name: install terraform
     command: bash /REPO/scripts/BASH/install_terraform.sh
  
-  - name: clone my git repos
-    command: bash /REPO/scripts/BASH/install_git_repos.sh 
+  # - name: clone my git repos
+  #   command: bash /REPO/scripts/BASH/install_git_repos.sh 
  
  
  
