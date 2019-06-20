@@ -29,6 +29,9 @@ cd /REPO
 # yum install htop ncdu -y
 #yum install code-insiders
 # yum upgrade git
+yum -y install xrdp tigervnc-server && systemctl start xrdp &&  systemctl enable xrdp
+firewall-cmd --permanent --add-port=3389/tcp
+firewall-cmd --reload
 
 git --version
 git clone https://github.com/wardcomm/scripts.git
