@@ -53,15 +53,24 @@
 
   - name: install terraform
     command: bash /REPO/scripts/BASH/install_terraform.sh
+ 
+  # - name: clone my git repos
+  #   command: bash /REPO/scripts/BASH/install_git_repos.sh 
+ 
+ 
+ 
+  - name: upgrade terraform
+    command: bash /REPO/scripts/BASH/upgrade_terraform.sh 
 
   - name: install homebrew
     shell: bash /REPO/scripts/BASH/install_homebrew.sh
 
-  - name: install multple apps
+  - name: install multiple Apps
     yum:
       name: "{{ item }}"
       state: latest
     loop:
+     - inxi 
      - kdiff3
       #     - system-config-lvm
      - wireshark-gnome

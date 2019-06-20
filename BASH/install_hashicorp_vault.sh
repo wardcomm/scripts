@@ -17,11 +17,5 @@ echo "* Extracting $ZIP into $INSTALL_DIR"
 unzip -o ${INSTALL_DIR}/$ZIP -d $INSTALL_DIR && rm -v ${INSTALL_DIR}/$ZIP
 rm -rf /root/bin/${APP}
 mv /opt/${APP}/${APP} /root/bin/${APP}
-${APP} h
-
-# vault -h
-# mkdir -p /opt/${APP}/
-# INSTALL_DIR="${1:-/opt/${APP}}"
-# URL="https://releases.hashicorp.com/mkdir -p /opt/${APP}/"
-# VER="$(curl -sL $URL | grep -v beta | grep -Po "_(\d*\.?){3}" | sed 's/_//' | sort -V | tail -1)"
-# ZIP="${APP}_${VER}_linux_amd64.zip"
+${APP} version
+${APP} -autocomplete-install
