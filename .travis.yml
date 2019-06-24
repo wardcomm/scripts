@@ -54,7 +54,7 @@ script:
   - ansible-review --version
 
   # Basic role syntax check
-  - ansible-playbook -i tests/inventory tests/test.yml  --syntax-check
+  - ansible-playbook localhost ANISBLE/install_linux.yml  --syntax-check
 
   - git ls-files | grep -Ei '^[^[:punct:]].+.(yaml|yml)$' | xargs ansible-review -q
 
