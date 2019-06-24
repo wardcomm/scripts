@@ -1,0 +1,18 @@
+[Desktop Entry]
+X-SnapInstanceName=code-insiders
+Name=Visual Studio Code - Insiders
+Comment=Code Editing. Redefined.
+GenericName=Text Editor
+Exec=env BAMF_DESKTOP_FILE_HINT=/var/lib/snapd/desktop/applications/code-insiders_code-insiders.desktop /var/lib/snapd/snap/bin/code-insiders --user-data-dir ~/.code-insiders
+Icon=/var/lib/snapd/snap/code-insiders/178/usr/share/pixmaps/com.visualstudio.code.insiders.png
+Type=Application
+StartupNotify=false
+StartupWMClass=Code - Insiders
+Categories=Utility;TextEditor;Development;IDE;
+MimeType=text/plain;inode/directory;
+Actions=new-empty-window;
+Keywords=vscode;
+
+[Desktop Action new-empty-window]
+Name=New Empty Window
+Icon=/usr/share/pixmaps/com.visualstudio.code.insiders.png
