@@ -54,6 +54,19 @@ script:
   - ansible-review --version
 
   - bash -n BASH/install_gui_and_tools.sh
+  - bash -n BASH/azure_backend_create.sh
+  - bash -n BASH/create_keys.sh
+  - bash -n BASH/install_docker-cd.sh
+  - bash -n BASH/install_git_repos.sh
+  - bash -n BASH/install_hashicorp_vault.sh
+  - bash -n BASH/install_homebrew.sh
+  - bash -n BASH/kubectl.sh
+  - bash -n BASH/libreoffice.sh
+  - bash -n BASH/linters.sh
+  - bash -n BASH/terraform.sh
+  - bash -n BASH/virtualbox.sh
+  - bash -n BASH/VSCODE.sh
+  - bash -n BASH/upgrade_terraform.sh 
   # Basic role syntax check
   # - ansible-playbook -i /etc/ansible/hosts localhost ANISBLE/install_linux.yml  --syntax-check
 
