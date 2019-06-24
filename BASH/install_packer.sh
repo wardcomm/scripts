@@ -1,5 +1,5 @@
 #!/bin/bash
-wget https://releases.hashicorp.com/vault/1.1.3/vault_1.1.3_linux_amd64.zip
+https://releases.hashicorp.com/packer/1.4.1/packer_1.4.1_linux_amd64.zip
 
 #!/bin/bash
 #varialbles
