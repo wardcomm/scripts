@@ -53,10 +53,11 @@ script:
   # Check syntax
   - ansible-review --version
 
+  - bash -n BASH/install_gui_and_tools.sh
   # Basic role syntax check
   # - ansible-playbook -i /etc/ansible/hosts localhost ANISBLE/install_linux.yml  --syntax-check
 
-  - git ls-files | grep -Ei '^[^[:punct:]].+.(yaml|yml)$' | xargs ansible-review -q
+  # - git ls-files | grep -Ei '^[^[:punct:]].+.(yaml|yml)$' | xargs ansible-review -q
 
 notifications:
   webhooks: https://galaxy.ansible.com/api/v1/notifications/
