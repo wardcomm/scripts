@@ -132,6 +132,7 @@
     loop:
         - yamllint
         - ansible-lint
+        - pywinrm
 
   - name: update the system
     yum:
