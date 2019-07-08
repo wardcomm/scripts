@@ -8,4 +8,4 @@ tar xf nginxadmin.tar
 
 cd publicnginx
 
-./nginxinstaller installS
+
