@@ -1,0 +1,29 @@
+---
+ansible_connection: winrm
+ansible_port: 5985
+ansible_winrm_transport: ntlm
+ansible_winrm_connection_timeout: 900
+ansible_winrm_operation_timeout_sec: 1200
+ansible_winrm_read_timeout_sec: 800
+ansible_winrm_server_cert_validation: ignore
+server: "{{ ansible_hostname | lower }}"
+server_fqdn:  "{{ ansible_fqdn | lower }}"
+my_dom: "{{ ansible_domain | lower }}"
+prod: "{{ ((( server[3] == 'd') or (server[3] == 'u' )) or ('test' in server )) | ternary (false, true) }}"
+twc: "{{ ('twcable' in server ) | ternary (true, false) }}"
+chtr: "{{ ('charter' in server ) | ternary (true, false) }}" 
+os: "{{ ansible_distribution }}"
+#bin_server: "vm0pnyumxxw0001.twcable.com/deployments/Windows"  # - PROD BIN Server
+bin_server: "vm0qnyumxxw0001.twcable.com/deployments/Windows"  # - QA BIN Server
+chassis: "{{ ansible_system_vendor | lower }}"
+orange: false
+NBU:
+  routes:
+    NCE: '10.222.59.0/24'
+    NCW: '142.136.136.0/26, 10.222.56.0/24'
+    CDP: '10.222.57.0/24'
+
+HPSA:
+  packages:
+    Windows10: 'C:\Temp\deploy\HPSA\opsware-agent-70.0.76793.1-win32-10.0-X64.exe'
+    Windows6: 'C:\Temp\deploy\HPSA\opsware-agent-70.0.76793.1-win32-6.3-X64.exe'

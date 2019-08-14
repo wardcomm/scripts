@@ -1,0 +1,37 @@
+---
+- block:
+  - debug:
+      msg: "The hostname is {{ inventory_hostname }}..."
+
+  - debug:
+      msg: "The connection type is {{ ansible_connection }} by {{ ansible_user}}."
+
+  - name: "Wait {{ _delay }} seconds for forward DNS"
+    command: "host {{ inventory_hostname }}"
+    changed_when: false
+    register: forward_DNS
+    retries: "{{ _retries }}"
+    delay: "{{ _delay }}"
+    until: forward_DNS.rc == 0
+
+  - debug:
+      msg: "IP Address is: {{ forward_DNS.stdout.split()[3] }}"
+
+  - name: "Wait {{ _delay }} seconds for reverse DNS"
+    command: "host {{ forward_DNS.stdout.split()[3] }}"
+    changed_when: false
+    register: reverse_DNS
+    until: reverse_DNS.rc == 0
+    retries: "{{ _retries }}"
+    delay: "{{ _delay }}"
+
+  - debug:
+      msg: "{{ reverse_DNS.stdout.split()[4] }}"
+
+  vars:
+    # Could take up to an hour, poll every 60 seconds until then.
+    _retries: 60
+    _delay: 60
+  tags: "always"
+  # default not to do this, as it is more provisioning specific.
+#  when: DNS_wait | default(true) | bool

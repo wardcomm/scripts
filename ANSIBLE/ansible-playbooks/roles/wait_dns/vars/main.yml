@@ -1,0 +1,3 @@
+---
+ansible_ignore_errors: yes
+ansible_connection: local

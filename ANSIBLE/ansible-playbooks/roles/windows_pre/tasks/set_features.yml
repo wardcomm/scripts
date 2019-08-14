@@ -1,0 +1,54 @@
+---
+- block:
+  - name: Set pagefile to 8 GB and disable AutomaticManagedPagefile...
+    win_pagefile:
+      drive: C
+      initial_size: 8192
+      maximum_size: 8192
+      remove_all: yes
+      automatic: no
+      state: present
+
+  - name: Install Common Windows Features
+    win_feature:
+      name:
+      - FileAndStorage-Services
+      - File-Services
+      - FS-FileServer
+      - NET-WCF-TCP-PortSharing45
+      - PowerShell-ISE
+      - RDC
+      - RSAT-AD-PowerShell
+      - RSAT-AD-AdminCenter
+      - RSAT-ADDS-Tools
+      - RSAT-ADLDS
+      - Server-Media-Foundation
+      - Storage-Services
+      - Telnet-Client
+      state: present
+    ignore_errors: yes
+  
+  - name: Remove Windows Features...
+    win_feature:
+      name:
+      - RSAT-SNMP
+      - SNMP-Service
+      - FS-SMB1  
+      state: absent
+
+  - name: Disable SMBv1...
+    win_shell:  Set-SmbServerConfiguration -EnableSMB1Protocol $false -Confirm:$false -ErrorAction SilentlyContinue
+
+  - name: Install Desktop Experience for Windows 2012...
+    win_feature:
+      name: 
+        - Desktop-Experience
+        - RSAT-NIS
+      state: present
+    when: os is search("2012")
+
+  - name: Reboot system if Windows 2019...
+    win_reboot:
+      reboot_timeout: 1200
+      connect_timeout: 120
+    when: os is search("2019")

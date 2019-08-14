@@ -1,0 +1,26 @@
+---
+- name: Check current domain/workgroup state...
+  win_shell: (Get-WmiObject -Class Win32_ComputerSystem).PartOfDomain
+  register: domain_state
+
+- name: Set the domain state variable...
+  set_fact:
+    domain_state: "{{ domain_state.stdout_lines[0] }}"
+
+- block:
+  - include_vars: password.yml
+    no_log: true
+    
+  - name: Join Charter Domain
+    win_domain_membership:
+      dns_domain_name: corp.chartercom.com
+      hostname: "{{ server }}"
+      domain_admin_user: "{{ vault.domain_join.user }}"
+      domain_admin_password: "{{ vault.domain_join.pass }}"
+      domain_ou_path: "OU=SCCM_PreDeploy,OU=Systems,OU=DC_Operations,OU=Enterprise,DC=CORP,DC=CHARTERCOM,DC=com"
+      state: domain
+
+  tags: 
+    - join
+    
+  when: domain_state == false

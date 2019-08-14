@@ -1,0 +1,12 @@
+---
+- block:
+  - name: Remove Charter groups from local Administrators group...
+    win_group_membership:
+      name: Administrators
+#      become_user: "{{ vault.domain_join.user }}"
+#      become_pass: "{{ vault.domain_join.pass }}"
+      members:
+        - chtr\AD-AZ-Cloud-Admins     #  Need to remove BEFORE prod
+#        - chtr\ADM-ENT-DC-AUTOMATION  #  Need to remove BEFORE prod
+      state: absent
+    register: gadd

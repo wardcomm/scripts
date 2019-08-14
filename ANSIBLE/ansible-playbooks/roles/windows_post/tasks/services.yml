@@ -1,0 +1,53 @@
+---
+- block:
+  - name: Disable Unneeded Services
+    win_regedit:
+      path: "HKLM:\\SYSTEM\\CurrentControlSet\\Services\\{{ item }}"
+      name: Start
+      state: present
+      data: 4
+      type: dword
+
+    with_items:
+      - AudioEndpointBuilder
+      - Audiosrv
+      - bthserv
+      - CDPUserSvc
+      - FrameServer
+      - icssvc
+      - lfsvc
+      - MapsBroker
+      - NcbService
+      - NgcCtnrSvc
+      - NgcSvc
+      - OneSyncSvc
+      - PcaSvc
+      - PimIndexMaintenanceSvc
+      - QWAVE
+      - RasAuto
+      - RasMan
+      - RmSvc
+      - SensorDataService
+      - SensorService
+      - SensrSvc
+      - SharedAccess
+      - ShellHWDetection
+      - Spooler
+      - SSDPSRV
+      - stisvc
+      - TabletInputService                             
+      - UnistoreSvc
+      - upnphost
+      - UserDataSvc
+      - WalletService
+      - WiaRpc
+      - wisvc
+      - wlidsvc
+      - WpnService
+      - WpnUserService
+      - wuauserv
+      - XblAuthManager
+      - XblGameSave
+
+    tags:
+      - services

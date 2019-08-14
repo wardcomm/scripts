@@ -1,0 +1,44 @@
+---
+- block:
+  - name: Move Qualys agent install log...
+    win_copy:
+      src: C:\ProgramData\Qualys\QualysAgent\Log.txt
+      dest: D:\Temp\Qualys.txt
+      remote_src: yes
+    ignore_errors: yes
+
+  - name: Rename local Administrator account...
+    win_shell: Rename-LocalUser -name "Administrator" -NewName "WinAdmin"
+    ignore_errors: yes
+
+  - name: Diable local WinAdmin (Administrator) account...
+    win_user:
+      name: WinAdmin
+      account_disabled: yes
+    ignore_errors: yes
+
+  - name: Remove Installation Folder and Contents...
+    win_file:
+      path: C:\Temp
+      state: absent
+
+  # - name: Copy Q2 Windows Validation script...
+  #   win_get_url:
+  #     url: https://bitbucket.corp.chartercom.com/projects/OA/repos/charter-validations/browse/windows/validation_windows.ps1?at=refs%2Fheads%2Frelease%2Fapril2019
+  #     dest: C:\Windows\temp\
+  #     timeout: 300
+  #     url_username: "{{ vault.domain_join.user }}"
+  #     url_password: "{{ vault.domain_join.pass }}"
+  #   ignore_errors: yes
+
+  # - name: Run Windows Validation...
+  #   win_shell: C:\Windows\Temp\validation_windows.ps1 -EmailIn "{{ requestedByEmail }}"
+  #   when: requestedByEmail is defined
+
+  - name: Final system reboot...
+    win_reboot:
+      reboot_timeout: 1500
+      connect_timeout: 120  
+
+  tags:
+    - cleanup

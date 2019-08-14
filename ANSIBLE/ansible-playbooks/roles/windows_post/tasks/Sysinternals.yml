@@ -1,0 +1,61 @@
+---
+- name: Check to see if Sysinternals appears installed...
+  win_stat:
+    path: "C:\\Program Files\\sysinternals"
+  register: Sysint
+  #ignore_errors: yes
+
+- name: Check to see if BGInfo has been setup...
+  win_stat:
+    path: "C:\\ProgramData\\Microsoft\\Windows\\Start Menu\\Programs\\StartUp\\BGInfo.lnk" 
+  register: BGInfo
+  #ignore_errors: yes
+
+- block:
+  - name: Create Sysinternals folders as needed...
+    win_file:
+      path: C:\Temp\Deploy\SysInternals
+      state: directory
+
+  - name: Copy Sysinternals archive...
+    win_get_url:
+      url: "http://{{ bin_server }}/Sysinternals/SysInternals_1.0_20181019.zip"
+      dest: C:\Temp\Deploy\Sysinternals\
+      timeout: 300
+
+  - name: Extract Sysinternals archive...
+    win_unzip:
+      src: C:\Temp\Deploy\Sysinternals\SysInternals_1.0_20181019.zip
+      dest: C:\Temp\Deploy\Sysinternals
+
+  - name: Install Sysinternals...
+    win_command: C:\Temp\deploy\SysInternals\SysInternals.exe
+    args:
+      creates: C:\Program Files\sysinternals
+
+  - name: Add Sysinternals to the current path...
+    win_path:
+      name: Path
+      elements: "C:\\Program Files\\sysinternals"
+      scope: machine
+      state: present
+      
+  - name: Install WinOps BGInfo Configuration...
+    win_copy:
+      src: C:\Temp\deploy\SysInternals\chtr.bgi
+      dest: "C:\\Program Files\\sysinternals\\chtr.bgi"
+      remote_src: yes
+      force: yes
+
+  - name: Create an application shortcut...
+    win_shortcut:
+      src: "C:\\Program Files\\sysinternals\\Bginfo.exe"
+      dest: "C:\\ProgramData\\Microsoft\\Windows\\Start Menu\\Programs\\StartUp\\BGInfo.lnk"
+      args: "\"C:\\Program Files\\sysinternals\\chtr.bgi\" /TIMER:0 /NOLICPROMPT /SILENT"
+      state: present
+      directory: "C:\\Program Files\\sysinternals"
+
+  #when: BGInfo.stat.exists == false or Sysint.stat.exists == false
+
+  tags:
+    - sysinternals

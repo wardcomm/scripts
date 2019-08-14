@@ -1,0 +1,156 @@
+---
+- block:
+  - name: PCI Enable SCHANNEL logging...
+    win_regedit:
+      path: HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL
+      state: present
+      type: dword
+      name: EventLogging
+      data: 5
+
+  - name: PCI Enable MD5 hash...
+    win_regedit:
+      path: HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Hashes\MD5
+      state: present
+      type: dword
+      name: Enabled
+      data: 0xffffffff
+
+  - name: PCI Enable SHA hash...
+    win_regedit:
+      path: HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Hashes\SHA
+      state: present
+      type: dword
+      name: Enabled
+      data: 0xffffffff
+
+  - name: PCI Enable SHA256 hash...
+    win_regedit:
+      path: HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Hashes\SHA256
+      state: present
+      type: dword
+      name: Enabled
+      data: 0xffffffff
+
+  - name: PCI Enable SHA384 hash...
+    win_regedit:
+      path: HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Hashes\SHA384
+      state: present
+      type: dword
+      name: Enabled
+      data: 0xffffffff
+
+  - name: PCI Enable SHA512 hash...
+    win_regedit:
+      path: HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Hashes\SHA512
+      state: present
+      type: dword
+      name: Enabled
+      data: 0xffffffff
+
+  - name: PCI Enable KeyExchangeAlgorithm Diffie-Hellman provider...
+    win_regedit:
+      path: HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\KeyExchangeAlgorithms\Diffie-Hellman
+      state: present
+      type: dword
+      name: Enabled
+      data: 0xffffffff
+
+  - name: PCI Enable KeyExchangeAlgorithm ECDH provider...
+    win_regedit:
+      path: HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\KeyExchangeAlgorithms\ECDH
+      state: present
+      type: dword
+      name: Enabled
+      data: 0xffffffff
+
+  - name: PCI Enable KeyExchangeAlgorithm PKCS provider...
+    win_regedit:
+      path: HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\KeyExchangeAlgorithms\PKCS
+      state: present
+      type: dword
+      name: Enabled
+      data: 0xffffffff
+
+  - name: PCI Enable TLS 1.2 protocol settings...
+    vars:
+      s_proto: HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols
+    win_regedit:
+      path: "{{ s_proto }}{{ item }}"
+      state: present
+      type: dword
+      name: Enabled
+      data: 1
+    with_items:
+      - "\\TLS 1.2\\Client"
+      - "\\TLS 1.2\\Server"
+
+  - name:  Set PCI TLS 1.2 protocol as the default...
+    vars:
+      s_proto: HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols
+    win_regedit:
+      path: "{{ s_proto }}{{ item }}"
+      state: present
+      type: dword
+      name: DisabledByDefault
+      data: 0
+    with_items:
+      - "\\TLS 1.2\\Client"
+      - "\\TLS 1.2\\Server"
+
+  - name: PCI disable legacy protocol defaults...
+    vars:
+      s_proto: HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols
+    win_regedit:
+      path: "{{ s_proto }}{{ item }}"
+      state: present
+      type: dword
+      name: Enabled
+      data: 0
+    with_items:
+      - "\\Multi-Protocol Unified Hello\\Client"
+      - "\\Multi-Protocol Unified Hello\\Server"
+      - "\\PCT 1.0\\Client"
+      - "\\PCT 1.0\\Server"
+      - "\\SSL 2.0\\Client"
+      - "\\SSL 2.0\\Server"
+      - "\\SSL 3.0\\Client"
+      - "\\SSL 3.0\\Server"
+      - "\\TLS 1.0\\Client"
+      - "\\TLS 1.0\\Server"
+      - "\\TLS 1.1\\Client"
+      - "\\TLS 1.1\\Server"
+
+  - name: PCI disable legacy protocols...
+    vars:
+      s_proto: HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols
+    win_regedit:
+      path: "{{ s_proto }}{{ item }}"
+      state: present
+      type: dword
+      name: DisabledByDefault
+      data: 1
+    with_items:
+      - "\\Multi-Protocol Unified Hello\\Client"
+      - "\\Multi-Protocol Unified Hello\\Server"
+      - "\\PCT 1.0\\Client"
+      - "\\PCT 1.0\\Server"
+      - "\\SSL 2.0\\Client"
+      - "\\SSL 2.0\\Server"
+      - "\\SSL 3.0\\Client"
+      - "\\SSL 3.0\\Server"
+      - "\\TLS 1.0\\Client"
+      - "\\TLS 1.0\\Server"
+      - "\\TLS 1.1\\Client"
+      - "\\TLS 1.1\\Server"
+
+  - name: Copy PCI archive...
+    win_get_url:
+      url: "http://{{ bin_server }}/pci.reg"
+      dest: C:\Temp\Deploy\
+
+  - name: Deploy Cipher Suite settings...
+    win_shell: reg import C:\Temp\Deploy\pci.reg
+
+  tags:
+    - pci

@@ -1,0 +1,5 @@
+---
+- block:
+  - name: Set the time zone to Central time
+    win_timezone:
+      timezone: Central Standard Time

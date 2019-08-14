@@ -1,0 +1,19 @@
+---
+- block:
+  - name: Disable Defrag task on all systems
+    win_scheduled_task:
+      name: ScheduledDefrag
+      path: \Microsoft\Windows\Defrag\
+      enabled: no
+    ignore_errors: yes
+
+  - name: Disable unneeded Windows 2016 tasks 
+    win_scheduled_task:
+      name: "{{ item.name }}"
+      path: "{{ item.path }}"
+      enabled: no
+    ignore_errors: yes
+    loop:
+        - { name: XblGameSaveTask, path: \Microsoft\XblGameSave\ }
+        - { name: XblGameSaveTaskLogon, path: \Microsoft\XblGameSave\ }
+    when: os is search("2016")

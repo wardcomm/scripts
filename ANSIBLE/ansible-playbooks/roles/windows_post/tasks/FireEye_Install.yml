@@ -1,0 +1,68 @@
+---
+- name: Check for FireEye service...
+  win_service:
+    name: "FireEye Endpoint Agent"
+  register: svc
+
+- block:
+  - set_fact:
+      suffix: "{{ ( twc ) | ternary('twc', 'chtr') }}"
+
+  - name: Create FireEye folders as needed...
+    win_file:
+      path: c:\Temp\Deploy\FireEye
+      state: directory
+
+  - name: Copy FireEye archive...
+    win_get_url:
+      url: "http://{{ bin_server }}/FireEye/FireEye_26.21.8_20180110.zip"
+      dest: C:\Temp\Deploy\FireEye\
+      timeout: 300
+
+  - name: Extract FireEye archive...
+    win_unzip:
+      src: C:\Temp\Deploy\FireEye\FireEye_26.21.8_20180110.zip
+      dest: C:\Temp\Deploy\FireEye
+
+  - name: Copy domain specific JSON...
+    win_copy:
+      src: "C:\\Temp\\Deploy\\FireEye\\agent_config.json.{{ suffix }}"
+      dest: C:\Temp\deploy\FireEye\agent_config.json
+      remote_src: yes
+
+  - name: Wait until JSON file exists...
+    win_wait_for:
+      path: C:\Temp\Deploy\FireEye\agent_config.json
+      state: present
+      delay: 5
+      sleep: 20
+
+  - name: Install FireEye Agent...
+    win_package:
+      path: C:\Temp\Deploy\FireEye\xagtSetup_26.21.8_universal.msi
+      product_id: '{F0A9EB84-5BE8-4409-9A62-77CA83281E93}'
+      state: present
+      expected_return_code: [0, 3010]
+      arguments: "/quiet /l*v D:\\Temp\\FireEye_Agent.txt"
+    register: result
+    retries: 3
+    delay: 60
+    until: result.rc != 1618
+
+  - name: Verify the FireEye Agent service...
+    win_service:
+      name: "FireEye Endpoint Agent"
+      state: started
+    register: svc_2
+
+  - name: Set installation results output string...
+    set_fact:
+      my_msg: "{{ svc_2.display_name }} - ended with return code: {{ result.rc }}."
+
+  - name: Write results output string to log...
+    win_shell: Add-Content -Path d:\Temp\Audit.txt -Value "{{ my_msg }}" -Force
+
+  tags:
+    - fireeye
+    
+  when: svc.exists == false

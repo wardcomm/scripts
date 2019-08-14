@@ -1,0 +1,79 @@
+---
+- name: Check for NetBackup service...
+  win_service:
+    name: "Netbackup Client Service"
+  register: svc
+
+- block:
+  # - block:
+  #     - vars:
+  #         NCE:
+  #           - CDT - route -p ADD 10.222.59.0 MASK 255.255.255.0 142.136.210.1
+  #           - DDT - route -p ADD 10.222.59.0 MASK 255.255.255.0 142.136.213.129
+  #           - MSV - route -p ADD 10.222.59.0 MASK 255.255.255.0 142.136.212.1
+  #           - PDT - route -p ADD 10.222.59.0 MASK 255.255.255.0 142.136.215.65
+  #           - QDT - route -p ADD 10.222.59.0 MASK 255.255.255.0 142.136.214.129
+  #           -SDT - route -p ADD 10.222.59.0 MASK 255.255.255.0 142.136.215.193
+
+  #         NCW
+  #         CDT - route -p ADD 10.222.56.0 MASK 255.255.255.0 142.136.218.1
+  #         DDT - route -p ADD 10.222.56.0 MASK 255.255.255.0 142.136.220.129
+  #         MSV - route -p ADD 10.222.56.0 MASK 255.255.255.0 142.136.132.1
+  #         PDT - route -p ADD 10.222.56.0 MASK 255.255.255.0 142.136.222.65
+  #         QDT - route -p ADD 10.222.56.0 MASK 255.255.255.0 142.136.221.129
+  #         SDT - route -p ADD 10.222.56.0 MASK 255.255.255.0 142.136.222.193
+
+  #     - name: Create backnet object...
+  #       set_fact:
+  #         nbur: "{{ NBU.routes[Vrm_DataCenter_Location] }}"
+
+  #     - name: Add static route for Netbackup if not VMware...
+  #       win_route:
+  #         destination: nbur
+  #         gateway: "{{ backnetgw }}"
+  #   when: orange == true
+
+  - name: Set Netbackup datacenter for installation input...
+    set_fact:
+      nbu_dc_name: "IT-{{ Vrm_DataCenter_Location }}"
+
+  - name: Set Netbackup datacenter for installation input...
+    set_fact:
+      nbu_dc_name: "IT-{{ Vrm_DataCenter_Location }}"
+      
+  - name: Create NBU folders as needed...
+    win_file:
+      path: C:\Temp\Deploy\NetBackup
+      state: directory
+
+  - name: Copy NBU archive...
+    win_get_url:
+      url: "http://{{ bin_server }}/NetBackup/NetBackup_8.0_20190617.zip"
+      dest: C:\Temp\Deploy\NetBackup\
+      timeout: 300
+
+  - name: Extract NBU archive...
+    win_unzip:
+      src: C:\Temp\Deploy\NetBackup\NetBackup_8.0_20190617.zip
+      dest: C:\Temp\Deploy\NetBackup
+
+  - name: Install Netbackup agent...
+    win_command: "cmd.exe /C C:\\Temp\\Deploy\\NetBackup\\nbu_client_install.cmd {{ nbu_dc_name }}"
+
+  - name: Verify the Netbackup client service...
+    win_service:
+      name: "Netbackup Client Service"
+      state: started
+    register: svc_2
+
+  - name: Set installation results output string...
+    set_fact:
+      my_msg: "{{ svc_2.display_name }} - ended with return code: 0."
+
+  - name: Write result return code to agent audit log...
+    win_shell: Add-Content -Path d:\Temp\Audit.txt -Value "{{ my_msg }}" -Force
+
+  tags:
+    - nbu
+    
+  when: svc.exists == false

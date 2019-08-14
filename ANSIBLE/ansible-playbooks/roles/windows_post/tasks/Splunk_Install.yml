@@ -1,0 +1,51 @@
+---
+- name: Check for Splunk service...
+  win_service:
+    name: "SplunkForwarder Service"
+  register: svc
+
+- block:
+  - name: Create Splunk folders as needed...
+    win_file:
+      path: C:\Temp\Deploy\Splunk
+      state: directory
+
+  - name: Copy Splunk archive...
+    win_get_url:
+      url: "http://{{ bin_server }}/Splunk/Splunk_7.0.2_20180808.zip"
+      dest: C:\Temp\Deploy\Splunk\
+      timeout: 300
+
+  - name: Extract Splunk archive...
+    win_unzip:
+      src: C:\Temp\Deploy\Splunk\Splunk_7.0.2_20180808.zip
+      dest: C:\Temp\Deploy\Splunk
+
+  - name: Install Splunk agent...
+    win_package:
+      path: "C:\\Temp\\Deploy\\Splunk\\splunkforwarder-7.0.2-03bbabbd5c0f-x64-release.msi"
+      product_id: '{E7990D9D-A04E-45E2-A54F-A16A405E977C}'
+      arguments: "AGREETOLICENSE=yes /quiet /L*V D:\\Temp\\Splunk_Agent.txt"
+      state: present
+    register: result
+    retries: 3
+    delay: 60
+    until: result.rc != 1618
+
+  - name: Verify the Splunk agent service...
+    win_service:
+      name: "SplunkForwarder Service"
+      state: started
+    register: svc_2
+
+  - name: Set installation results output string...
+    set_fact:
+      my_msg: "{{ svc_2.display_name }} - ended with return code: {{ result.rc }}."
+
+  - name: Write result return code to agent audit log...
+    win_shell: Add-Content -Path d:\Temp\Audit.txt -Value "{{ my_msg }}" -Force
+
+  tags:
+    - splunk
+
+  when: svc.exists == false

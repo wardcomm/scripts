@@ -1,0 +1,24 @@
+---
+- pause:
+    seconds: 90
+    echo: true
+
+- block:
+  - name: Create Agent deployment folder...
+    win_file:
+      path: C:\Temp\Deploy
+      state: directory
+
+  - name: Create Agent Logging folder...
+    win_file:
+      path: D:\Temp
+      state: directory
+    
+#   - debug:
+#       msg: "ansible_winrm_connection_timeout {{ ansible_winrm_connection_timeout }}"    
+
+#   - debug:
+#       msg: "ansible_winrm_operation_timeout_sec {{ ansible_winrm_operation_timeout_sec }}"
+
+#   - debug:
+#       msg: "ansible_winrm_read_timeout_sec {{ ansible_winrm_read_timeout_sec }}"

@@ -1,0 +1,192 @@
+---
+- block:
+  - name: Enable Powershell event logging...
+    win_regedit:
+      path: HKLM:\SOFTWARE\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging
+      name: EnableScriptBlockLogging
+      state: present
+      data: 1 
+      type: dword
+
+  - name: Enable RDP...
+    win_regedit:
+      path: HKLM:\SYSTEM\CurrentControlSet\Control\Terminal Server
+      name: fDenyTSConnections
+      state: present
+      data: 0 
+      type: dword
+
+  - name: Set RDP NLA authentication...
+    win_regedit:
+      path: HKLM:\SYSTEM\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp
+      name: UserAuthentication
+      state: present
+      data: 1
+      type: dword
+
+  - name: Recovery console settings...
+    win_regedit:
+      path: HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Setup\RecoveryConsole
+      name: 
+        - SecurityLevel
+        - SetCommand
+      state: present
+      data: 0
+      type: dword
+
+  - name: Enable Network Policies...
+    win_regedit:
+      path: HKLM:\SOFTWARE\Policies\Microsoft\Windows\LLTD
+      name: "{{ item }}"
+      state: present
+      data: 0 
+      type: dword
+
+    with_items:
+      - ProhibitLLTDIOOnPrivateNet
+      - EnableLLTDIO
+      - AllowLLTDIOOnPublicNet
+      - AllowLLTDIOOnDomain
+      - AllowRspndrOndomain
+      - AllowRspndrOnPublicNet
+      - EnableRspndr
+      - ProhibitRspndrOnPrivateNet
+
+  - name: Disable Network Sharing...
+    win_regedit:
+      path: HKLM:\SOFTWARE\Policies\Microsoft\Windows\Network Connections
+      name: "{{ item }}"
+      state: present
+      data: 0 
+      type: dword
+
+    with_items:
+      - NC_AllowNetBridge_NLA
+      - NC_ShowSharedAccessUI
+
+  - name: Disable Windows Update...
+    win_regedit:
+      path: HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU
+      name: NoAutoUpdate
+      state: present
+      data: 1 
+      type: dword
+
+  - name: Disable IE Admin mode for Admins...
+    win_regedit:
+      path: HKLM:\SOFTWARE\Microsoft\Active Setup\Installed Components\{A509B1A7-37EF-4b3f-8CFC-4F3A74704073}
+      name: IsInstalled
+      state: present
+      data: 0 
+      type: dword
+
+  - name: Disable IE Admin mode for Users...
+    win_regedit:
+      path: HKLM:\SOFTWARE\Microsoft\Active Setup\Installed Components\{A509B1A8-37EF-4b3f-8CFC-4F3A74704073}
+      name: IsInstalled
+      state: present
+      data: 0 
+      type: dword
+
+  - name: Enable IPv6 to prefer IPv4..... 
+    win_regedit:
+      path: HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip6\Parameters
+      name: DisabledComponents
+      state: present
+      type: dword
+      data: 0x20
+
+  - name: Set Scroll Lock crash key...
+    win_regedit:
+      path: HKLM:\SYSTEM\CurrentControlSet\Services\kbdhid\Parameters
+      name: CrashOnCtrlScroll
+      state: present
+      type: dword
+      data: 1
+
+  - name: Set crash key for remote...
+    win_regedit:
+      path: HKLM:\SYSTEM\CurrentControlSet\Services\i8042prt\Parameters
+      name: CrashOnCtrlScroll
+      state: present
+      type: dword
+      data: 1
+
+  - name: Set crash dump location...
+    win_regedit:
+      path: HKLM:\SYSTEM\CurrentControlSet\Control\CrashControl
+      name: Dumpfile
+      state: present
+      type: string
+      data: C:\MEMORY.DMP
+
+  - name: Set crash dump auto reboot...
+    win_regedit:
+      path: HKLM:\SYSTEM\CurrentControlSet\Control\CrashControl
+      name: AutoReboot
+      state: present
+      type: dword
+      data: 1
+
+  - name: Set crash dump enabled...
+    win_regedit:
+      path: HKLM:\SYSTEM\CurrentControlSet\Control\CrashControl
+      name: CrashDumpEnabled
+      state: present
+      type: dword
+      data: 2 
+
+  - name: Set crash dump to log events...
+    win_regedit:
+      path: HKLM:\SYSTEM\CurrentControlSet\Control\CrashControl
+      name: LogEvent
+      state: present
+      type: dword
+      data: 1
+
+  - name: Set crash dump to overwrite as needed...
+    win_regedit:
+      path: HKLM:\SYSTEM\CurrentControlSet\Control\CrashControl
+      name: Overwrite
+      state: present
+      type: dword
+      data: 1
+
+  - name: Set crash dump to alert administrators...
+    win_regedit:
+      path: HKLM:\SYSTEM\CurrentControlSet\Control\CrashControl
+      name: SendAlert
+      state: present
+      type: dword
+      data: 1
+
+  - name: Set Charter NTFS 8.3 file name creation...
+    win_regedit:
+      path: HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem
+      name: NtfsDisable8dot3NameCreation
+      state: present
+      type: dword
+      data: 1
+
+  - name: Set Charter drive autorun...
+    win_regedit:
+      path: HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer
+      name: NoDriveTypeAutoRun
+      state: present
+      type: dword
+      data: 0xff 
+
+  - name: Set remote administrator token policy...
+    win_regedit:
+      path: HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System
+      name: LocalAccountTokenFilterPolicy
+      state: present
+      type: dword
+      data: 0x1
+
+  - name: Set Charter Legal Notice...
+    win_regedit:
+      path: HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System
+      name: legalnoticecaption
+      state: present
+      data: Charter Communications Legal Notice

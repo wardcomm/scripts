@@ -1,0 +1,54 @@
+---
+- name: Check for manageengine desktop central - agent service...
+  win_service:
+    name: "ManageEngine Desktop Central - Agent"
+  register: svc
+
+- block:
+  - name: Create DTC folders as needed...
+    win_file:
+      path: C:\Temp\Deploy\DTC
+      state: directory
+
+  - name: Copy DTC archive...
+    win_get_url:
+      url: "http://{{ bin_server }}/DTC/DTC_10.0.259.W_20180918.zip"
+      dest: C:\Temp\Deploy\DTC\
+      timeout: 300
+
+  - name: Extract DTC archive...
+    win_unzip:
+      src: C:\Temp\Deploy\DTC\DTC_10.0.259.W_20180918.zip
+      dest: C:\Temp\Deploy\DTC
+
+  - name: Install DTC Agent...
+    win_package:
+      path: C:\Temp\deploy\DTC\directsetup\DesktopCentralAgent.msi
+      product_id: '{6AD2231F-FF48-4D59-AC26-405AFAE23DB7}'
+      arguments: "TRANSFORMS=\"C:\\Temp\\Deploy\\DTC\\directsetup\\DesktopCentralAgent.mst\" ENABLESILENT=yes REBOOT=ReallySuppress /q /lv D:\\Temp\\DTC_Agent.txt"
+      state: present    
+    register: result
+    retries: 3
+    delay: 60
+    until: result.rc != 1618
+
+  - name: Stop DTC agent service...
+    win_service:
+      name: 'ManageEngine Desktop Central - Agent'
+      state: stopped
+    register: svc_2
+    until: svc_2.state == 'stopped'
+    retries: 5
+    delay: 60
+
+  - name: Set installation results output string...
+    set_fact:
+      my_msg: "{{ svc_2.display_name }} - ended with return code: {{ result.rc }}."
+
+  - name: Write result return code to agent audit log...
+    win_shell: Add-Content -Path d:\Temp\Audit.txt -Value "{{ my_msg }}" -Force
+  
+  tags:
+    - dtc
+
+  when: svc.exists == false

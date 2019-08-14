@@ -1,0 +1,22 @@
+---
+- hosts: all
+  gather_facts: false
+  connection: local
+  roles:
+    - wait_dns
+
+- name: Wait for connection
+  hosts: all
+  tasks:
+    - name: Test connection...
+      wait_for_connection:
+        connect_timeout: 300
+        timeout: 900
+        delay: 300
+
+  gather_facts: true
+  roles:
+    - windows_pre
+    - windows_post
+
+  tags: "always"

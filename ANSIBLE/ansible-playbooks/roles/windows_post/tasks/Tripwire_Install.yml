@@ -1,0 +1,129 @@
+---
+- name: Check for Tripwire service...
+  win_service:
+    name: "Tripwire Axon Agent"
+  register: svc
+
+- block:
+  - name: Create Tripwire folders as needed...
+    win_file:
+      path: C:\Temp\Deploy\Tripwire
+      state: directory
+
+  - name: Copy Tripwire archive...
+    win_get_url:
+      url: "http://{{ bin_server }}/Tripwire/Tripwire_8.6.3_20181010.zip"
+      dest: C:\Temp\Deploy\Tripwire\
+      force: no
+      timeout: 300
+
+  - name: Extract Tripwire archive...
+    win_unzip:
+      src: C:\Temp\Deploy\Tripwire\Tripwire_8.6.3_20181010.zip
+      dest: C:\Temp\Deploy\Tripwire
+
+  - name: Install Tripwire Agent...
+    win_package:
+      path: C:\Temp\Deploy\Tripwire\Axon_Agent_x64.msi
+      product_id: '{0DDC5A8F-9334-4A46-91F8-6746B0730E54}'
+      arguments: "AGREETOLICENSE=yes /quiet /l*v D:\\Temp\\TripWire_Agent.txt"
+      state: present
+    register: result
+    retries: 3
+    delay: 60
+    until: result.rc  == 0
+
+  - name: Verify the Tripwire service...
+    win_service:
+      name: "Tripwire Axon Agent"
+      state: started
+    register: svc_2
+
+  - name: Set installation results output string...
+    set_fact:
+      my_msg: "{{ svc_2.display_name }} - ended with return code: {{ result.rc }}."
+
+  - name: Write result return code to agent audit log...
+    win_shell: Add-Content -Path d:\Temp\Audit.txt -Value "{{ my_msg }}" -Force
+
+  - name: Stop Tripwire Axon agent service...
+    win_service:
+      name: tripwireaxonagent
+      state: stopped
+
+  - name: Stop Tripwire Event Generator service...
+    win_service:
+      name: tripwireeventgeneratorservice
+      state: stopped
+
+  - name: Wait for Tripwire services to stop...
+    win_wait_for_process:
+      process_name_exact: 
+      - twagent
+      - tesvc
+      pre_wait_delay: 10
+      state: absent
+      timeout: 90
+ 
+  - name: Create Tripwire's agent config folder...
+    win_file:
+      path: C:\ProgramData\Tripwire\agent\config\
+      state: directory
+
+  - name: Copy Tripwire's metadata.yml file...
+    win_copy:
+      src: C:\Temp\Deploy\Tripwire\metadata.yml
+      dest: C:\Programdata\Tripwire\agent\config\metadata.yml
+      remote_src: yes
+
+  - name: Create Production Tripwire Unicode file for twagent.conf...
+    win_shell: "\"vm0ptripwa0001.corp.twcable.com\" | Out-File -FilePath C:\\ProgramData\\Tripwire\\agent\\config\\twagent.conf -Encoding unicode"
+    when: prod  == true
+
+  - name: Create Production Tripwire PSK file and add data for Production...
+    win_copy:
+      content: "{{ item.content }}"
+      dest: "{{ item.dest }}"
+    loop:
+        - { content: 'y7fRM9wb72Be', dest: 'C:\ProgramData\Tripwire\agent\config\registration_pre_shared_key.txt'}
+    when: prod  == true
+
+  - name: Create UAT/Dev Tripwire Unicode file for twagent.conf...
+    win_shell: "\"vm0utripwa0001.corp.twcable.com\" | Out-File -FilePath C:\\ProgramData\\Tripwire\\agent\\config\\twagent.conf -Encoding unicode"
+    when: prod  == false
+
+  - name: Create UAT/Dev Tripwire PSK file and add data for Dev/UAT...
+    win_copy:
+      content: "{{ item.content }}"
+      dest: "{{ item.dest }}"
+    loop:
+        - { content: 'z8b3EmR1sa_B', dest: 'C:\ProgramData\Tripwire\agent\config\registration_pre_shared_key.txt'}
+    when: prod  == false
+
+  - name: Create Tripwire's agent Program Files folder...
+    win_file:
+      path: C:\Program Files\Tripwire\Agent\Event Generator Service\
+      state: directory
+
+  - name: Create Tripwire's conf files and values...
+    win_copy:
+      content: "{{ item.content }}"
+      dest: "{{ item.dest }}"
+    loop:
+        - { content: 'port=1169', dest: 'C:\Program Files\Tripwire\Agent\Event Generator Service\tesvc.conf'}
+        - { content: 'tesvc.port.control=1169', dest: 'C:\ProgramData\Tripwire\agent\config\twfim.conf'}
+
+  - name: Start Tripwire Axon agent service...
+    win_service:
+      name: tripwireaxonagent
+      state: started
+
+  - name: Start Tripwire Event Generator service...
+    win_service:
+      name: tripwireeventgeneratorservice
+      state: started
+
+  tags: 
+    - tripwire
+    
+  when: svc.exists == false

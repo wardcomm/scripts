@@ -1,0 +1,32 @@
+---
+- block:
+  - name: Add Charter WinOps groups to local Administrators group
+    win_group_membership:
+      name: Administrators
+      members:
+        - chtr\RG-DC-WINDOWS-OPS-ADM
+        - chtr\ADM-IT-Infrastructure-WinSvcAccounts
+      state: present
+    register: gadd
+
+  - name: Add Solarwinds group to local Performance Monitor Users group
+    win_group_membership:
+      name: 'Performance Monitor Users'
+      members:
+        - chtr\svc_solarwinds
+      state: present
+    register: gadd
+  
+  - name: Add SQLAdmins if needed...
+    win_group_membership:
+      name: Administrators
+      members:
+        - chtr\EG-SQLAdmins
+      state: present
+    when: chassis is search("microsoft") 
+
+  - name: Reboot system post domain join
+    win_reboot:   
+      connect_timeout: 120
+      reboot_timeout: 1200
+    when: domain_state == true

@@ -1,0 +1,52 @@
+---
+- name: Check for the Symantec Agent service...
+  win_service:
+    name: "SepMasterService"
+  register: svc
+
+- block:
+  - name: Create SEP folders as needed...
+    win_file:
+      path: c:\Temp\Deploy\SEP
+      state: directory
+
+  - name: Copy SEP archive...
+    win_get_url:
+      url: "http://{{ bin_server }}/SEP/SEP_14.2.1031_20190222.zip"
+      dest: C:\Temp\Deploy\SEP\
+      timeout: 300
+
+  - name: Extract SEP archive...
+    win_unzip:
+      src: C:\Temp\Deploy\SEP\SEP_14.2.1031_20190222.zip
+      dest: C:\Temp\Deploy\SEP\
+      creates: setup.exe
+
+  - name: Symantec Endpoint Protection installation...
+    win_package:
+      path: C:\Temp\Deploy\SEP\setup.exe
+      product_id: '{2B448775-6A9D-4594-A59F-5F3076B67309}'
+      state: present
+      arguments: "/s /v\"/qn /L*V D:\\Temp\\SEP_Agent.txt\" /w"
+    register: result
+    retries: 3
+    delay: 60
+    until: result.rc != 1618
+
+  - name: Verify the Symantec Agent service...
+    win_service:
+      name: "SepMasterService"
+      state: started
+    register: svc_2
+
+  - name: Set installation results output string...
+    set_fact:
+      my_msg: "{{ svc_2.display_name }} - ended with return code: {{ result.rc }}."
+
+  - name: Write result return code to agent audit log...
+    win_shell: Add-Content -Path d:\Temp\Audit.txt -Value "{{ my_msg }}" -Force
+
+  tags:
+    - sep
+
+  when: svc.exists == false

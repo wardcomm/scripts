@@ -1,0 +1,54 @@
+---
+- name: Check for OpswareAgent service...
+  win_service:
+    name: "OpswareAgent"
+  register: svc
+
+- block:
+  - set_fact:
+      hpsa_pkg: "{{ HPSA.packages['Windows' ~ ansible_distribution_major_version] }}"
+
+  - name: Create HPSA folders as needed...
+    win_file:
+      path: C:\Temp\Deploy\HPSA
+      state: directory
+
+  - name: Copy HPSA archive...
+    win_get_url:
+      url: "http://{{ bin_server }}/HPSA/HPSA_70.0.76793.1_20180418.zip"
+      dest: C:\Temp\Deploy\HPSA\
+      timeout: 300
+
+  - name: Extract HPSA archive...
+    win_unzip:
+      src: C:\Temp\Deploy\HPSA\HPSA_70.0.76793.1_20180418.zip
+      dest: C:\Temp\Deploy\HPSA
+
+  - name: HPSA agent installation...
+    win_package:
+      path: "{{ hpsa_pkg }}"
+      product_id: '{D9ADF11F-7A67-4E70-BD89-F29DE876C982}'
+      state: present
+      arguments: "-s --wsus_cfg_skip --opsw_gw_addr 142.136.251.47:3001 --del_opsw_gw_addr_list --force_full_hw_reg --force_sw_reg --force_new_device --loglevel error --logfile D:\\Temp\\HPSA_Agent.txt"
+    register: result
+    retries: 3
+    delay: 60
+    until: result.rc != 1618
+
+  - name: Verify the Opsware Agent service...
+    win_service:
+      name: "OpswareAgent"
+      state: started
+    register: svc_2
+
+  - name: Set installation results output string...
+    set_fact:
+      my_msg: "{{ svc_2.display_name }} - ended with return code: {{ result.rc }}."
+
+  - name: Write result return code to agent audit log...
+    win_shell: Add-Content -Path d:\Temp\Audit.txt -Value "{{ my_msg }}" -Force
+
+  tags:
+    - hpsa
+    
+  when: svc.exists == false

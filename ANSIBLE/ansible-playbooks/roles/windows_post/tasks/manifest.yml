@@ -1,0 +1,12 @@
+---
+- block:
+  - name: Create IERB manifest folder...
+    win_file:
+      path: 'C:\Program Files\build'
+      state: directory
+
+  - name: Move IERB manifest to build folder...
+    win_get_url:
+      url: "http://{{ bin_server }}/IERBReleaseNotes.txt"
+      dest: 'C:\Program Files\build'
+      timeout: 300

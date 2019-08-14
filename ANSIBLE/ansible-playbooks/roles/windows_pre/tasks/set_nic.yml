@@ -1,0 +1,39 @@
+---
+- block:
+  - name: Set the primary adapter name to Primary...
+    set_fact:
+      pri_nic: "{{ item }}"
+    with_items:
+      - "{{ ansible_interfaces }}"
+    when: item.default_gateway
+
+  - name: Set primary adapter metric...
+    win_shell: |
+      Get-NetAdapter |
+      Where-Object {$_.ifIndex -eq "{{ pri_nic.interface_index }}"}|
+      Rename-NetAdapter -NewName Primary
+      Set-NetIPInterface -InterfaceIndex  "{{ pri_nic.interface_index }}" -InterfaceMetric 4
+    when: pri_nic is defined
+
+  - name: Get the Orange adapter if present...
+    set_fact:
+      back_nic: "{{ item }}"
+    with_items:
+      - "{{ ansible_interfaces }}"
+    when: item.default_gateway == none
+
+  - name: Set the Orange adapter if present...
+    win_shell: |
+      Get-NetAdapter |
+      Where-Object {$_.ifIndex -eq "{{ back_nic.interface_index }}"}|
+      Rename-NetAdapter -NewName Orange
+      Get-NetAdapter Orange | Set-DNSClient –RegisterThisConnectionsAddress $False
+    when: back_nic is defined
+
+  - name: Set property if backnet exists...
+    set_fact:
+      orange: true
+    when: back_nic is defined
+
+  tags: 
+    - nic

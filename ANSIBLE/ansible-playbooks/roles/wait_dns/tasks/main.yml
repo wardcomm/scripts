@@ -1,0 +1,8 @@
+---
+- include_tasks: "{{ task }}"
+  tags: "always"
+  loop:
+    - wait_dns.yml
+
+  loop_control:
+    loop_var: task

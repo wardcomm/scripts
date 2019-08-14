@@ -1,0 +1,26 @@
+---
+- block:
+#   - name: Set 2012 Product key
+#     win_command: cscript //B C:\Windows\System32\slmgr.vbs /ipk D2N9P-3P6X9-2R39C-7RTCD-MDVJX
+#     when: os is search("2012") 
+  
+#   - name: Set 2016 Product key
+#     win_command: cscript //B C:\Windows\System32\slmgr.vbs /ipk WC2BQ-8NRM3-FDDYY-2BFGV-KHKQY
+#     when: os is search("2016") 
+
+#   - name: Set 2019 Product key
+#     win_command: cscript //B C:\Windows\System32\slmgr.vbs /ipk N69G4-B89J2-4G8F4-WWYCC-J464C
+#     when: os is search("2019") 
+
+# #  Allow sleep time for slmgr to complete
+#   - pause:
+#       seconds: 15
+
+  - name: Attempt to register with KMS...
+    win_command: cscript //B C:\Windows\System32\slmgr.vbs /ato
+    ignore_errors: yes
+
+  - pause:
+      seconds: 15
+  tags:
+    - kms

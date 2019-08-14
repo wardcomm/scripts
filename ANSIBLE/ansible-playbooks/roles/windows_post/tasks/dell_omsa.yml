@@ -1,0 +1,56 @@
+---
+- block:
+  - name: Add SNMP for DELL Windows Features...
+    win_feature:
+      name:
+      - RSAT-SNMP
+      - SNMP-Service
+      - SNMP-WMI-Provider
+      state: present
+
+  - name: Determine if DELL OpenManage is installed
+    win_stat:
+      path: "C:\\Program Files\\Dell\\SysMgt\\omastart.exe"
+    register: OMSA_v
+
+  - block:
+    - name: Create DELL folders as needed...
+      win_file:
+        path: c:\Temp\Deploy\DELL
+        state: directory
+
+    - name: Copy Dell OMSA archive...
+      win_get_url:
+        url: "http://{{ bin_server }}/DELL/DellOMSA_9.3_20190806.zip"
+        dest: C:\Temp\Deploy\DELL\
+        timeout: 300
+
+    - name: Extract Dell OMSA archive...
+      win_unzip:
+        src: C:\Temp\Deploy\DELL\DellOMSA_9.3_20190806.zip
+        dest: C:\Temp\Deploy\DELL
+
+    - name: Install Dell OpenManage System Administrator...
+      win_package:
+        path: C:\Temp\Deploy\DELL\SysMgmtx64.msi
+        product_id: '{B92A1800-2D51-48FD-96E5-F192304DFBFE}'
+        state: present
+        expected_return_code: [0, 3010]
+        arguments: "/qn /l*v D:\\Temp\\Dell_OMSA.txt"
+      register: result
+      retries: 3
+      delay: 60
+      until: result.rc != 1618
+
+    - name: Set installation results output string...
+      set_fact:
+        my_msg: "Dell OpenManage System Administrator - ended with return code: {{ result.rc }}."
+
+    - name: Write result return code to agent audit log...
+      win_shell: Add-Content -Path d:\Temp\Audit.txt -Value "{{ my_msg }}" -Force
+
+    when: OMSA_v.stat.exists == false
+    
+  tags:
+    - omsa
+  when: chassis is search("dell")

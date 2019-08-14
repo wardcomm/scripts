@@ -1,0 +1,15 @@
+---
+- block:
+  - name: Create deployment folder if needed...
+    win_file:
+      path: C:\Temp\Deploy
+      state: directory
+
+  # - name: Set Windows Firewall Policies...
+  #   win_shell: "Get-NetFirewallProfile | Set-NetFirewallProfile -Enabled:false"
+
+  # - name: Set Firewall Rule for Remote Desktop...
+  #   win_shell: Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
+
+  tags:
+    - utils

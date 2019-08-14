@@ -1,0 +1,25 @@
+---
+- include_tasks: "{{ task }}"
+  tags: "always"
+  loop:
+    - log_dir.yml
+    - Qualys.yml
+    - dell_omsa.yml
+    - Sysinternals.yml
+    - SEP_Install.yml
+    - SNOW_Install.yml
+    - Splunk_Install.yml
+    - Tripwire_Install.yml
+    - FireEye_Install.yml
+    - NBU_Install.yml
+    - HPSA_Install.yml
+    - DTC_Install.yml
+    - services.yml
+    - remove_groups.yml
+    - pci_configs.yml
+    - kms_configs.yml
+    - manifest.yml
+    - clean_up.yml
+
+  loop_control:
+    loop_var: task

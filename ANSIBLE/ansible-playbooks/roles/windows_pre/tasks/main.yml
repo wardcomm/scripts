@@ -1,0 +1,18 @@
+---
+- debug:
+    var: hostvars
+    
+- include_tasks: "{{ task }}"
+  tags: "always"
+  loop:
+    - set_features.yml
+    - set_nic.yml
+    - set_schtasks.yml
+    - reg_configs.yml
+    - set_tz.yml
+    - utils.yml
+    - chtr_join.yml
+    - add_groups.yml
+
+  loop_control:
+    loop_var: task

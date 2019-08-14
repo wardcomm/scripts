@@ -1,0 +1,51 @@
+---
+- name: Check for SNOW service...
+  win_service:
+    name: "SnowInventoryAgent5"
+  register: svc
+
+- block:
+  - name: Create SNOW folders as needed...
+    win_file:
+      path: C:\Temp\Deploy\SNOW
+      state: directory
+
+  - name: Copy SNOW archive...
+    win_get_url:
+      url: "http://{{ bin_server }}/SNOW/Snow_5.2.3_20180313.zip"
+      dest: C:\Temp\Deploy\SNOW\
+      timeout: 300
+
+  - name: Extract SNOW archive...
+    win_unzip:
+      src: C:\Temp\Deploy\SNOW\Snow_5.2.3_20180313.zip
+      dest: C:\Temp\Deploy\SNOW
+
+  - name: SNOW Agent installation...
+    win_package:
+      product_id: '{DB3112B5-7611-F010-AE6F-7ED5C1ACC7AD}'
+      state: present
+      path: C:\Temp\Deploy\SNOW\Snowagent-5.2.3.x64.msi
+      arguments: "/lv D:\\Temp\\SNOW_Agent.txt"
+    register: result
+    retries: 3
+    delay: 60
+    until: result.rc != 1618 
+    
+  - name: Verify the Snow agent service...
+    win_service:
+      name: "SnowInventoryAgent5"
+      state: started
+    register: svc_2
+
+  - name: Set installation results output string...
+    set_fact:
+      my_msg: "{{ svc_2.display_name }} - ended with return code: {{ result.rc }}."
+
+  - name: Write result return code to agent audit log...
+    win_shell: Add-Content -Path d:\Temp\Audit.txt -Value "{{ my_msg }}" -Force
+
+  tags:
+    - snow
+
+  when: svc.exists == false

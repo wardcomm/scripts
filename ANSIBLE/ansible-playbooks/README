@@ -1,0 +1,3 @@
+The default branch should always be empty. Switch to or create additional
+branches as it pertains to the playbook or role that a Tower job template will
+be created for.
