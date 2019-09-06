@@ -1,0 +1,5 @@
+---
+
+oracle_context_database: "{% if oracle_db_name| length > 0 -%}true
+                          {%- else -%}false
+                          {%- endif %}"

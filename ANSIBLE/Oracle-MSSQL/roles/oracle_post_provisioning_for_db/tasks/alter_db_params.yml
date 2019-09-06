@@ -1,0 +1,31 @@
+---
+- name: Copy the "alter_db_params.sql" to server
+  template:
+    src: alter_db_params.sql.j2
+    dest: "{{ oracle_base }}/admin/scripts/{{ oracle_sid }}_alter_db_params.sql"
+    owner: "{{ oracle_user }}"
+    group: "{{ oracle_group }}"
+    mode: 0755
+
+- name: Run {{ oracle_sid }}_alter_db_params.sql script
+  become: yes
+  become_user: '{{ oracle_user }}'
+  environment: "{{ ora_user_env }}"
+  command: "sqlplus -S -NOLOGINTIME / as sysdba @{{ oracle_base }}/admin/scripts/{{ oracle_sid }}_alter_db_params.sql"
+  register: "{{ oracle_sid }}_alter_db_params_result"
+
+
+- name: db checklist post update for post provision for db
+  include_tasks: db_checklist_post_update.yml
+  vars:
+    chklst_json_body:
+      new_entry: true
+      host_name: "{{ ansible_hostname }}"
+      db_name: "{{ oracle_db_name }}"
+      ticket_ref: "{{ ticket_ref }}"
+      #ID: "{{ checklist_id }}"
+      checklist_type: "POST PROVISIONING for db"
+      checklist_category: db install
+      post_build_status: "SUCCESS"
+  tags:
+  - apex_api

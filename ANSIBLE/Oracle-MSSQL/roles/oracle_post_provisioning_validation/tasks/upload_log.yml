@@ -1,0 +1,45 @@
+---
+
+- name: read logfile
+  slurp:
+    src: "{{ logfile_path }}"
+  register: logfile_text
+
+- block:
+  # - name: execute 'upload DB check log' API call
+  #   uri:
+  #     url: "{{ apex_url }}/charter/upload_db_check_log"
+  #     validate_certs: no  # should be removed after https certs becomes renewed
+  #     method: POST
+  #     body: "{{ logfile_text.content | b64decode | string }}"
+  #     headers:
+  #       Content-Type: text/plain
+  #       ID: "{{ checklist_id }}"
+  #   register: log_insrt_response
+
+  - name: upload log for post provisioning validation
+    include_tasks: db_checklist_status_file.yml
+    vars:
+        standard_task_id: "{{ standard_task_id }}"
+        task_key: "{{ ansible_hostname }}"
+        task_area: "{{ task_area }}"
+        task_id: "{{ ticket_ref }}"
+        task_status: "{{ task_status }}"
+        task_message: "{{ task_message }}"
+        file_mimetype: "text/plain"
+        record_type: "file_upload"
+        standard_task_id: "{{ standard_task_id }}"
+        logfile_path:  "{% if oracle_context_grid -%}{{ oracle_tmp }}/grid_post_validaton_result.json
+                  {%- elif oracle_context_database -%}{{ oracle_tmp }}/{{ oracle_db_name }}_post_validaton_result.json
+                  {%- elif oracle_context_database -%}{{ oracle_tmp }}/combined_post_validaton_result.json
+                  {%- endif %}"
+    tags:
+    - apex_api
+
+  rescue:
+  - name:
+    delegate_to: localhost
+    lineinfile:
+      path: /apex/unsent_json_body/{{ ansible_hostname }}/upload_log.json
+      line: '{"checklist_id": {{ checklist_id | to_json }} }, {"logfile_path": {{ logfile_path | to_json }} }'
+      create: yes
