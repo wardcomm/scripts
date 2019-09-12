@@ -22,18 +22,7 @@
       - "{{ ansible_interfaces }}"
     when: item.default_gateway == none
 
-  - name: Set the Orange adapter if present...
-    win_shell: |
-      Get-NetAdapter |
-      Where-Object {$_.ifIndex -eq "{{ back_nic.interface_index }}"}|
-      Rename-NetAdapter -NewName Orange
-      Get-NetAdapter Orange | Set-DNSClient –RegisterThisConnectionsAddress $False
+  - include: set_bngw.yml
     when: back_nic is defined
 
-  - name: Set property if backnet exists...
-    set_fact:
-      orange: true
-    when: back_nic is defined
-
-  tags: 
-    - nic
+  tags: "nic"

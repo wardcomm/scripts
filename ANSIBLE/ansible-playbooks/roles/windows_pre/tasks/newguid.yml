@@ -1,10 +1,10 @@
 ---
+- block:
   - name: Create temp directory
     win_file:
-      path: C:\temp\deploy\Disk
+      path: C:\temp\deploy\Disk\
       state: directory
 
-- block:
   - name: Copy setguid.ps1...
     win_get_url:
       url: "http://{{ bin_server }}/Disk/setguid_1.0_20190808.zip"
@@ -20,7 +20,7 @@
   - name: Run remote powershell script...
     win_command: powershell.exe -ExecutionPolicy ByPass -File C:\temp\deploy\disk\setguid.ps1
 
+  when: chassis is search("microsoft")
+
   tags:
     - newguid
-  
-  when: chassis is search("microsoft")

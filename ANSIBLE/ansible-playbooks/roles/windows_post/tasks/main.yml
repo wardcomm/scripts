@@ -15,6 +15,7 @@
     - HPSA_Install.yml
     - DTC_Install.yml
     - services.yml
+    - DNS.yml
     - remove_groups.yml
     - pci_configs.yml
     - kms_configs.yml

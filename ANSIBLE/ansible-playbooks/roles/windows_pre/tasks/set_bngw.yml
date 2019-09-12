@@ -1,0 +1,54 @@
+---
+- block:
+  - name: Set the Orange adapter if present...
+    win_shell: |
+      Get-NetAdapter |
+      Where-Object {$_.ifIndex -eq "{{ back_nic.interface_index }}"}|
+      Rename-NetAdapter -NewName Orange
+      Get-NetAdapter Orange | Set-DNSClient –RegisterThisConnectionsAddress $False
+
+  - name: Create dynamic backnet variable based on NDC...
+    set_fact:
+      nbur: "{{ lookup('vars', Vrm_DataCenter_Location + '_bn_route') }}"
+
+  - name: Create WMI query to gather backnet adapter info...
+    set_fact:
+      query: "Select * from Win32_NetworkAdapterConfiguration Where InterfaceIndex={{ back_nic.interface_index }}"
+
+  - name: Get the backnet adapter IP address...
+    win_shell: |
+      (Get-WMIObject -Query "{{ query }}").IPAddress[0]
+    register: back_ip
+
+  - name: Get the backnet adapter subnet mask...
+    win_shell: |
+      (Get-WMIObject -Query "{{ query }}").IPSubnet[0]
+    register: back_mask
+
+  - name: Clean/trim backnet IP variable...
+    set_fact:
+      back_ip: "{{ back_ip.stdout_lines[0] }}"
+
+  - name: Clean/trim backnet mask variable...
+    set_fact:
+      back_mask: "{{ back_mask.stdout_lines[0] }}"
+
+  - name: Create backnet expression for CIDR bit count...
+    set_fact:
+      back_cidr: "{{ back_ip }}/{{ back_mask }}"
+
+  - name: Get CIDR bit count...
+    set_fact:
+      cidr_bits: "{{ back_cidr | ipaddr('prefix') }}"
+
+  - name: Find gateway based on CIDR bits...
+    set_fact:
+      back_gw: "{{ back_ip | ipsubnet(cidr_bits) }}"
+
+  - name: Add static route using discovered NDC and gateway...
+    win_route:
+      destination: "{{ item }}"
+      gateway: "{{ back_gw | ipaddr('net') | ipaddr('1') | ipv4('address') }}"
+    with_items:
+     - "{{ nbur }}"
+  ignore_errors: yes

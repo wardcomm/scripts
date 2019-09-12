@@ -16,13 +16,14 @@ os: "{{ ansible_distribution }}"
 #bin_server: "vm0pnyumxxw0001.twcable.com/deployments/Windows"  # - PROD BIN Server
 bin_server: "vm0qnyumxxw0001.twcable.com/deployments/Windows"  # - QA BIN Server
 chassis: "{{ ansible_system_vendor | lower }}"
-orange: false
-NBU:
-  routes:
-    NCE: '10.222.59.0/24'
-    NCW: '142.136.136.0/26, 10.222.56.0/24'
-    CDP: '10.222.57.0/24'
-
+CDP_DNS: [192.168.92.45,172.24.231.241]
+NCE_DNS: [192.168.92.45,172.24.231.241]
+NCW_DNS: [192.168.92.45,172.24.231.241]
+NCE_bn_route:
+  - '10.222.59.0/24'
+NCW_bn_route:
+  - '10.222.56.0/24'
+  - '142.136.136.0/26'
 HPSA:
   packages:
     Windows10: 'C:\Temp\deploy\HPSA\opsware-agent-70.0.76793.1-win32-10.0-X64.exe'

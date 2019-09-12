@@ -7,11 +7,13 @@
   loop:
     - set_features.yml
     - set_nic.yml
+    - set_dns.yml
     - set_schtasks.yml
     - reg_configs.yml
     - set_tz.yml
     - utils.yml
     - chtr_join.yml
+    - newguid.yml
     - add_groups.yml
 
   loop_control:

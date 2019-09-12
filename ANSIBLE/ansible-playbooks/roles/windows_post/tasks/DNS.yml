@@ -1,0 +1,5 @@
+---
+- name: Set DNS Forwarders on all visible adapters...
+  win_dns_client:
+    adapter_names: '*'
+    ipv4_addresses: "{{ lookup('vars', Vrm_DataCenter_Location + '_DNS')}}"
