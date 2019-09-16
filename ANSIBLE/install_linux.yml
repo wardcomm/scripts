@@ -62,8 +62,8 @@
   - name: upgrade terraform
     command: bash /REPO/scripts/BASH/upgrade_terraform.sh 
 
-  - name: install homebrew
-    shell: bash /REPO/scripts/BASH/install_homebrew.sh
+ # - name: install homebrew
+ #   shell: bash /REPO/scripts/BASH/install_homebrew.sh
 
   - name: install multiple Apps
     yum:
