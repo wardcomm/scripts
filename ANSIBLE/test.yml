@@ -1,14 +1,22 @@
 ---
-  - hosts: windows
-    tasks:
+- hosts: localhost
+  gather_facts: yes
+  vars:
+    cluster_nodes: server1,server2,server3
+  tasks:
+  - name: Run Gather Facts
+    setup:
+      gather_subset:
+      - all
+  - debug:
+      msg: "{{ cluster_nodes }}"
+#  vars:
+#    cluster_nodes: server1,server2,server3
 
-    - name: Run Gather Facts
-      setup:
+  - name: Create string of nodes...
+    set_fact: cluster_nodes = "{{ cluster_nodes.split(",") }}"
 
-
-- name: Create string of nodes...
-  set_fact: cluster_nodes = cluster_nodes.split(",")
-
+  
 #ansible-playbook myplaybook.yml -i hosts -e "cluster_nodes='server1,server2,server3'"
 
 #Group Vars Method (Preferred):
