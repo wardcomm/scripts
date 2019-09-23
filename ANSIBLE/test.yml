@@ -2,61 +2,24 @@
   - hosts: localhost
     gather_facts: yes
     vars:
-      cluster_nodes: server1,server2,server3
-    tasks:
-- hosts: localhost
-  gather_facts: yes
-  vars:
-    # This statement will NOT change the value of the extra var
-    cluster_nodes: servererver3 # cluster_nodes is input as server1,server2,server3 as an extra var
-    clu_nodes: "{{ cluster_nodes.split(',') }}"
+      # This statement will NOT change the value of the extra var
+      cluster_nodes: servererver3 # cluster_nodes is input as server1,server2,server3 as an extra var
+      clu_nodes: "{{ cluster_nodes.split(',') }}"
 
-  tasks:
-  - name: Run Gather Facts
-    setup:
-      gather_subset:
+    tasks:
+    - name: Run Gather Facts
+      setup:
+        gather_subset:
         - all
-  - debug:
-      msg: {{ cluster_nodes }} # not required. The customized message that is printed. If omitted, prints a generic message.
-      verbosity:  # not required. A number that controls when the debug is run, if you set to 3 it will only run debug when -vvv or above
-        #  vars:
+    - debug:
+        msg: "The current value of cluster_nodes is {{ cluster_nodes }}."
+  #  vars:
   #    cluster_nodes: server1,server2,server3
 
-  - name: Create string of nodes...
-    set_fact: cluster_nodes = cluster_nodes.split(",")
+    - debug:
+        msg: "{{ clu_nodes }}"
 
-  #ansible-playbook myplaybook.yml -i hosts -e "cluster_nodes='server1,server2,server3'"
-
-  #Group Vars Method (Preferred):
-  #==============================
-  #Ex1: cluster_nodes: "{{ cluster_nodes.split(",") }}"
-  #Ex2: cluster_nodes: "{{ lookup('vars', 'cluster_nodes'.split(",") }}"
-
-
-
-
-
----
-  - hosts: windows
-    tasks:
-      msg: "The current value of cluster_nodes is {{ cluster_nodes }}."
-#  vars:
-#    cluster_nodes: server1,server2,server3
-
-  - debug:
-      msg: "{{ clu_nodes }}" 
-
-  - name: with_list -> loop
-    debug:
-      msg: "{{ item }}"
-    loop: "{{ clu_nodes }}"
-
-
-#ansible-playbook myplaybook.yml -i hosts -e "cluster_nodes='server1,server2,server3'"
-
-#Group Vars Method (Preferred):
-#==============================
-#Ex1: cluster_nodes: "{{ cluster_nodes.split(",") }}"
-#Ex2: cluster_nodes: "{{ lookup('vars', 'cluster_nodes'.split(",") }}"
-cluster_nodes_table: "{{ cluster_nodes_table.split(",") }}"
-cluster_nodes_table: "{{ lookup('vars', 'cluster_nodes_table'.split(",") }}"
+    - name: with_list -> loop
+      debug:
+        msg: "{{ item }}"
+      loop: "{{ clu_nodes }}"
