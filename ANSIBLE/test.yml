@@ -1,14 +1,26 @@
 ---
+<<<<<<< HEAD
   - hosts: localhost
     gather_facts: yes
     vars:
       cluster_nodes: server1,server2,server3
     tasks:
+=======
+- hosts: localhost
+  gather_facts: yes
+  vars:
+    # This statement will NOT change the value of the extra var
+    cluster_nodes: servererver3 # cluster_nodes is input as server1,server2,server3 as an extra var
+    clu_nodes: "{{ cluster_nodes.split(',') }}"
+
+  tasks:
+>>>>>>> 6fadd9c12e0dca0bb9cfdd009a2e5dd159d89163
   - name: Run Gather Facts
     setup:
       gather_subset:
         - all
   - debug:
+<<<<<<< HEAD
       msg: {{ cluster_nodes }} # not required. The customized message that is printed. If omitted, prints a generic message.
       verbosity:  # not required. A number that controls when the debug is run, if you set to 3 it will only run debug when -vvv or above
         #  vars:
@@ -31,12 +43,21 @@
 ---
   - hosts: windows
     tasks:
-
-  - name: Create string of nodes...
-    set_fact: cluster_nodes = "{{ cluster_nodes.split(",") }}"
+=======
+      msg: "The current value of cluster_nodes is {{ cluster_nodes }}."
+#  vars:
+#    cluster_nodes: server1,server2,server3
+>>>>>>> 6fadd9c12e0dca0bb9cfdd009a2e5dd159d89163
 
   - debug:
-      msg: " {cluster_nodes{}} " 
+      msg: "{{ clu_nodes }}" 
+
+  - name: with_list -> loop
+    debug:
+      msg: "{{ item }}"
+    loop: "{{ clu_nodes }}"
+
+
 #ansible-playbook myplaybook.yml -i hosts -e "cluster_nodes='server1,server2,server3'"
 
 #Group Vars Method (Preferred):
