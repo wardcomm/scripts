@@ -2,22 +2,29 @@
 - hosts: localhost
   gather_facts: yes
   vars:
-    cluster_nodes: server1,server2,server3
+    # This statement will NOT change the value of the extra var
+    cluster_nodes: servererver3 # cluster_nodes is input as server1,server2,server3 as an extra var
+    clu_nodes: "{{ cluster_nodes.split(',') }}"
+
   tasks:
   - name: Run Gather Facts
     setup:
       gather_subset:
       - all
   - debug:
-      msg: "{{ cluster_nodes }}"
+      msg: "The current value of cluster_nodes is {{ cluster_nodes }}."
 #  vars:
 #    cluster_nodes: server1,server2,server3
 
-  - name: Create string of nodes...
-    set_fact: cluster_nodes = "{{ cluster_nodes.split(",") }}"
-
   - debug:
-      msg: " {cluster_nodes{}} " 
+      msg: "{{ clu_nodes }}" 
+
+  - name: with_list -> loop
+    debug:
+      msg: "{{ item }}"
+    loop: "{{ clu_nodes }}"
+
+
 #ansible-playbook myplaybook.yml -i hosts -e "cluster_nodes='server1,server2,server3'"
 
 #Group Vars Method (Preferred):
