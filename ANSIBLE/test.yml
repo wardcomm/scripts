@@ -1,4 +1,34 @@
 ---
+  - hosts: localhost
+    gather_facts: yes
+    vars:
+      cluster_nodes: server1,server2,server3
+    tasks:
+  - name: Run Gather Facts
+    setup:
+      gather_subset:
+        - all
+  - debug:
+      msg: {{ cluster_nodes }} # not required. The customized message that is printed. If omitted, prints a generic message.
+      verbosity:  # not required. A number that controls when the debug is run, if you set to 3 it will only run debug when -vvv or above
+        #  vars:
+  #    cluster_nodes: server1,server2,server3
+
+  - name: Create string of nodes...
+    set_fact: cluster_nodes = cluster_nodes.split(",")
+
+  #ansible-playbook myplaybook.yml -i hosts -e "cluster_nodes='server1,server2,server3'"
+
+  #Group Vars Method (Preferred):
+  #==============================
+  #Ex1: cluster_nodes: "{{ cluster_nodes.split(",") }}"
+  #Ex2: cluster_nodes: "{{ lookup('vars', 'cluster_nodes'.split(",") }}"
+
+
+
+
+
+---
   - hosts: windows
     tasks:
 
@@ -15,3 +45,5 @@
 #==============================
 #Ex1: cluster_nodes: "{{ cluster_nodes.split(",") }}"
 #Ex2: cluster_nodes: "{{ lookup('vars', 'cluster_nodes'.split(",") }}"
+cluster_nodes_table: "{{ cluster_nodes_table.split(",") }}"
+cluster_nodes_table: "{{ lookup('vars', 'cluster_nodes_table'.split(",") }}"
