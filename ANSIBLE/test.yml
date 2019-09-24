@@ -24,4 +24,5 @@
         msg:
         - "{{ item }}"
         - "{{ cluster_nodes }}"
+        - "{{ clu_notes }}"
       loop: "{{ clu_nodes }}"
