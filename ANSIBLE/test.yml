@@ -26,7 +26,7 @@
         msg:
         - "{{ item }}"
         - "{{ cluster_nodes }}"
-        - "{{ clu_notes }}"
+        - "{{ clu_nodes }}"
       loop: "{{ clu_nodes }}"
       register: result
 
