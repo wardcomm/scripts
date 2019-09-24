@@ -11,15 +11,30 @@
       setup:
         gather_subset:
         - all
-    - debug:
+    - name: outputing what cluster_nodes is
+      debug:
         msg: "The current value of cluster_nodes is {{ cluster_nodes }}."
   #  vars:
   #    cluster_nodes: server1,server2,server3
 
-    - debug:
+    - name: output of clu_nodes
+      debug:
         msg: "{{ clu_nodes }}"
 
     - name: with_list -> loop
       debug:
         msg: "{{ item }}"
       loop: "{{ clu_nodes }}"
+      register: result
+
+   # - name: upgrade all packages
+   #   yum:
+   #     name: '*'
+   #     state: latest
+   #   register: result
+   #   ignore_errors: yes
+
+#    - name: Output of result from patches
+#      debug:
+#        var: result
+#        msg: "This is the out put of result"
