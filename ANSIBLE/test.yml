@@ -23,8 +23,9 @@
 
     - name: with_list -> loop
       debug:
-        msg: "{{ item }}"
-        msg: "{{ cluster_nodes }}"
+        msg:
+        - "{{ item }}"
+        - "{{ cluster_nodes }}"
       loop: "{{ clu_nodes }}"
       register: result
 
