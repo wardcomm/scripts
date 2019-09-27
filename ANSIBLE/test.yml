@@ -3,7 +3,7 @@
     gather_facts: yes
     vars:
       # This statement will NOT change the value of the extra var
-      cluster_nodes: servererver3 # cluster_nodes is input as server1,server2,server3 as an extra var
+      cluster_nodes: "servererver3" # cluster_nodes is input as server1,server2,server3 as an extra var
       clu_nodes: "{{ cluster_nodes.split(',') }}"
       OS: "{{ ansible_distribution }} {{ ansible_distribution_version }}"
       cluster_nodes: 'nceunoracsd0031,nceunoracsd0032,nceunoracsd0033'
@@ -30,8 +30,10 @@
     - name: output of clu_nodes with sort
       debug:
         msg:
-        - "{{ clu_nodes|sort(reverse=False) }}"
+        - "This is the cluster nodes:  {{ clu_nodes|sort(reverse=False) }}"
+        - "This is the master node: {{ master }}"
 #        - "{{ cluster_nodes | sort }}"
+      failed_when: master != master_node
 
     - name: with_list -> loop
       debug:
@@ -56,3 +58,4 @@
 #      debug:
 #        var: result
 #        msg: "This is the out put of result"
+#        ansible-playbook /REPO/scripts/ANSIBLE/test.yml -i /REPO/scripts/ANSIBLE/hosts -e "cluster_nodes='server5,server2,server100'" -e "master_node='server5'" -vvv 
