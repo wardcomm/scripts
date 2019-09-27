@@ -5,17 +5,15 @@
       # This statement will NOT change the value of the extra var
       cluster_nodes: servererver3 # cluster_nodes is input as server1,server2,server3 as an extra var
       clu_nodes: "{{ cluster_nodes.split(',') }}"
+      OS: "{{ ansible_distribution }} {{ ansible_distribution_version }}"
+      cluster_nodes: 'nceunoracsd0031,nceunoracsd0032,nceunoracsd0033'
+      master: "{{ cluster_nodes | regex_replace (',.*','') }}"
 
     tasks:
     - name: Run Gather Facts
       setup:
         gather_subset:
         - all
-
-    vars:
-    OS: "{{ ansible_distribution }} {{ ansible_distribution_version }}"
-    cluster_nodes: 'nceunoracsd0031,nceunoracsd0032,nceunoracsd0033'
-    master: "{{ cluster_nodes | regex_replace (',.*','') }}"
 
     - name: "Debug"
       debug:
