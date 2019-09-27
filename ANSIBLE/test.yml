@@ -17,7 +17,6 @@
     cluster_nodes: 'nceunoracsd0031,nceunoracsd0032,nceunoracsd0033'
     master: "{{ cluster_nodes | regex_replace (',.*','') }}"
 
-    tasks:
     - name: "Debug"
       debug:
         msg:
