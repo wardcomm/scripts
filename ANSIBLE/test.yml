@@ -11,22 +11,18 @@
       setup:
         gather_subset:
         - all
-    
+
     vars:
     OS: "{{ ansible_distribution }} {{ ansible_distribution_version }}"
     cluster_nodes: 'nceunoracsd0031,nceunoracsd0032,nceunoracsd0033'
     master: "{{ cluster_nodes | regex_replace (',.*','') }}"
-    
+
     tasks:
     - name: "Debug"
       debug:
         msg:
           - "{{ master }}"
           - "{{ cluster_nodes }}"
-
-
-
-
 
     - name: outputing what cluster_nodes is
       debug:
@@ -36,10 +32,10 @@
 
     - name: output of clu_nodes with sort
       debug:
-        msg: 
+        msg:
         - "{{ clu_nodes|sort(reverse=False) }}"
 #        - "{{ cluster_nodes | sort }}"
- 
+
     - name: with_list -> loop
       debug:
         msg:
