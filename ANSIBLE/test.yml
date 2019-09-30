@@ -1,0 +1,61 @@
+---
+  - hosts: localhost
+    gather_facts: yes
+    vars:
+      # This statement will NOT change the value of the extra var
+      cluster_nodes: "servererver3" # cluster_nodes is input as server1,server2,server3 as an extra var
+      clu_nodes: "{{ cluster_nodes.split(',') }}"
+      OS: "{{ ansible_distribution }} {{ ansible_distribution_version }}"
+      cluster_nodes: 'nceunoracsd0031,nceunoracsd0032,nceunoracsd0033'
+      master: "{{ cluster_nodes | regex_replace (',.*','') }}"
+
+    tasks:
+    - name: Run Gather Facts
+      setup:
+        gather_subset:
+        - all
+
+    - name: "Debug"
+      debug:
+        msg:
+          - "{{ master }}"
+          - "{{ cluster_nodes }}"
+
+    - name: outputing what cluster_nodes is
+      debug:
+        msg: "The current value of cluster_nodes is {{ cluster_nodes }}."
+  #  vars:
+  #    cluster_nodes: server1,server2,server3
+
+    - name: output of clu_nodes with sort
+      debug:
+        msg:
+        - "This is the cluster nodes:  {{ clu_nodes|sort(reverse=False) }}"
+        - "This is the master node: {{ master }}"
+#        - "{{ cluster_nodes | sort }}"
+      failed_when: master != master_node
+
+    - name: with_list -> loop
+      debug:
+        msg:
+        - "{{ item }}"
+        - "{{ cluster_nodes }}"
+        - "{{ clu_nodes }}"
+        - "{{ inventory_hostname }}"
+        - "{{ ansible_machine }}"
+      #  - "{{ ansible_facts }}"
+      loop: "{{ clu_nodes }}"
+      register: result
+
+   # - name: upgrade all packages
+   #   yum:
+   #     name: '*'
+   #     state: latest
+   #   register: result
+   #   ignore_errors: yes
+
+#    - name: Output of result from patches
+#      debug:
+#        var: result
+#        msg: "This is the out put of result"
+#        ansible-playbook /REPO/scripts/ANSIBLE/test.yml -i /REPO/scripts/ANSIBLE/hosts -e "cluster_nodes='server5,server2,server100'" -e "master_node='server5'" -vvv 
