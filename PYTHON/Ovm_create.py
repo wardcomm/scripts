@@ -2,8 +2,8 @@
 import requests,json
 from time import sleep
 
-user = p2906297
-password = THem5dax
+user = 'p2906297'
+password = 'THem5dax'
 baseUri='https://ovmdmgr04:7002/ovm/core/wsapi/rest'
 s = requests.Session()
 s.auth = ('user', 'password')
@@ -18,8 +18,8 @@ def get_id_from_name(object_type, object_name):
       return e
   return None
 
-repo_id = get_id_from_name(s,baseUri,'Repository','MyRepository')
-sp_id = get_id_from_name(s,baseUri,'ServerPool','MyServerPool')
+#repo_id = get_id_from_name(s,baseUri,'Repository','MyRepository')
+#sp_id = get_id_from_name(s,baseUri,'ServerPool','MyServerPool')
 
 data = {
   'name': 'myServer',
