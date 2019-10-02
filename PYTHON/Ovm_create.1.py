@@ -8,6 +8,11 @@ password=THem5dax
 baseUri='https://ovmdmgr04:7002/ovm/core/wsapi/rest'
 repo_id=get_id_from_name(s,baseUri,'Repository','MyRepository')
 sp_id=get_id_from_name(s,baseUri,'ServerPool','MyServerPool')
+s = requests.Session()
+s.auth = ('user', 'password')
+s.verify = False #disables SSL certificate verification
+s.headers.update({'Accept': 'application/json', 'Content-Type': 'application/json'})
+# s.cert='/path/to/mycertificate.pem
 
 data={
         'name': 'MyVirtualMachine',

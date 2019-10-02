@@ -1,10 +1,14 @@
 #!/usr/bin/env python
 import requests,json
+
 from time import sleep
 
 user = 'p2906297'
 password = 'THem5dax'
 baseUri='https://ovmdmgr04:7002/ovm/core/wsapi/rest'
+Repository='https://ovmdmgr04:7002/ovm/core/wsapi/rest/Repository/id'
+ServerPool='https://ovmdmgr04:7002/ovm/core/wsapi/rest/ServerPool/id'
+
 s = requests.Session()
 s.auth = ('user', 'password')
 s.verify = False #disables SSL certificate verification
