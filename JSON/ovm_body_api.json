@@ -1,0 +1,16 @@
+{
+    "name":"ovm_test_api",
+    "description":"A Test server for ORacle  api",
+    "vmDomainType":"Xen HVM PV Drivers",
+    "repositoryId":"ndc2-pool07-repo",
+    "serverPoolId":"ndc-pool07-x86",
+    "cpuCount":"1",
+    "cpuCountLimit":"1",
+    "cpuPriority":"50",
+    "cpuUtilizationCap":"100",
+    "hugePagesEnabled":"False",
+    "memory":"1024",
+    "memoryLimit":"1024",
+    "osType":"Oracle Linux 7",
+    "osVersion":"Oracle Linux Server release 7.6"
+ }
