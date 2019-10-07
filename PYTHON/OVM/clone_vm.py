@@ -3,9 +3,11 @@ import requests
 import urllib3
 import ovmclient
 import sys
-case1 = sys.argv[1]
+#case1 = sys.argv[1]
+print (len(sys.argv)
 
-urllib3.disable_warnings()
+#requests.packages.urllib3.disable_warnings()
+
 
 headers = {
     'Authorization': "Basic cDI5MDYyOTc6VEhlbTVkYXg=",
@@ -41,7 +43,7 @@ create_template = False
 print("""
 print "\nCloning VM"
 print "##############"
-print "Creating VM",case1,"from VM template ol7-template-UEK-kernel"
+print "Creating VM",case1,"from" vm_il"
 """)
 
 # Clone the VM
