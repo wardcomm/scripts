@@ -13,7 +13,7 @@ pool_id = client.server_pools.get_id_by_name('pool1')
 vm_id = client.vms.get_id_by_name('vm1')
 
 # Set to True to create a VM template, False for a regular VM
-create_template = True
+create_template = False
 
 # Clone the VM
 job = client.jobs.wait_for_job(

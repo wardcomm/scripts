@@ -9,7 +9,8 @@ user = "p2906297"
 password = "THem5dax"
 url_api = "https://10.136.170.208:7002/ovm/core/wsapi/rest"
 client = ovmclient.Client( url_api, user, password )
-print(client)
+#print(client)
+case1 = sys.argv[0]
 # Make sure the manager is running
 client.managers.wait_for_manager_state()
 
@@ -23,7 +24,7 @@ create_template = False
 
 print "\nCloning VM"
 print "##############"
-print "Creating VM",case1,"from VM template ol7-template-UEK-kernel"
+print ("Creating VM", case1, "from VM template ol7-template-UEK-kernel")
 
 
 # Clone the VM
@@ -39,5 +40,5 @@ client.jobs.wait_for_job(client.vms.update(new_vm_id, data))
 # Delete the VM template
 #client.jobs.wait_for_job(client.vms.delete(new_vm_id))
 #
-print " -Done\n"
+print (" -Done\n")
 
