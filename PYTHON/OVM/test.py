@@ -22,7 +22,27 @@ s.headers.update({'Accept': 'application/json', 'Content-Type': 'application/jso
 
 url = "https://ovmdmgr04:7002/ovm/core/wsapi/rest/Vm/"
 
-payload = "{\r\n    \"name\":\"ovm_test_api\",\r\n    \"description\":\"A Test server for ORacle  api\",\r\n    \"vmDomainType\":\"Xen HVM PV Drivers\",\r\n    \"repositoryId\":\"ndc2-pool07-repo\",\r\n    \"serverPoolId\":\"ndc-pool07-x86\",\r\n    \"cpuCount\":\"1\",\r\n    \"cpuCountLimit\":\"1\",\r\n    \"cpuPriority\":\"50\",\r\n    \"cpuUtilizationCap\":\"100\",\r\n    \"hugePagesEnabled\":\"False\",\r\n    \"memory\":\"1024\",\r\n    \"memoryLimit\":\"1024\",\r\n    \"osType\":\"Oracle Linux 7\",\r\n    \"osVersion\":\"Oracle Linux Server release 7.6\"\r\n }\r\n "
+# payload = {\r\n    \"name\":\"ovm_test_api\",\r\n    \"description\":\"A Test server for ORacle  api\",\r\n    \"vmDomainType\":\"Xen HVM PV Drivers\",\r\n    \"repositoryId\":\"ndc2-pool07-repo\",\r\n    \"serverPoolId\":\"ndc-pool07-x86\",\r\n    \"cpuCount\":\"1\",\r\n    \"cpuCountLimit\":\"1\",\r\n    \"cpuPriority\":\"50\",\r\n    \"cpuUtilizationCap\":\"100\",\r\n    \"hugePagesEnabled\":\"False\",\r\n    \"memory\":\"1024\",\r\n    \"memoryLimit\":\"1024\",\r\n    \"osType\":\"Oracle Linux 7\",\r\n    \"osVersion\":\"Oracle Linux Server release 7.6\"\r\n }
+
+payload = {
+    "name":"WONDER_WOMAN",
+    "description":"A Test server for ORacle  api",
+    "vmDomainType":"Xen HVM PV Drivers",
+    "repositoryId":"ndc2-pool07-repo",
+    "serverPoolId":"ndc-pool07-x86",
+    "cpuCount":"1",
+    "cpuCountLimit":"1",
+    "cpuPriority":"50",
+    "cpuUtilizationCap":"100",
+    "hugePagesEnabled":"False",
+    "memory":"1024",
+    "memoryLimit":"1024",
+    "osType":"Oracle Linux 7",
+    "osVersion":"Oracle Linux Server release 7.6"
+ }
+
+
+
 headers = {
     'Content-Type': "application/json",
     'Accept': "application/json",
@@ -40,4 +60,6 @@ headers = {
 
 response = requests.post(url, data=payload, headers=headers, json=True, verify=False)
 
+data = response.json()
+print(data)
 print(response.text)

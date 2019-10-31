@@ -15,17 +15,14 @@ client = ovmclient.Client(
 # Make sure the manager is running
 client.managers.wait_for_manager_state()
 
-# Discover a new host and take ownership
-# r = client.servers.discover()
-#  print(client)
-# Get an existing VM or a VM template
-vm_id = client.vms.get_id_by_name('SUPER_MAN')
-print("This is the vm id of\n test001")
-print(vm_id)
+# Find server by name and take ownership
 
-vm_template = client.vms.get_by_name('ol7-template-UEK-kernel')
-print("This is the template\n" "ol7-template-UEK-kernel\n")
-print(vm_template)
+# vm_id = client.vms.get_id_by_name('CAP_AMERICA')
+# print("This is the vm id of\n" + str(vm_id))
+# print(vm_id)
+disk_id = client.vms.get_id_by_name('Mapping for disk Id (0004fb0000120000857212a164441335.img)')
+# client.vms.delete(vm_id)
+client.vms.delete(disk_id)
 
 # # Make sure the manager is running
 # client.managers.wait_for_manager_stat

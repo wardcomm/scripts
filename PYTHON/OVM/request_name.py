@@ -1,14 +1,33 @@
-#!/usr/bin/env python
-
-# importing the requests and json library
 import json
 import requests
 import warnings
+from requests.auth import HTTPBasicAuth
+from requests.auth import AuthBase
 from urllib3.exceptions import  InsecureRequestWarning
 warnings.simplefilter('ignore',InsecureRequestWarning)
 
+PAYLOAD = {
+    "name":"ovm_test_api",
+    "description":"A Test server for ORacle  api",
+    "vmDomainType":"Xen HVM PV Drivers",
+    "repositoryId":"ndc2-pool07-repo",
+    "serverPoolId":"ndc-pool07-x86",
+    "cpuCount":"1",
+    "cpuCountLimit":"1",
+    "cpuPriority":"50",
+    "cpuUtilizationCap":"100",
+    "hugePagesEnabled":"False",
+    "memory":"1024",
+    "memoryLimit":"1024",
+    "osType":"Oracle Linux 7",
+    "osVersion":"Oracle Linux Server release 7.6"
+}
+
+
+
 #variable
-url = "https://ovmdmgr04:7002/ovm/core/wsapi/rest/Server/id/"
+# url = "https://ovmdmgr04:7002/ovm/core/wsapi/rest/Server/id/"
+url = 'https://ovmdmgr04:7002/ovm/core/wsapi/rest/Vm'
 user = 'p2906297'
 password = 'THem5dax'
 baseUri = 'https://ovmdmgr04:7002/ovm/core/wsapi/rest'
@@ -32,9 +51,9 @@ headers = {
     }
 
 response = requests.request("GET", url, headers=headers, verify=False)
-servers = client.server_pools.get_id_by_name()
+resp = requests.post(url, headers, PAYLOAD, verify=False )
 print(response.text)
-
+vm_id = client.vms.get_id_by_name('test001')
 # #variables
 # rest_api='https://ovmdmgr04:7002/ovm/core/wsapi/rest'
 # url = "https://ovmdmgr04:7002/ovm/core/wsapi/rest/Server/id/"
@@ -56,3 +75,6 @@ print(response.text)
 # #extract_data = data['results']
 
 # print(data)
+# output = requests.get('https://ovmdmgr04:7002/ovm/core/wsapi/rest/Vm', verify=False)
+
+# print(output)

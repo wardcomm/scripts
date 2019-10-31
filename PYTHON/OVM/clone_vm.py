@@ -27,7 +27,7 @@ user = 'p2906297'
 password = 'THem5dax'
 
 client = ovmclient.Client(
-    'https://10.136.170.208:7002/ovm/core/wsapi/rest', 'user', 'password')
+    'https://10.136.170.208:7002/ovm/core/wsapi/rest', user, password)
 
 # Make sure the manager is running
 client.managers.wait_for_manager_state()
