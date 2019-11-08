@@ -46,7 +46,7 @@ vm_id = client.vms.get_id_by_name('BAT_MAN')
 print(vm_id)
 # disk_id = client.disk_mappings.get_id_by_name()
 # print(disk_id)
-test = client.disk_mappings.disk_id('vm_id')
+test = client.
 print(test)
        # do something with the content
 # if i == server:

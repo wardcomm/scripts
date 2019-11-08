@@ -46,9 +46,9 @@ try:
     client.vms.clone(vm_id, pool_id, create_template=create_template))
 
 except NameError:
-  print("arguemnt was not given")
+  print("arguement was not given")
 except IndexError:
-  print("arguemnt was not given")
+  print("arguement was not given")
 except:
   print("need to type example: .\OVM_CLONE_VM.py WINTER_SOLDIER in command line ")
 new_vm_id = job['resultId']

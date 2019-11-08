@@ -50,6 +50,8 @@ print(oneline)
 print("!!!!!!!!!!!!!!!!!!!!!!")
 # print type(vm_value)
 print(vm_value)
+test_uri = "https://ovmdmgr04:7002/ovm/core/wsapi/rest/VirtualDisk/0004fb000012000057d918986ad26e5e.img"
+client.vms.delete(test_uri)
 # print(y)
 # print(c)
 print("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
