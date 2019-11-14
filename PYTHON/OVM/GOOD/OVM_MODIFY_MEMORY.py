@@ -44,7 +44,7 @@ print(new_memory)
 print(new_memory_max)
 # Update the VM, e.g. setting a new name
 # vm['name'] = 'vm2'
-vm_id[old_memory] = new_memory
-vm_id[old_memory_max] = new_memory_max
-client.vms.update(vm_value, data = {'memory':new_memory})
-client.vms.update(vm_value, data = {'memoryLimit':new_memory_max})
+vm_id['memory'] = new_memory
+vm_id['memoryLimit'] = new_memory_max
+client.vms.update(vm_value, new_memory)
+client.vms.update(vm_value, new_memory_max)

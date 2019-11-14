@@ -23,7 +23,7 @@ s.headers.update({'Accept': 'application/json', 'Content-Type': 'application/jso
 
 # Find server by name and take ownership
 
-vm_id = client.vms.get_by_name('THE_WASP')
+vm_id = client.vms.get_by_name('CHARLES')
 # vm_value = client.vms.get_by_id(vm_id)
 # print(vm_value)
 # print(vm_id)
@@ -50,8 +50,8 @@ print(oneline)
 print("!!!!!!!!!!!!!!!!!!!!!!")
 # print type(vm_value)
 print(vm_value)
-test_uri = "https://ovmdmgr04:7002/ovm/core/wsapi/rest/VirtualDisk/0004fb000012000057d918986ad26e5e.img"
-client.vms.delete(test_uri)
+# test_uri = "https://ovmdmgr04:7002/ovm/core/wsapi/rest/VirtualDisk/0004fb000012000057d918986ad26e5e.img"
+# client.vms.delete(test_uri)
 # print(y)
 # print(c)
 print("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
