@@ -23,27 +23,27 @@ s.headers.update({'Accept': 'application/json', 'Content-Type': 'application/jso
 
 argument = sys.argv[1]
 repo_name = client.repositories.get_id_by_name('pool07-virt1-repo')
-print(repo_name)
+# print(repo_name)
 repo_value = (repo_name['value'])
-print(repo_value)
+# print(repo_value)
 
 vm_id = client.vms.get_id_by_name(argument)
 virtual_machine = (vm_id['value'])
-print(virtual_machine)
-print(vm_id)
+# print(virtual_machine)
+# print(vm_id)
 vm_value = str(vm_id['value'])
 url = baseUri+'/'+'Vm/' + vm_value + '/VmDiskMapping'
-print(url)
+# print(url)
 vm_url = baseUri +'/Vm/'+ virtual_machine +'/VmDiskMapping'
-print(vm_url)
+# print(vm_url)
 data = s.get(url)
-print(data)
+# print(data)
 json_data = data.json()
-print(json_data)
+# print(json_data)
 x = json_data[0]
 disk_id = print(x['virtualDiskId']['value'])
 
 client.vms.stop(vm_id)
 client.vms.delete(vm_id)
 tests = client.repository_virtual_disks(repo_value).delete(disk_id)
-print(tests)
+# print(tests)
