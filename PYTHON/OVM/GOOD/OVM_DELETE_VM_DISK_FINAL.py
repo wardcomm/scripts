@@ -41,7 +41,7 @@ data = s.get(url)
 json_data = data.json()
 # print(json_data)
 x = json_data[0]
-disk_id = print(x['virtualDiskId']['value'])
+disk_id = (x['virtualDiskId']['value'])
 
 client.vms.stop(vm_id)
 client.vms.delete(vm_id)
