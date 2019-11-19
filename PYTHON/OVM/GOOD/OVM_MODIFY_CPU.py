@@ -18,15 +18,19 @@ s.verify=False #disables SSL certificate verification
 s.headers.update({'Accept': 'application/json', 'Content-Type': 'application/json'})
 
 server_name = sys.argv[1]
-new_memory = sys.argv[2]
-new_memory_max = sys.argv[3]
+processors = sys.argv[2]
+processors_limit = sys.argv[3]
+# processor_cap = sys.argv [4]
 
 vm_id = client.vms.get_id_by_name(server_name)
 vm_value = str(vm_id['value'])
 url = baseUri+'/Vm/' + vm_value
+data = s.get(url)
+print(data.json())
 real_data = client.vms.get_by_id(vm_id)
-real_data["memory"] = new_memory
-real_data["memoryLimit"] = new_memory_max
+real_data["cpuCount"] = processors
+real_data["cpuCountLimit"] = processors_limit
+# real_data["pinnedCpus"] = processor_cap
 data_put = s.put(url,data=json.dumps(real_data))# the line that does the magic of  modifying
 
 
