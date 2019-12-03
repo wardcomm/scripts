@@ -2,6 +2,7 @@ import ovmclient
 import json
 import requests
 import warnings
+import sys
 from urllib3.exceptions import  InsecureRequestWarning
 warnings.simplefilter('ignore',InsecureRequestWarning)
 
@@ -9,12 +10,14 @@ warnings.simplefilter('ignore',InsecureRequestWarning)
 user = 'p2906297'
 password = 'THem5dax'
 
+
+server_name = sys.argv[1]
 client = ovmclient.Client(
     'https://ovmdmgr04:7002/ovm/core/wsapi/rest', user, password)
 baseUri = 'https://ovmdmgr04:7002/ovm/core/wsapi/rest'
 # Make sure the manager is running
 client.managers.wait_for_manager_state()
-vm_id = client.vms.get_id_by_name('NAGA')
+vm_id = client.vms.get_id_by_name(server_name)
 print(vm_id)
 vm_value = str(vm_id['value'])
 print(vm_value)
