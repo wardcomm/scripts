@@ -2,7 +2,7 @@
 import requests 
   
 # api-endpoint 
-URL = "http://maps.googleapis.com/maps/api/geocode/json"
+URL = "0"
   
 # location given here 
 location = "delhi technological university"
