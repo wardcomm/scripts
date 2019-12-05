@@ -1,15 +1,23 @@
+#!/usr/bin/env python 
+#imports libraries
 import requests
-import sys
 import urllib3
 import ovmclient
+import sys
+import os
+import time
 import json
 import pprint
 
-#variable
-user = 'p2906297'
-password = 'THem5dax'
+#variables
+user = "p2906297"
+password = "THem5dax"
 baseUri = 'https://ovmdmgr04:7002/ovm/core/wsapi/rest'
-client = ovmclient.Client(baseUri, user, password)
+client = ovmclient.Client( baseUri, user, password )
+server_pool = "ndc-pool07-x86"
+clone_template = "ol7-template-UEK-kernel"
+new_server = sys.argv[1]
+time.sleep(3)
 repo_name = client.repositories.get_id_by_name('pool07-virt1-repo')
 repo_value = (repo_name['value'])
 pp = pprint.PrettyPrinter(indent=4)
@@ -18,6 +26,34 @@ s = requests.Session()
 s.auth=( user, password )
 s.verify=False #disables SSL certificate verification
 s.headers.update({'Accept': 'application/json', 'Content-Type': 'application/json'})
+
+# Make sure the manager is running
+client.managers.wait_for_manager_state()
+
+pool_id = client.server_pools.get_id_by_name( server_pool )
+
+# Get an existing VM or a VM template
+vm_id = client.vms.get_id_by_name( clone_template )
+
+# Set to True to create a VM template, False for a regular VM
+create_template = False
+
+# Clone the VM
+try:
+  job = client.jobs.wait_for_job(
+    client.vms.clone(vm_id, pool_id, create_template=create_template))
+
+except NameError:
+  print("arguement was not given")
+except IndexError:
+  print("arguement was not given")
+except:
+  print("need to type example: .\OVM_CLONE_VM.py YODA in command line ")
+new_vm_id = job['resultId']
+
+data = client.vms.get_by_id(new_vm_id )
+data["name"] = new_server
+client.jobs.wait_for_job(client.vms.update(new_vm_id, data))
 
 vm_get = client.vms.get_id_by_name(server_name)
 vm_value = str(vm_get['value'])
