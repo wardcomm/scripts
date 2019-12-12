@@ -71,7 +71,7 @@ vm_disk_mapping_data = {
    "diskWriteMode":"READ_WRITE",
    "emulatedBlockDevice":False,
    "storageElementId":"None",
-   "diskTarget":3
+   "diskTarget":0,
 }
 
 print("A")
@@ -90,8 +90,9 @@ map = "0004fb00000600006d8682d0a02325d4"
 
 # abc_url = baseUri + '/Repositories/0004fb0000030000b7b4973509ec4981/VirtualMachines/0004fb00000600006d8682d0a02325d4/vm.cfg'
 # xyz_url = baseUri + '/VmDiskMapping/0004fb0000130000a0e46130e576e5ac'
-# test = "https://ovmdmgr04:7002/ovm/core/wsapi/rest/Vm/0004fb00000600006d8682d0a02325d4/VmDiskMapping/"
-test = "https://ovmdmgr04:7002/ovm/core/wsapi/rest/Vm/0004fb00000600006d8682d0a02325d4/"
+test = "https://ovmdmgr04:7002/ovm/core/wsapi/rest/Vm/0004fb00000600006d8682d0a02325d4/VmDiskMapping/"
+# test = "https://ovmdmgr04:7002/ovm/core/wsapi/rest/VmDiskMapping/0004fb0000120000daf6056c18e70eed.img"
+# test = "https://ovmdmgr04:7002/ovm/core/wsapi/rest/Vm/0004fb00000600006d8682d0a02325d4"
 # test = "https://ovmdmgr04:7002/ovm/core/wsapi/rest/VmDiskMapping/"
 # test_url = baseUri + /VmDiskMapping/'
 # print("this is repository id virtualmachine id")
@@ -120,6 +121,7 @@ print(dictionary)
 # client.repository_virtual_disks(repo_value).create(disk_data, sparse='true')
 # client.vm_disk_mappings(map).create(vm_disk_mapping_data)
 # img_url = (get_uri_from_disk_mapping_rename)
+client.vm_disk_mappings('0004fb00000600006d8682d0a02325d4').create(vm_disk_mapping_data)
 vm_get = client.vms.get_id_by_name(server_name)
 vm_value = str(vm_get['value'])
 url = baseUri+'/Vm/' + vm_value
@@ -128,8 +130,9 @@ final_data = test + image
 print(test)
 print(final_data)
 # client.vm_disk_mappings(vm_id).create(vm_disk_mapping_data)
-data_put = s.post(test, data=json.dumps(vm_disk_mapping_data))
+# data_put = s.post(test, data=json.dumps(vm_disk_mapping_data))
 print(data_put)
 print(data_put.content)
 print(data_put.text)
+print(get_data)
 # post url data
