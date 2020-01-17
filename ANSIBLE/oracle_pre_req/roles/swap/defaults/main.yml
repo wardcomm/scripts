@@ -1,0 +1,14 @@
+---
+swap_file_path: /swapfile
+small_swap_file_size_mb: '16384'
+swap_swappiness: '60'
+swap_file_state: present
+small_swap_file_create_command: "dd if=/dev/zero of={{ swap_file_path }} bs=1024 count={{ small_swap_file_size_mb }}"
+swap_test_mode: false
+big_swap_file_size_mb: '32768'
+big_swap_file_create_command: "dd if=/dev/zero of={{ swap_file_path }} bs=1024 count={{ big_swap_file_size_mb }}"
+big_logic: if "{{ ansible_memtotal_mb }}" >= '262144' {{ big_swap_file_create_command }}
+small_logic: if "{{ ansible_memtotal_mb }}"< '262144' {{ small_swap_file_create_command }}
+# {{ {{ansible_memtotal_mb}} is version('262144', '<=') }}
+
+#  dd if=/dev/zero of=/extraswap bs=1M count=16384

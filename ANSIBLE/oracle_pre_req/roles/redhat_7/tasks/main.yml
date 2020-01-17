@@ -1,0 +1,6 @@
+---
+  - name: check uptime
+    shell: cat /proc/uptime
+    register: reboot_check
+  - debug:
+      msg: this is the kernel   {{ ansible_kernel }}

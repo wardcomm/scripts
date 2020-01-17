@@ -1,0 +1,32 @@
+---
+  - name: check memory total
+    shell: grep MemTotal /proc/meminfo
+    register: mem_total
+
+  - name: check memory swap
+    shell: grep SwapTotal /proc/meminfo
+    register: swap_total
+
+  - name: check memory
+    shell: grep HugePages /proc/meminfo
+    register: hugepages_total
+
+  - name: check if ssh is running
+    shell: ps -ef|grep ssh
+    register: ssh_running
+
+  - name:  Check if /tmp has at lease 4gb of freespace
+    shell: df -kh /tmp
+    register: tmp_4gig_freespace
+
+  - name: Check /var/tmp for permission
+    shell:  ls -lsrta /var |grep tmp
+    register: var_temp_permission
+
+  - name: check free RAM
+    shell: free
+    register: free
+
+  - name: Check shared memory
+    shell: df -h /dev/shm
+    register: shared_memory

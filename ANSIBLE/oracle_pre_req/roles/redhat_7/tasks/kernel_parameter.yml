@@ -1,0 +1,57 @@
+---
+  - name: Add or modify nproc soft limit for the user oracle
+    pam_limits:
+      domain: oracle
+      limit_type: soft
+      limit_item: nproc
+      value: 4096
+
+  - name: Add or modify nproc hard limit for the user oracle
+    pam_limits:
+      domain: oracle
+      limit_type: hard
+      limit_item: nproc
+      value: 16384
+
+  - name: Add or modify nofile soft limit for the user oracle
+    pam_limits:
+      domain: oracle
+      limit_type: soft
+      limit_item: nofile
+      value: 2048
+
+  - name: Add or modify nofile hard limit for the user oracle
+    pam_limits:
+      domain: oracle
+      limit_type: hard
+      limit_item: nofile
+      value: 65536
+
+  - name: Add or modify stack soft limit for the user oracle
+    pam_limits:
+      domain: oracle
+      limit_type: soft
+      limit_item: stack
+      value: 10240
+
+  - name: Add or modify stack hard limit for the user oracle
+    pam_limits:
+      domain: oracle
+      limit_type: hard
+      limit_item: stack
+      value: 32768
+
+  - name: Add or modify stack hard limit for the user oracle
+    pam_limits:
+      domain: oracle
+      limit_type: soft
+      limit_item: memlock
+      value: v
+
+
+
+
+
+
+  - debug:
+      msg: this is the kernel   {{ ansible_kernel }}

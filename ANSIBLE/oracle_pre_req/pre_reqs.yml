@@ -1,0 +1,14 @@
+---
+- hosts: all
+  gather_facts: true
+  connection: local
+
+  roles:
+    - role: redhat_7
+      when: ansible_distribution == 'RedHat' and ansible_distribution_version >= '7.6'
+    - role: host_vars
+    - role: swap
+    - oel
+    - rac
+    - rac_one_node
+    - gi_standalone

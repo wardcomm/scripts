@@ -1,0 +1,9 @@
+---
+
+- name: check if host has booted within last 300 sec
+
+  shell: test $(cat /proc/uptime | cut -d. -f1) -lt 300
+
+  changed_when: false
+
+  register: reboot_check
