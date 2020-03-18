@@ -1,14 +1,27 @@
 ---
 swap_file_path: /swapfile
-small_swap_file_size_mb: '16384'
+small_swap_file_size_mb: '16385' #16384 + 1 block is needed to work
+big_swap_file_size_mb: '32768'
 swap_swappiness: '60'
 swap_file_state: present
 small_swap_file_create_command: "dd if=/dev/zero of={{ swap_file_path }} bs=1024 count={{ small_swap_file_size_mb }}"
 swap_test_mode: false
-big_swap_file_size_mb: '32768'
 big_swap_file_create_command: "dd if=/dev/zero of={{ swap_file_path }} bs=1024 count={{ big_swap_file_size_mb }}"
-big_logic: if "{{ ansible_memtotal_mb }}" >= '262144' {{ big_swap_file_create_command }}
-small_logic: if "{{ ansible_memtotal_mb }}"< '262144' {{ small_swap_file_create_command }}
+scale: '1024'
+scoggins_constant: '262144'
+percent: '100'
+physical_memory_command: "dmidecode -t 17 | grep 'Size: [0-9]' | awk '{print $2}' | paste -sd+ - | bc"
+
+
+# big_logic: if "{{ ansible_memtotal_mb }}" >= '262144' {{ big_swap_file_create_command }}
+# small_logic: if "{{ ansible_memtotal_mb }}"< '262144' {{ small_swap_file_create_command }}
+# box_memtotal: "cat /proc/meminfo | grep MemTotal | awk '{print $2}'"
+# kb_mb_convert:  "{{ box_memtotal |  / '1024' }}"
+# box_memtotal: "cat /proc/meminfo | grep MemTotal | awk '{print $2}'"
+# kb_mb_convert:  "{{ box_memtotal  / 1024 }}"
+# big_swap: "{{ kb_mb_convert >= '262144'}}"
+# small_swap: "{{ kb_mb_convert < '262144'}}"
+
 # {{ {{ansible_memtotal_mb}} is version('262144', '<=') }}
 
 #  dd if=/dev/zero of=/extraswap bs=1M count=16384

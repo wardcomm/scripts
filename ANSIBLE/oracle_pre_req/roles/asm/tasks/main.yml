@@ -2,8 +2,8 @@
   - include_tasks: "{{ task }}"
     tags: "always"
     loop:
-      - kernel_parameter.yml
-
+      - asmlib_install.yml
+      - check_drive_type.yml
 
     loop_control:
       loop_var: task

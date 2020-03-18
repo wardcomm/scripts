@@ -1,0 +1,150 @@
+---
+- block:
+    # On RHEL 6 tzdata-update command will not work if /etc/localtime is symlink.
+    # - name: "Ensure /etc/localtime is a regular file"
+    #   copy:
+    #     remote_src: yes
+    #     src: "/usr/share/zoneinfo/{{ ntp.timezone }}"
+    #     dest: "/etc/localtime"
+    #     owner: "root"
+    #     group: "root"
+    #     mode: "0644"
+    #   when: ansible_distribution_major_version == "6"
+
+  - name: Setting Time Zone
+    timezone:
+      name: America/Chicago
+      hwclock: local
+
+
+    # - name: "Ensure Time Zone"
+    #   timezone:
+    #     hwclock: "UTC"
+    #     name: "{{ ntp.timezone }}"
+    #   notify: "restart cron"
+    #   when: not hadoop
+
+    # - name: "Ensure Time Zone (Hadoop)"
+    #   timezone:
+    #     hwclock: "UTC"
+    #     name: "UTC"
+    #   notify: "restart cron"
+    #   when: hadoop
+
+    #############################################################################
+    # Current base images have old Satellite 5 configs which trip up the yum list
+    # that the yum: module seems to be using to test for package presence and
+    # hard fails on improper cert location. This was observed in RHEL7, not sure
+    # the status on RHEL6.
+    # The following is a snippet from repos.yml to fix the problem. We are not
+    # calling repos.yml beforehand, which would naturally fix this, because time
+    # setup should be done before repos.
+    #
+    # Once we go to the new thin template I don't think this will be required any
+    # more.
+  - set_fact:
+        up2date_sysconfig: "/etc/sysconfig/rhn/up2date"
+
+  - name: "Check for up2date sysconfig presence"
+    stat:
+      path: "{{ up2date_sysconfig }}"
+    register: up2date_stat
+
+  - name: "Ensure sslCACert is properly set in up2date sysconfig"
+    lineinfile:
+      path: "{{ up2date_sysconfig }}"
+      regexp: '^\s*sslCACert\s*=.*'
+      line: "sslCACert=/usr/share/rhn/RHNS-CA-CERT"
+      backup: no  # it will get purged later anyways
+      state: "present"
+    when: up2date_stat.stat.exists
+    #############################################################################
+
+  - block:
+    - name: "Ensure ntp packages are installed"
+      yum:
+        name:
+          - "ntp"
+          - "ntpdate"
+        state: "present"
+
+      # This task does not make any changes to the system. The 'changed_when'
+      # directive ensures the task will never report a change. All we need is to
+      # evaluate the RC of the ntpstat command to determine what to do next.
+    - name: "Get status of ntpd"
+      command: "/usr/bin/ntpstat"
+      register: ntpstat_results
+      ignore_errors: "yes"
+      failed_when: false
+      changed_when: false
+
+      # If ntpstat command failed with rc=2, ntpd is not running.
+      # This condition would imply that ntpd is either just not running or won't
+      # run because the time is too far off. In either event, set it manually.
+    - name: "Set time manually if ntpstat command failed"
+      command: "/usr/sbin/ntpdate -u {{ ntp['servers'][0] }}"
+      register: ntpdate_results
+      when: ntpstat_results.rc == 2
+
+    - name:  "Ensure ntp.conf is set to the standard"
+      template:
+        src: "templates/ntp.j2"
+        dest: "/etc/ntp.conf"
+        owner: "root"
+        group: "root"
+        mode: "0644"
+        backup: "yes"
+      notify:
+        - "restart ntp"
+
+    - name:  "Ensure ntpd  is set to the standard"
+      template:
+        src: "templates/ntpd.j2"
+        dest: "/etc/sysconfig/ntpd"
+        owner: "root"
+        group: "root"
+        mode: "0644"
+        backup: "yes"
+      notify:
+       - "restart ntp"
+
+    - name: verify ntpd is set “-g -x”
+      shell: ps -ef|grep ntp
+
+    - name: "Ensure ntpd service is running"
+      service:
+        name: "ntpd"
+        state: "started"
+        enabled: true
+
+      when: ansible_distribution_major_version == "6" or ansible_distribution_major_version == "7"
+
+    - block:
+      - name: ensure ntpdate isn't installed
+        package:
+          name: 'ntpdate'
+          state: absent
+
+      - name: install chrony
+        package:
+          name: 'chrony'
+          state: latest
+
+      - name: "Ensure chrony.conf is set to the standard"
+        template:
+          src: "templates/chrony.j2"
+          dest: "/etc/chrony.conf"
+          owner: "root"
+          group: "root"
+          mode: "0644"
+          backup: "yes"
+        notify:
+          - "restart chronyd"
+
+      when: ansible_distribution_major_version == "8"
+
+    - meta: flush_handlers
+    become: true
+    tags:
+      - "time"
+      - "pbis"

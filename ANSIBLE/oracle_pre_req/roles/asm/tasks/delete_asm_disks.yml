@@ -1,0 +1,20 @@
+---
+- name: set delete asm disk if already created
+  command:  /usr/sbin/oracleasm deletedisk -v {{disk_partion.label}}
+  loop:
+    - { label: D0001 }
+    - { label: D0002 }
+    - { label: D0003 }
+    - { label: D0004 }
+    - { label: R9001 }
+    - { label: R9002 }
+    - { label: R9003 }
+    - { label: R9004 }
+    - { label: GRID_DISK01 }
+    - { label: GRID_DISK02 }
+    - { label: GRID_DISK03 }
+    - { label: EXP001 }
+    - { label: EXP002 }
+    - { label: EXP003 }
+  loop_control:
+    loop_var: disk_partion

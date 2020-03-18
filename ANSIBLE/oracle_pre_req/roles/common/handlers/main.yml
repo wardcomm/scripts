@@ -1,0 +1,151 @@
+- name: "Restart auditd"
+  # Must use service command: https://access.redhat.com/solutions/2664811
+  command: "service auditd restart"
+  args:
+    warn: false
+  listen: "restart auditd"
+  become: true
+
+- name: "Restart rsyslog"
+  service:
+    name: "rsyslog"
+    state: "restarted"
+  listen: "restart rsyslog"
+  become: true
+
+- name: "Rebuild grub2 config"
+  command: "grub2-mkconfig -o /boot/grub2/grub.cfg"
+  listen: "rebuild grub2 config"
+  become: true
+
+- name: "Restart ntp"
+  service:
+    name: "ntpd"
+    state: "restarted"
+  listen: "restart ntp"
+  become: true
+
+- name: "Restart chronyd"
+  service:
+    name: "chronyd"
+    state: "restarted"
+  listen: "restart chronyd"
+  become: true
+
+- name: "Restart postfix"
+  service:
+    name: "postfix"
+    state: "restarted"
+  listen: "restart postfix"
+  become: true
+
+- name: "Restart cron"
+  service:
+    name: "crond"
+    state: "restarted"
+  listen: "restart cron"
+  become: true
+
+- name: "Restart SNMP"
+  service:
+    name: "snmpd"
+    state: "restarted"
+  listen: "restart snmp"
+  become: true
+
+- name: "Rehash OpenLDAP cacerts"
+  command: "/usr/sbin/cacertdir_rehash /etc/openldap/cacerts"
+  listen: "rehash openldap cacerts"
+  become: true
+
+- name: "Restart SSSD"
+  service:
+    name: "sssd"
+    state: "restarted"
+  listen: "restart sssd"
+  become: true
+
+- name: "Restart NetBackup"
+  service:
+    name: "netbackup"
+    state: "restarted"
+  listen: "restart netbackup"
+  become: true
+
+- name: "Restart SSHD"
+  service:
+    name: "sshd"
+    state: "restarted"
+  listen: "restart sshd"
+  become: true
+
+- name: "Restart PBIS Service Manager"
+  service:
+    name: "lwsmd"
+    state: "restarted"
+  listen: "restart lwsmd"
+  become: true
+
+- name: "Restart RSCD"
+  service:
+    name: "rscd"
+    state: "restarted"
+  listen: "restart rscd"
+  become: true
+
+- name: "Restart XYMON Client"
+  service:
+    name: "xymon-client"
+    state: "restarted"
+  listen: "restart xymon-client"
+  become: true
+
+- name: "Restart xagt (FireEye)"
+  service:
+    name: "xagt"
+    state: "restarted"
+  listen: "restart xagt"
+  become: true
+
+################################################################################
+#      !!!! NO ADDITIONAL HANDLERS SHOULD GO BEYOND THIS POINT !!!!            #
+################################################################################
+
+# Sleep is required in order to not display unreachable messages once the
+# connection dies. I think it needs to be 1 more than the async number, which
+# tells it to wait that many seconds before closing the connection. poll:
+# should also be 0 so it doesn't try to recheck the status.
+- name: "Reboot and wait"
+  shell: "sleep 2; shutdown -r now 'Ansible triggered reboot'"
+  async: 1
+  poll: 0
+  ignore_errors: true
+  changed_when: true
+  become: true
+  listen:
+    - "reboot"
+    - "reboot and wait"
+  when: allow_reboot
+
+# Once a reboot is called we have to wait until the remote host has shutdown the
+# remote access service so that we don't get a false positive when checking if
+# the host has come back up below.
+- name: "Wait for host to shutdown remote access"
+  pause:
+    seconds: 10
+  listen:
+    - "reboot and wait"
+  when: allow_reboot
+
+- name: "Waiting on connection to host"
+  wait_for:
+    host: "{{ inventory_hostname }}"
+    port: 22
+    state: "started"
+    delay: 5
+    timeout: 180
+  connection: local
+  become: false
+  listen:
+    - "reboot and wait"
+  when: allow_reboot

@@ -1,0 +1,11 @@
+---
+- name: copy oracle_profile to /etc/profile.d/ folder
+  copy:
+    src: files/oracle_profile.sh
+    dest: /etc/profile.d/oracle_profile.sh
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: source the file
+  shell: source   /etc/profile.d/oracle_profile.sh

@@ -1,0 +1,6 @@
+---
+memtotal: "{{ ansible_memtotal_mb }}"
+ram_size: "{{ ansible_memtotal_mb * 1024 | float | int }}"
+ram_math: "{{ ram_size |float * 0.9 }}"
+mem_lock: "{{ ram_math | float | round(1, 'floor') | int}}"
+oracle_user: oracle

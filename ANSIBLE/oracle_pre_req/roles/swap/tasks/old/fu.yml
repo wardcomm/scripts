@@ -1,0 +1,32 @@
+---
+  - hosts: 127.0.0.1
+    gather_facts: yes
+    connection: local
+    vars:
+    - scale: 1024
+    - total_mem: 4194304
+
+    tasks:
+    - name: Math
+      debug:
+        msg: "The value of {{ total_mem }} divided by {{ scale }} is {{ total_mem // scale }} KB."
+
+    - name: Math too...
+      debug:
+        msg: "The value of {{ total_mem }} divided by ({{ scale }} * {{ scale }}) is {{ total_mem // scale }} GB."
+
+    - name: Create "BF" variable value...
+      set_fact:
+        big_factor: "{{ scale * scale }}"
+
+    - name: Create "GB" variable value...
+      set_fact:
+        GB: "{{ total_mem // big_factor | int }}"
+
+    - name: Dump all vars...
+      debug:
+        msg:
+        - "Scale factor is: {{ scale }}."
+        - "Big factor is {{ big_factor }}."
+        - "Total memory is {{ total_mem }}."
+        - "Memory in GB is {{ GB }}."

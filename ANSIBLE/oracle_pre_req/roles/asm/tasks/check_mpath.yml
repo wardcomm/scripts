@@ -1,0 +1,6 @@
+---
+- name: check for mpath disk
+  shell: multipath -v3 -d -ll
+  register: mpath_disks
+
+- name: debug_mpath

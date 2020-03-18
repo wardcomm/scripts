@@ -1,0 +1,24 @@
+---
+- name: Clone a Virtual Machine from template
+  ovmm_vm_updated:
+
+    state: clone_template
+    name: ST_VM40_test
+    ovm_host: ovmdmgr04
+    ovm_port: 7002
+    ovm_user: p2906297
+    ovm_pass: 'THem5dax'
+    server_pool: ndc-pool07-x86
+    repository: pool07-virt1-repo
+    memory: 4096
+    vcpu_cores: 4
+#        boot_order: PXE
+    vmTemplate: ol7-template-UEK-kernel
+    vmCloneDefinition: ol_ansible
+    vmrootpassword: changeme
+
+  register: testout
+
+- name: dump test output
+  debug:
+    msg: '{{ testout }}'

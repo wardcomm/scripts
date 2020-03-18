@@ -1,0 +1,18 @@
+---
+- name: Create /u01 directory if it does not exist
+  file:
+    path: /u01
+    state: directory
+    recurse: yes
+    owner: oracle
+    group: oinstall
+    mode: '0755'
+
+- name: Create /u02 directory if it does not exist
+  file:
+    path: /u02
+    state: directory
+    recurse: yes
+    owner: oracle
+    group: oinstall
+    mode: '0755'

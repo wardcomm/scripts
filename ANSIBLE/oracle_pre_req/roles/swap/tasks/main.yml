@@ -1,23 +1,30 @@
 ---
-- name: Check if big or small swap
-  set_fact:
-    big_swap: "{{ ansible_memtotal_mb >= '262144'}}"
-    small_swap: "{{ ansible_memtotal_mb < '262144'}}"
-- debug:
-    msg:
-    - "{{ small_swap }}"
-    - "{{ big_swap }}"
+  - name: Manage swap file entry in fstab.
+    mount:
+      name: none
+      src: "{{ swap_file_path }}"
+      fstype: swap
+      opts: sw
+      state: "{{ swap_file_state }}"
 
-- name: Manage swap file entry in fstab.
-  mount:
-    name: none
-    src: "{{ swap_file_path }}"
-    fstype: swap
-    opts: sw
-    state: "{{ swap_file_state }}"
+  - include_tasks: logic.yml
+    tags: "always"
 
-- include_tasks: disable.yml
-  when: swap_file_state == 'absent'
+  - include_tasks: disable.yml
+    when: swap_file_state == 'absent'
 
-- include_tasks: enable.yml
-  when: swap_file_state == 'present'
+  - include_tasks: enable.yml
+    when: swap_file_state == 'present'
+
+
+
+
+
+
+  # - include_tasks: "{{ task }}"
+  #   tags: "always"
+  #   loop:
+  #     - logic.yml
+
+  #   loop_control:
+  #   loop_var: task

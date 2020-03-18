@@ -1,0 +1,13 @@
+---
+  - include_tasks: "{{ task }}"
+    tags: "always"
+    loop:
+      # - yum.yml
+      - oracle_users_and_groups.yml
+      - check_home_and_shell.yml
+      - umask.yml
+      - profile.yml
+      - time.yml
+      - directory.yml
+    loop_control:
+      loop_var: task

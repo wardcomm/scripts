@@ -1,0 +1,6 @@
+---
+- name:         Initialize "{{ oasm_disk.dev }}1" as "{{ oasm_disk.disk }}"
+  command:      /usr/sbin/oracleasm createdisk "{{ oasm_disk.disk }}" "{{ oasm_disk.dev }}1"
+  ignore_errors: yes
+  when:
+    -  "oasm_disk_status.rc == 1 "

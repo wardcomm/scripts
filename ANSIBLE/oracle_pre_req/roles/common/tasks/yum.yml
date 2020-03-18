@@ -1,0 +1,45 @@
+---
+  - name: Install Multiple Apps
+    yum:
+      name: "{{ item }}"
+      state: latest
+    loop:
+       - expect
+       - tree
+       - bc
+       - binutils
+       - compat-libcap1
+      #  - compat-libstdc++
+       - elfutils-libelf
+       - elfutils-libelf-devel
+       - fontconfig-devel
+       - glibc
+       - glibc-devel
+       - gcc
+       - gcc-c++
+       - ksh
+       - libaio
+       - libaio-devel
+       - libX11
+       - libXau
+       - libXi
+       - libXtst
+       - libXrender
+       - libXrender-devel
+       - librdmacm-devel
+       - libgcc
+       - libstdc++
+       - libstdc++-devel
+       - libxcb
+       - make
+       - net-tools
+       - nfs-utils
+       - python
+       - python-configshell
+       - python-rtslib
+       - python-six
+       - targetcli
+       - smartmontools
+       - sysstat
+      #  - cvuqdisk
+       - kmod

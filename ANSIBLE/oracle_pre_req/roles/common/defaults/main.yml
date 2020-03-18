@@ -1,0 +1,9 @@
+---
+oracle_user: oracle
+oracle_base: /oracle/app
+oracle_dba_group: dba
+oracle_oinstall_group: oinstall
+oracle_psapps_group: psapps
+oracle_database_type: GENERAL_PURPOSE
+oracle_os_user_pass: oracle
+oracle_asmadmin_group: asmadmin

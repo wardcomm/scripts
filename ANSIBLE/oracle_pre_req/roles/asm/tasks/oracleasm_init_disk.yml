@@ -1,0 +1,61 @@
+- name:         Query status of disk "{{ oasm_disk.dev }}1"
+  command:      /usr/sbin/oracleasm querydisk "{{ oasm_disk.dev }}1"
+  changed_when: false
+  failed_when:  false
+  register:     oasm_disk_status
+
+- debug:
+    var:        oasm_disk_status
+    verbosity:  1
+
+- name:         Ensure that there is one partition that occupies whole disk "{{ oasm_disk.dev }}"
+  parted:
+    device:     "{{ oasm_disk.dev }}"
+    number:     1
+    state:      present
+    label:      msdos
+    part_type:  primary
+    part_start: 0%
+    part_end:   100%
+
+- name: Copy 99-oracle-asmdevices.rules file with owner and permissions
+  copy:
+    src: files/99-oracle-asmdevices.rules
+    dest: /etc/udev/rules.d/99-oracle-asmdevices.rules
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Reload udev Rules
+  command: udevadm control --reload-rules
+
+- name:   udevadm trigger
+  command: udevadm trigger --type=devices --action=change
+
+- name: change ownership of devices
+  file:
+    path:  "{{ oasm_disk.dev }}1"
+    owner: oracle
+    group: oinstall
+
+
+
+- include_tasks: delete_asm_disks.yml
+  when: "oasm_disk_status.rc == 0 "
+
+- include_tasks: initialize_disks.yml
+  when: "oasm_disk_status.rc == 1 "
+
+# - name: clear the disk headers
+#   command: dd if=/dev/zero of={{oasm_disk.dev}} bs=1024 count=1024
+
+# - name:         Initialize "{{ oasm_disk.dev }}1" as "{{ oasm_disk.disk }}"
+#   command:      /usr/sbin/oracleasm createdisk "{{ oasm_disk.disk }}" "{{ oasm_disk.dev }}1"
+#   ignore_errors: yes
+#   when:
+#     - '"is not marked as an ASM disk" in oasm_disk_status.stdout'
+#     # - '"is already labeled for ASM disk" in oasm_disk_status.stdout'
+
+
+- name: oracle list_disks
+  command: /usr/sbin/oracleasm listdisks

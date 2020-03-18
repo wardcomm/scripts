@@ -10,10 +10,20 @@
 #   - "{{ big_swap }}"
 - debug:
     msg:
-    - "small_swap is {{ small_swap }}."
+    - "{{ small_swap }}"
     - "{{ small_swap_file_create_command }}"
     - "{{ big_swap_file_create_command }}"
-    - "{{swap_file_path}}"
+    - "{{ swap_file_path }}"
+
+- name: Disable swap (if configured).
+  command: swapoff -a
+
+- name: Ensure swap file doesn't exist (if configured).
+  file:
+    path: "{{ swap_file_path }}"
+    state: absent
+
+
 
 - name: Ensure small swap file of 16 Gigs exits
   shell:
@@ -25,9 +35,12 @@
 - debug:
     msg: "big_swap is {{ big_swap }}."
 
+- debug:
+    msg: "small_swap is {{ small_swap }}."
+
 - name: Ensure Large swap file of 32 gigs exits
-  shell: >
-    "{{ big_swap_file_create_command }}"
+  shell:
+    cmd: "{{ big_swap_file_create_command }}"
     creates: "{{ swap_file_path }}"
   register: swap_file_create
   when: big_swap
@@ -39,19 +52,24 @@
     group: root
     mode: 0600
 
+- name: swapoff unmount swap if already created
+  shell: swapoff -a
+  register: swapoff_result
+  ignore_errors: true
+
 - name: Make swap file if necessary.
   shell: mkswap -L swap {{ swap_file_path }}
-  when: swap_file_create is changed
+  # when: swap_file_create is changed
   register: mkswap_result
+
+- name: Run swapon enable the swap file.
+  shell: swapon -a
+  # when:
+  #   - swapon_result is true
 
 - name: Run swapon show the swap file.
   shell: swapon -s {{ swap_file_path }}
   register: swapon_result
-
-- name: Run swapon enable the swap file.
-  shell: swapon {{ swap_file_path }}
-  # when:
-  #   - swapon_result is true
 
 - name: Set swappiness.
   sysctl:
