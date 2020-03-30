@@ -1,0 +1,34 @@
+---
+
+oracle_version: 12.1.0.2
+
+# Oracle Editions avaialble: EE, SEONE, SE
+oracle_edition: EE
+
+# location for temporary installation files
+oracle_tmp: /u01/tmp/{{ oracle_version }}
+
+install_base: /u01/app
+
+oracle_base: "{{ install_base }}/oracle"
+
+oracle_db_name: db
+
+oracle_db_mem: "2048"
+
+# FILE_SYSTEM_STORAGE | ASM_STORAGE
+oracle_storage_type: ASM_STORAGE
+
+asm_data_group: DATA
+
+rac_install: "{% if ansible_play_hosts | length > 1 -%}true
+              {%- else -%}false
+              {%- endif %}"
+
+## TODO: Get standard location where binaries can reliably be found
+# For the lab, this path can be mounted using: `mount 10.10.98.164:/export/techlab/ovm /ansible` (nfs-utils & nfs-utils-lib will need to be installed)
+oracle_installer_path: "/ansible"
+
+# Whether to start Oracle Enterprise Manager DBconsole
+oracle_em: false
+

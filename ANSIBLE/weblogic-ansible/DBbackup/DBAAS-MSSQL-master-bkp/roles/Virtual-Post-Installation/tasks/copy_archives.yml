@@ -1,0 +1,11 @@
+---
+
+- win_get_url:
+    url: '{{ bin_server }}\mssql_bin.zip'
+    dest: "{{ ansible_directory }}"
+    validate_certs: no
+
+- win_unzip:
+    src: '{{ ansible_directory }}\mssql_bin.zip'
+    dest: '{{ installer_location }}'
+    delete_archive: yes

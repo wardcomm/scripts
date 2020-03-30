@@ -1,0 +1,100 @@
+---
+
+# - name: Clean Directories
+  # become: yes
+  # become_user: root
+  # file:
+    # state: absent
+    # path: "{{ item }}"
+  # with_items:
+    # - "{{ DEMO_DOMAIN_HOME }}"
+
+# - name: Copy DEMO Domain Creation Script to Stage Directory
+  # become: yes
+  # become_user: "{{ install_user }}"
+  # template:
+   # src:  roles/fmw-domain/files/createDEMODomain.py
+   # dest: "{{ STAGE_DIR }}/createDEMODomain.py"
+
+# - name: Creating DEMO Domain "{{ DEMO_DOMAIN_HOME }}"
+  # become: yes
+  # become_user: "{{ install_user }}"
+  # command: "./wlst.sh {{ STAGE_DIR }}/createDEMODomain.py"
+  # args:
+    # chdir: "{{ ORACLE_BIN }}"
+  # environment:
+    # JAVA_HOME: "{{ JAVA_HOME }}"
+
+# - name: Create DEMO AdminServer log and other needed dirs
+  # become: yes
+  # become_user: root
+  # file:
+    # state: directory
+    # path: "{{ item }}"
+    # owner: "{{ install_user }}"
+    # group: "{{ install_group }}"
+    # mode: 0755
+  # with_items:
+    # - "{{ DEMO_DOMAIN_HOME }}/servers/AdminServer/logs"
+    # - "{{ ORACLE_HOME }}/oracle_common/common/nodemanager/security"
+
+# - name: Enable JDBC Remote for DEMO
+  # become: yes
+  # become_user: "{{ install_user }}"
+  # replace:
+    # destfile: "{{ DEMO_DOMAIN_HOME }}/bin/setDomainEnv.sh"
+    # regexp:   'Dweblogic.jdbc.remoteEnabled=false'
+    # replace:  'Dweblogic.jdbc.remoteEnabled=true'
+    # backup: yes
+
+# - name: Enable Production Mode
+  # become: yes
+  # become_user: "{{ install_user }}"
+  # replace:
+    # destfile: "{{ DEMO_DOMAIN_HOME }}/bin/setDomainEnv.sh"
+    # regexp:   'PRODUCTION_MODE=""'
+    # replace:  'PRODUCTION_MODE="true"'
+    # backup: yes
+
+# - name: Copy setclassPath script Domain home
+  # become: yes
+  # become_user: "{{ install_user }}"
+  # template:
+   # src:  roles/fmw-domain/files/setclassPath.sh
+   # dest: "{{ DEMO_DOMAIN_HOME }}/security"
+
+# - name: Set WL environment
+  # become: yes
+  # become_user: "{{ install_user }}"
+  # shell: "sh setWLSEnv.sh"
+  # args:
+    # chdir: "{{ WLSERVER }}/server/bin"
+  # environment:
+    # JAVA_HOME: "{{ JAVA_HOME }}"
+
+- name: copying createDemoKey script 
+  become: yes
+  become_user: "{{ install_user }}"
+  copy:
+    src: roles/fmw-domain/files/createDemoKey.sh
+    dest: "{{  DEMO_DOMAIN_HOME }}/security/createDemoKey.sh"
+    mode: 0755
+
+- name: create DemoKey file
+  become: yes
+  become_user: "{{ install_user }}"
+  shell: "sh createDemoKey.sh"
+  args:
+    chdir: "{{ DEMO_DOMAIN_HOME }}/security"
+  environment:
+    JAVA_HOME: "{{ JAVA_HOME }}"
+
+# - name: Fetch Keyfile for DEMO
+  # become: yes
+  # become_user: "{{ install_user }}"
+  # fetch:
+    # src:  "{{ DEMO_DOMAIN_HOME }}/security/DemoIdentity.jks"
+    # dest: /tmp/DemoIdentity.jks
+    # flat: yes
+    # fail_on_missing: yes
+

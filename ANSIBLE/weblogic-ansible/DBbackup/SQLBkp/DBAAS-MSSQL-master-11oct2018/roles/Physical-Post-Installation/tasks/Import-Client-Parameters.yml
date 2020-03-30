@@ -1,0 +1,18 @@
+---
+
+- name: Copy Import Client Parameters file
+  win_template: 
+    src: ../templates/Import-Client-Parameters-SQL2.j2
+    dest: c:\Ansible\Temp\Import-Client-Parameters-SQL2.ps1
+  diff: false
+
+- name: Import Client Parameters  
+  win_shell: |
+     c:\Ansible\Temp\Import-Client-Parameters-SQL2.ps1 > c:\Ansible\Logs\Import-Client-Parameters-SQL2.log
+  register: Import
+  no_log: true
+
+- name: Protected Output - Import Client Parameters  
+  debug:                                                                  
+    var: "Import | combine({'cmd': Import.cmd | replace(SaPw, '<PASSWORD HIDDEN>') | replace(password, '<PASSWORD HIDDEN>')})"
+  failed_when: Import.rc

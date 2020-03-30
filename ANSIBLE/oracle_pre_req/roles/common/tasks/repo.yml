@@ -1,0 +1,206 @@
+---
+  - block:
+    - include_vars: passwords.yml
+      no_log: true
+  
+    - block:  
+      - name: "Check for Satellite 6 registration"
+        command: "subscription-manager list"
+        changed_when: false
+        register: sub_status
+  
+      - set_fact:
+          not_subscribed: "{{ (sub_status.stdout is not search('(?s).*\n\\s*[sS]tatus:\\s+[sS]ubscribed')) | ternary(true, false) }}"
+  
+      - name: "Remove old CA certificate"
+        yum:
+          name: 'katello-ca-consumer*'
+          state: absent
+        when: not_subscribed
+  
+      - name: "Install CA certificate"
+        yum:
+          name: "https://{{ satellite['server'][DC] }}/pub/katello-ca-consumer-latest.noarch.rpm"
+          state: present
+          validate_certs: no
+        when: not_subscribed
+        retries: 3
+  
+      - name: "Run subscription manager"
+        redhat_subscription:
+          activationkey: "{{ satellite.key }}"
+          org_id: "{{ satellite.org }}"
+          server_hostname: "{{ satellite['server'][DC] }}"
+        when: not_subscribed
+        retries: 3
+  
+      when: ansible_distribution == "RedHat"
+  
+    - block:  
+      - name: "Check for Spacewalk registration"
+        stat:
+          path: /etc/sysconfig/rhn/systemid
+        register: sub_status
+  
+      - set_fact:
+          not_subscribed: "false"
+  
+      - set_fact:
+          not_subscribed: "true"
+        when: sub_status.stat.exists == False  
+  
+      - block:  
+        - name: "Ensure RHN directory for certificates exists"
+          file:
+            path: /usr/share/rhn/
+            state: directory
+            mode: 0755
+            owner: root
+            group: root
+  
+        - name: "Get Certificate for Spacewalk"
+          get_url:
+            url: "http://{{ spacewalk.server }}/pub/RHN-ORG-TRUSTED-SSL-CERT"
+            dest: "{{ item }}"
+            validate_certs: no
+            owner: root
+            group: root
+            mode: 0644
+          loop:
+            - "/usr/share/rhn/RHN-ORG-TRUSTED-SSL-CERT"
+            - "/usr/share/rhn/ULN-CA-CERT"  
+  
+        - name: "Install certificate rpm"
+          yum:
+            name: "http://{{ spacewalk.server }}/pub/rhn-org-trusted-ssl-cert-1.0-1.noarch.rpm"
+            state: present
+  
+        - name: "Add the rpm key"
+          rpm_key:
+            state: present
+            key: "/etc/pki/rpm-gpg/RPM-GPG-KEY-oracle"
+          when: ansible_distribution == "OracleLinux"
+  
+        - name: "Add the rpm key"
+          rpm_key:
+            state: present
+            key: "/etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7"
+          when: ansible_distribution == "CentOS"        
+  
+        - name: "Install required packages"  
+          package:
+            name: "{{ item }}"
+            state: present
+          loop:
+              - rhn-client-tools
+              - rhn-check
+              - rhn-setup
+              - rhnsd
+          when: ansible_distribution == "CentOS"      
+  
+        - name: "Register to spacewalk"
+          rhn_register:
+            state: present
+            server_url: "http://{{ spacewalk.server }}/XMLRPC/"
+            activationkey: "{{ spacewalk['key'][ansible_distribution ~ ansible_distribution_major_version] }}"
+        when: not_subscribed
+  
+      when: ansible_distribution == "OracleLinux" or ansible_distribution == "CentOS"
+  
+    - name: "Ensure vRA UNIX group ({{ accounts.groups.vraacct.name }}) for unregistration purposes"
+      group:
+        name: "{{ accounts.groups.vraacct.name }}"
+        gid: "{{ accounts.groups.vraacct.gid }}"
+        system: "{{ accounts.groups.vraacct.system }}"
+      when:
+        - ansible_virtualization_role == "guest"
+        - ansible_virtualization_type == "VMware"
+  
+    - name: "Ensure vRA UNIX user ({{ accounts.users.vraacct.name }}) for unregistration purposes"
+      user:
+        name: "{{ accounts.users.vraacct.name }}"
+        uid: "{{ accounts.users.vraacct.uid }}"
+        createhome: "{{ accounts.users.vraacct.createhome }}"
+        group: "{{ accounts.users.vraacct.group }}"
+        home: "{{ accounts.users.vraacct.home }}"
+        comment: "{{ accounts.users.vraacct.comment }}"
+        shell: "{{ accounts.users.vraacct.shell }}"
+        system: "{{ accounts.users.vraacct.system }}"
+        password: "{{ vault.vraacct.shadow.password }}"
+      when:
+        - ansible_virtualization_role == "guest"
+        - ansible_virtualization_type == "VMware"
+  
+    - name: "Ensure vRA sudoers file"
+      copy:
+        src: "etc/sudoers.d/{{ accounts.users.vraacct.name }}"
+        dest: "/etc/sudoers.d/{{ accounts.users.vraacct.name }}"
+        owner: "root"
+        group: "root"
+        mode: "0440"
+        validate: "visudo -cf %s"
+        backup: no
+      when:
+        - ansible_virtualization_role == "guest"
+        - ansible_virtualization_type == "VMware"
+  
+    # Custom Repo(s)
+    - block:
+      - name: "Check that RHEL6 VMs are susbscribed to the vmware tools repo (Ignored in next section for other RHEL versions)"
+        shell: "subscription-manager list --consumed --pool-only | grep c3b06a8464297b1701645c2c8a0900fe"
+        changed_when: False
+        failed_when: ( vmwarerepo.rc not in [ 0, 1 ] )
+        register: vmwarerepo
+  
+      - name: "Ensure RHEL6 VMs are subscribed to the vmware tools repo"
+        command: subscription-manager attach --pool c3b06a8464297b1701645c2c8a0900fe
+        when:
+          - vmwarerepo.rc != 0      
+  
+      when: 
+        - ansible_distribution_major_version == "6"
+        - ansible_virtualization_role == "guest"
+        - ansible_virtualization_type == "VMware"
+        - ansible_distribution == "RedHat"
+  
+    - name: "Configure {{ custom_repo }} repo"
+      yum_repository:
+        name: "{{ custom_repo }}"
+        description: "{{ custom_repo }} - $releasever"
+        baseurl: "https://{{ pkgsvr }}/yum/{{ custom_repo }}/$releasever/$basearch"
+        gpgcheck: no
+        # Takes first priority, when explicitly enabled. Don't disable other repos
+        # on the caller to be able to pull in dependencies.
+        priority: "1" 
+        enabled: no
+        # Protect from updates by other repos.
+        protect: yes
+        sslverify: no
+        state: "present"
+  
+    # Install the priorities yum plugin to honor our custom repo(s) priorities.
+    - name: "Ensure yum-plugin-priorities is installed"
+      yum:
+        name: "yum-plugin-priorities"
+        enablerepo: "{{ satellite.repos.optional }}"
+        state: "present"
+      when: ansible_distribution == "RedHat"
+  
+    - name: "Ensure yum-plugin-priorities is installed"
+      yum:
+        name: "yum-plugin-priorities"
+        state: "present"
+      when: ansible_distribution == "OracleLinux" or ansible_distribution == "CentOS"
+          
+  
+    become: true
+    tags:
+      - "repos"
+      - "bladelogic"
+      - "fireeye"
+      - "pbis"
+      - "software"
+      - "qualys"
+      - "netbackup"
+      - "bigfix"
+      - "time"  

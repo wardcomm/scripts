@@ -1,0 +1,20 @@
+---
+- name: Delete a VM on PCA
+  hosts: ovm 
+
+  tasks:
+
+    - name: Delete a Virtual Machine
+      ovmm_vm:
+        state: absent
+        name: myvm 
+        ovm_user: admin
+        ovm_pass: xxxxx
+        ovm_host: dhcp-10-xxx-xx-xx
+        ovm_port: 7002
+
+      register: testout
+
+    - name: dump test output
+      debug:
+        msg: '{{ testout }}'

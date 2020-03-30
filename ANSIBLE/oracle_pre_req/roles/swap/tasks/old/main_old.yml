@@ -1,0 +1,49 @@
+
+---
+
+  tasks:
+    - name: register varible for memory
+      shell: cat /proc/meminfo | grep MemTotal | awk '{print $2}'
+      register: memory_on_system_kb
+
+    - name: dumping standard out lines
+      debug:
+        msg: "{{ memory_on_system_kb.stdout_lines }}"
+
+
+    - set_fact:
+      # box_memtotal: "{{ cat /proc/meminfo | grep MemTotal | awk '{print $2}' }}"
+        kb_mb_convert: "{{ memory_on_system_kb.stdout  // scale }}"
+        big_swap: "{{ kb_mb_convert  >= scoggins_constant }}"
+        small_swap: "{{ kb_mb_convert < scoggins_constant }}"
+
+  # - name: Check if big or small swap
+#   set_fact:
+#     # box_memtotal: "{{ cat /proc/meminfo | grep MemTotal | awk '{print $2}' }}"
+#     kb_mb_convert: "{{ box_memtotal / 1024}}"
+#     big_swap: "{{ kb_mb_convert >= '262144'}}"
+#     small_swap: "{{ kb_mb_convert < '262144'}}"
+# - debug:
+#     msg:
+#     - "{{ small_swap }}"
+#     - "{{ big_swap }}"
+#     # - "{{ box_memtotal }}"
+#     - "{{ kb_mb_convert }}"
+
+    - name: Manage swap file entry in fstab.
+      mount:
+        name: none
+        src: "{{ swap_file_path }}"
+        fstype: swap
+        opts: sw
+        state: "{{ swap_file_state }}"
+
+    - include_tasks: disable.yml
+      when: swap_file_state == 'absent'
+
+    - include_tasks: enable.yml
+      when: swap_file_state == 'present'
+
+    - include_tasks: memory_calc.yml
+
+    - include_tasks: fu.yml

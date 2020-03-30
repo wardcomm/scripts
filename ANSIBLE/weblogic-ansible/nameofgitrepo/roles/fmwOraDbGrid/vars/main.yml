@@ -1,0 +1,69 @@
+---
+
+# Oracle os user and group
+
+ora_install_user  : 'oracle'
+ora_install_group  : 'oinstall'
+
+dba_install_user  : 'oracle'
+dba_install_group  : 'dba'
+
+
+required_dirs:
+  - "{{ BASE_DIR }}"
+  - "{{ BASE_DIR }}/{{ install_user }}"
+  - "{{ ORACLE_BASE }}"
+#  - "{{ ORACLE_HOME }}"
+  - "{{ ORACLE_INV }}"
+  - "{{ stage_dir }}"
+
+# jdk installer and target folder
+jdk_installation_archive: 'jdk-9.0.4_linux-x64_bin.tar.gz'
+
+jdk_url: "http://download.oracle.com/otn-pub/java/jdk/9.0.4+11/c2514751926b4512b076cc82f959763f/{{ jdk_installation_archive }}"
+#java_home : '{{ oracle_base }}/jdk1.8.0_131'
+
+
+#Linux packages to be be installed to prepare Rhel 7 ready for Oracle DB install..
+
+packages:
+
+- binutils.x86_64 
+- compat-libcap1.x86_64 
+- gcc.x86_64 
+- gcc-c++.x86_64 
+- glibc.i686 
+- glibc.x86_64 
+- glibc-devel.i686 
+- glibc-devel.x86_64 
+- ksh 
+- compat-libstdc++-33 
+- libaio.i686 
+- libaio.x86_64 
+- libaio-devel.i686 
+- libaio-devel.x86_64 
+- libgcc.i686 
+- libgcc.x86_64 
+- libstdc++.i686 
+- libstdc++.x86_64 
+- libstdc++-devel.i686 
+- libstdc++-devel.x86_64 
+- libXi.i686 
+- libXi.x86_64 
+- libXtst.i686 
+- libXtst.x86_64 
+- make.x86_64 
+- sysstat.x86_64 
+- zip 
+- unzip
+
+#required Oracle Directories
+
+ORA_INST_HOME : /home/oracle
+ORA_STAGE : /stage
+ORA_DB_BASE : /stage/database
+ORA_DEV_HOME : /u01 
+ORA_DB_REC_DIR : /u02
+ORA_INST_DIR : /apps/orainstallers
+TMP : /mytmp
+TMP1 : /home/oracle/tmp

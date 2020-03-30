@@ -1,0 +1,343 @@
+accounts:
+  users:
+    splunk:
+      name: "splunk"
+      uid: "201"
+      createhome: no
+      group: "splunk"
+      home: "/opt/splunkforwarder"
+      comment: "Splunk Server"
+      shell: "/bin/bash"
+      system: yes
+    vraacct:
+      name: "vraacct"
+      uid: "493"
+      comment: "vRA account"
+      createhome: yes
+      home: "/export/home/vraacct"
+      shell: "/bin/bash"
+      group: "vraacct"
+      system: yes
+  groups:
+    splunk:
+      name: "splunk"
+      gid: "201"
+      system: yes
+    vraacct:
+      name: "vraacct"
+      gid: "493"
+      system: yes
+
+dns:
+  NCE:
+    - "142.136.252.85"
+    - "142.136.253.85"
+  NCW:
+    - "142.136.253.85"
+    - "142.136.252.85"
+  CDP:
+    - "142.136.252.85"
+    - "142.136.253.85"
+  STL:
+    - "142.136.252.85"
+    - "142.136.253.85"
+  GVL:
+    - "142.136.252.85"
+    - "142.136.253.85"
+
+ntp:
+  timezone: "America/Chicago"
+  servers:
+    - "165.237.86.17"
+    - "67.48.224.77"
+
+audit_rules_file:
+  RHEL6: "/etc/audit/audit.rules"
+  RHEL7: "/etc/audit/rules.d/audit.rules"
+
+service_states:
+  RHEL7:
+    enabled:
+      - "nscd"
+      - "snmpd"
+    disabled:
+      - "rpcbind"
+      - "rpcbind.socket"
+      - "firewalld"
+      - "NetworkManager"
+      - "tuned"
+  RHEL6:
+    enabled:
+      - "nscd"
+      - "snmpd"
+    disabled:
+      - "ip6tables"
+      - "iptables"
+      - "mdmonitor"
+      - "netfs"
+      - "autofs"
+      - "nfslock"
+      - "rpcbind"
+      - "rpcgssd"
+
+core_packages:
+  RHEL7:
+    install:
+      - "deltarpm"
+      - "net-snmp"
+      - "net-snmp-utils"
+      - "ntp"
+      - "nmap-ncat"
+      - "bind-utils"
+      - "sysstat"
+      - "ksh"
+      - "nfs-utils"
+      - "autofs"
+      - "xinetd"
+      - "sos"
+      - "nscd"
+      - "strace"
+      - "tcpdump"
+      - "wget"
+      - "xterm"
+      - "vim-common"
+      - "vim-enhanced"
+      - "iotop"
+      - "mlocate"
+      - "bash-completion"
+      - "net-tools"
+      - "bind-utils"
+      - "traceroute"
+      - "tmpwatch"
+      - "unzip"
+      - "patch"  # required for bladelogic, netbackup playbooks
+    exclude: ""
+    remove:
+      - "chrony"
+  RHEL6:
+    install:
+      - "audispd-plugins"
+      - "dos2unix"
+      - "mlocate"
+      - "mtr"
+      - "ntp"
+      - "ntpdate"
+      - "sos"
+      - "strace"
+      - "sysstat"
+      - "tcpdump"
+      - "unzip"
+      - "vim-enhanced"
+      - "wget"
+      - "which"
+      - "yum-plugin-security"
+      - "zip"
+      - "nscd"
+      - "ksh"
+      - "xinetd"
+      - "autofs"
+      - "nfs-utils"
+      - "nc"
+      - "iotop"
+      - "lsscsi"
+      - "net-snmp-utils"
+      - "net-snmp"
+      - "xterm"
+      - "openssh-clients"
+      - "libselinux-python"
+      - "bind-utils"
+      - "tmpwatch"
+      - "traceroute"
+      - "patch"  # required for bladelogic, netbackup playbooks
+    exclude: ""
+    remove: []
+
+netbackup:
+  exclude_list:
+    - "/dev/odm"
+    - "/tmp"
+    - "/var/tmp"
+    - "/sys"
+  servers:
+    CDP:
+      - "netbpmas21v"
+      - "netbpmas21"
+      - "netbpmas22"
+      - "netbpmas21dr"
+      - "netbpmed21"
+      - "netbpmed22"
+      - "netbpmed23"
+      - "netbpmed24"
+      - "netbpmed25"
+      - "netbpmed26"
+      - "netbpmed31"
+      - "netbpmed32"
+      - "netbpmed33"
+      - "netbpmed34"
+    NCE:
+      - "netbpmas21v"
+      - "netbpmas21"
+      - "netbpmas22"
+      - "netbpmas21dr"
+      - "netbpmed21"
+      - "netbpmed22"
+      - "netbpmed23"
+      - "netbpmed24"
+      - "netbpmed25"
+      - "netbpmed26"
+      - "netbpmed31"
+      - "netbpmed32"
+      - "netbpmed33"
+      - "netbpmed34"
+    NCW:
+      - "dnvr-nbuit-001v"
+      - "dnvr-nbuit-001"
+      - "dnvr-nbuit-001-bn"
+      - "dnvr-nbuit-002"
+      - "dnvr-nbuit-002-bn"
+      - "dnvr-nbuit-011"
+      - "dnvr-nbuit-011-bn"
+      - "dnvr-nbuit-012"
+      - "dnvr-nbuit-012-bn"
+      - "dnvr-nbuit-013"
+      - "dnvr-nbuit-013-bn"
+      - "dnvr-nbuit-014"
+      - "dnvr-nbuit-014-bn"
+    GVL:
+      - "sc58sbusp01"
+      - "sc58sbusp02"
+      - "sc58sbusp03"
+      - "sc58sbusp04"
+      - "sc58sbusp05"
+    STL:
+      - "kstlsbusp01"
+      - "kstlsbusp02"
+      - "kstlsbusp03"
+      - "kstlsbusp04"
+      - "kstlsbusp05"
+
+xymon:
+  servers:
+    - "10.136.255.49"
+
+default_fs:
+  RHEL7: "xfs"
+  RHEL6: "ext4"
+
+soft_nproc_file:
+  RHEL7: "/etc/security/limits.d/20-nproc.conf"
+  RHEL6: "/etc/security/limits.d/90-nproc.conf"
+
+missing_dirs:
+  RHEL7:
+    - "/var/lib/chrony"
+    - "/var/ftp"
+  RHEL6:
+    - "/var/adm"
+    - "/var/spool/uucp"
+    - "/var/gopher"
+    - "/var/ftp"
+    - "/var/lib/rpcbind"
+    - "/var/empty/saslauth"
+
+pkgsvr: "vm0pnyumxxw0001.twcable.com"
+
+HPSA:
+  gw_svr:
+    CDP: "165.237.179.115"
+    NCE: "142.136.251.47"
+    NCW: "142.136.236.91"
+    STL: "172.24.209.126"
+    GVL: "172.24.209.126"
+
+satellite:
+  org: "New_Charter"
+  key: "RHEL{{ ansible_distribution_major_version }}-{{ satellite_key_type }}"
+  server:
+    NCE: "vm0pnsatcpa0001.corp.chartercom.com"
+    NCW: "vm0pnsatmsa0001.corp.chartercom.com:443"
+    STL: "vm0pnsatcpa0003.corp.chartercom.com"
+    GVL: "vm0pnsatcpa0003.corp.chartercom.com"
+    CDP: "vm0pnsatcpa0002.corp.chartercom.com"
+  repos:
+    optional: "rhel-{{ ansible_distribution_major_version }}-server-optional-rpms"
+
+audit_rules:
+  - "-w /etc/localtime -p wa -k time-change"
+  - "-w /etc/group -p wa -k identity"
+  - "-w /etc/passwd -p wa -k identity"
+  - "-w /etc/gshadow -p wa -k identity"
+  - "-w /etc/shadow -p wa -k identity"
+  - "-w /etc/template/ -p wa -k template"
+  - "-w /etc/security/opasswd -p wa -k identity"
+  - "-w /etc/issue -p wa -k system-locale"
+  - "-w /etc/issue.net -p wa -k system-locale"
+  - "-w /etc/hosts -p wa -k system-locale"
+  - "-w /etc/sysconfig/network -p wa -k system-locale"
+  - "-w /etc/selinux/ -p wa -k MAC-policy"
+  - "-e 2"
+  - "-w /var/log/faillog -p wa -k logins"
+  - "-w /var/log/lastlog -p wa -k logins"
+  - "-w /var/log/tallylog -p wa -k logins"
+  - "-w /var/log/btmp -p wa -k session"
+  - "-w /var/run/utmp -p wa -k session"
+  - "-w /var/log/wtmp -p wa -k session"
+  - "-a always,exit -F arch=b64 -S mount -F auid>=500 -F auid!=4294967295 -k mounts"
+  - "-w /var/log/sudo.log -p wa -k actions"
+  - "-w /sbin/insmod -p x -k modules"
+  - "-w /sbin/rmmod -p x -k modules"
+  - "-w /sbin/modprobe -p x -k modules"
+  - "-w /etc/sudoers -p wa -k scope"
+  - "-a always,exit -F arch=b64 -S init_module -S delete_module -k modules"
+  - "-a always,exit -F arch=b64 -S adjtimex -S settimeofday -k time-change"
+  - "-a always,exit -F arch=b64 -S clock_settime -k time-change"
+  - "-a always,exit -F arch=b64 -S adjtimex -S settimeofday -k time-change"
+  - "-a always,exit -F arch=b64 -S clock_settime -k time-change"
+  - "-a exit,always -F arch=b64 -S sethostname -S setdomainname -k system-locale"
+  - "-a always,exit -F arch=b64 -S chmod -S fchmod -S fchmodat -F auid>=500 -F auid!=4294967295 -k perm_mod"
+  - "-a always,exit -F arch=b64 -S chown -S fchown -S fchownat -S lchown -F auid>=500 -F auid!=4294967295 -k perm_mod"
+  - "-a always,exit -F arch=b64 -S setxattr -S lsetxattr -S fsetxattr -S removexattr -S lremovexattr -S fremovexattr -F auid>=500 -F auid!=4294967295 -k perm_mod"
+  - "-a always,exit -F arch=b64 -S creat -S open -S openat -S truncate -S ftruncate -F exit=-EACCES -F auid>=500 -F auid!=4294967295 -k access"
+  - "-a always,exit -F arch=b64 -S creat -S open -S openat -S truncate -S ftruncate -F exit=-EPERM -F auid>=500 -F auid!=4294967295 -k access"
+  - "-a always,exit -F arch=b64 -S unlink -S unlinkat -S rename -S renameat -F auid>=500 -F auid!=4294967295 -k delete"     
+
+spacewalk:
+  server: "vm0pnsatmsa0003.corp.chartercom.com"
+  key:
+    OracleLinux7: "1-24010eae36d29cdde7419c531c356d10"
+    CentOS7: "1-9285ee3bde95b3ab2702a466ccb20b51"
+
+PBIS:
+  install_script: "pbis-enterprise-8.6.0.423.linux.x86_64.rpm.sh"
+  RPMs:
+    ALL: &PBIS__RPMs__ALL
+      - "powerbroker-shlibs-10.0.1.10-1.x86_64"
+      - "powerbroker-runhost-10.0.1.10-1.x86_64"
+      - "powerbroker-submithost-10.0.1.10-1.x86_64"
+    NCE: &PBIS__RPMs__NCE
+      - *PBIS__RPMs__ALL
+      - "powerbroker-config_NCE_client-10.0.1.10-1.noarch"
+    NCW: &PBIS__RPMs__NCW
+      - *PBIS__RPMs__ALL
+      - "powerbroker-config_NCW_client-10.0.1.10-1.noarch"
+    STL: *PBIS__RPMs__NCW
+    GVL: *PBIS__RPMs__NCE
+    CDP: *PBIS__RPMs__NCE
+  join:
+    ou: "{{ (staging) | ternary('Unix/Hosts/root-unmanaged', 'Unix/Hosts') }}"
+    domain: "corp.chartercom.com"
+  require:
+    default:
+      domain: "CHTR"
+      hostgroup: "UX-RG-BUILDADMIN"
+
+tripwire:
+  version: "8.8.0.0"
+  #  server: "vm0ptripwa0001.corp.twcable.com"
+  server: "vm0pwtripwa0002.corp.chartercom.com"
+
+snowagent:
+  version: "6.0.0-1.x86_64"
+
+bigfix:
+  version: "9.5.9.62"

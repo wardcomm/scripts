@@ -1,0 +1,11 @@
+---
+
+  - name: check oracle home dir
+    shell: echo $HOME
+    become: true
+    become_user: oracle
+
+  - name: check oracle shell is Korn Shell
+    shell: echo $SHELL
+    become: true
+    become_user: oracle

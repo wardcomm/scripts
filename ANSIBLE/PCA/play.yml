@@ -1,0 +1,27 @@
+---
+- name: Create a VM on Oracle PCA
+  hosts: localhost 
+
+  tasks:
+
+    - name: Create a Virtual Machine
+      ovmm_vm:
+        state: present
+        name: ST_vm33 
+        ovm_user: admin
+        ovm_pass: xxxx
+        ovm_host: dhcp-10-xxx-xx-xx
+        ovm_port: 7002
+        server_pool: SP1
+        repository: MyRepo
+        memory: 4096
+        vcpu_cores: 4
+        boot_order: PXE
+        networks: ['VMnet', 'VMnet']
+        disks: [['disk1', 1073741824, 'MyRepo'], ['disk2', 1073741824, 'MyRepo']]
+
+      register: testout
+
+    - name: dump test output
+      debug:
+        msg: '{{ testout }}'

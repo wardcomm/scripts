@@ -1,0 +1,182 @@
+--- 
+- include_vars: Physical-Secrets.yml
+  no_log: True
+
+# This entry added to fix the sqlcmd Task issue
+- name: Admin Login Creation
+  win_shell: |
+    $Qry = "CREATE LOGIN [{{ ansible_hostname }}\{{ ansible_user }}] FROM WINDOWS;  
+            ALTER SERVER ROLE sysadmin ADD MEMBER [{{ ansible_hostname }}\{{ ansible_user }}]"
+    
+    Invoke-SqlCmd -query $Qry -serverinstance "{{ ansible_hostname }}" -database "master" -username "Sa" -password "{{ SaPw }}"
+  ignore_errors: yes
+  register: admin_login
+  no_log: True
+
+- name: Protected Output - Admin Login Creation                                      
+  debug:                                                                  
+    var: "admin_login | combine({'cmd': admin_login.cmd | replace(SaPw, '<PASSWORD HIDDEN>')})"
+
+- name:  SystemRequirement
+  win_shell: |
+    [System.Reflection.Assembly]::LoadWithPartialName('Microsoft.SqlServer.SMO') | out-null
+    [System.Reflection.Assembly]::LoadWithPartialName('Microsoft.SqlServer.ConnectionInfo') | out-null
+    [System.Reflection.Assembly]::LoadWithPartialName('Microsoft.SqlServer.SqlWmiManagement') | out-null
+    [System.Reflection.Assembly]::LoadWithPartialName('Microsoft.SqlServer.ManagedDTS') | out-null
+    [System.Reflection.Assembly]::LoadWithPartialName("Microsoft.AnalysisServices") | out-null
+    [System.Reflection.Assembly]::LoadWithPartialName("Microsoft.SqlServer.SqlWmiManagement") | out-null
+    [System.Reflection.Assembly]::LoadWithPartialName('Microsoft.VisualBasic') | Out-Null
+    [System.Reflection.Assembly]::LoadWithPartialName('Microsoft.SqlServer.Management.PowerShell.sqlps') | Out-Null
+    # Load the IntegrationServices Assembly
+    [Reflection.Assembly]::LoadWithPartialName("Microsoft.SqlServer.Management.IntegrationServices") | Out-Null
+    Set-ExecutionPolicy Unrestricted -Force
+
+#Powershell 5.0 or higher is needed.
+- name: Import Module Carbon,DBATools and SQLPS
+  win_psmodule:
+    name: "{{ modules }}"
+    state: present
+  loop:
+  - Carbon
+  - DBATools
+  - SQLPS
+  loop_control:
+    loop_var: modules
+
+- include: InsertRow-ServerListTable.yml
+
+- include: Change-SQL-Services-to-use-domain-svc-acct.yml
+
+- name: Set Memory 
+  win_shell: |
+    $Mem = gwmi Win32_OperatingSystem | % { $_.TotalVisibleMemorySize }
+    $MaxMem = [System.Math]::Round(($mem/1024) * .8, 0)
+    $MinMem = [System.Math]::Round($maxmem * .5, 0)
+
+    $Qry = "EXEC sys.sp_configure N'show advanced options', N'1'  RECONFIGURE WITH OVERRIDE EXEC sys.sp_configure N'max server memory (MB)', N'$MaxMem' RECONFIGURE WITH OVERRIDE EXEC sys.sp_configure N'min server memory (MB)', N'$MinMem' RECONFIGURE WITH OVERRIDE EXEC sys.sp_configure N'show advanced options', N'0'  RECONFIGURE WITH OVERRIDE"
+
+    Invoke-SqlCmd -query $Qry -serverinstance "{{ ansible_hostname }}" -database "master" -username "sa" -password "{{ SaPw }}"
+
+- name: Insert Row in Password Table      
+  win_shell: |
+    $Date = Get-Date -Format g
+    $Date
+    $Qry = "IF NOT EXISTS (SELECT TOP 1 1 FROM [CHARTER_DBA].[PWD].[Passwords] WHERE ServerName = '{{ ansible_hostname }}' AND Username = 'sa')
+             INSERT INTO [CHARTER_DBA].[PWD].[Passwords] ([GroupName],[ServerName],[UserName],[Password],[Type])
+             VALUES('{{ GName }}','{{ ansible_hostname }}','sa', [CHARTER_DBA].[dbo].[FNC_ENCRIPTION_PW]('{{ SaPw }}') ,'SQL')
+             IF EXISTS (SELECT TOP 1 1 FROM [CHARTER_DBA].[PWD].[Passwords] WHERE ServerName = '{{ ansible_hostname }}' AND UserName = 'sa')
+             UPDATE [CHARTER_DBA].[PWD].[Passwords]
+             SET [Password] = [CHARTER_DBA].[dbo].[FNC_ENCRIPTION_PW]('{{ SaPw }}')
+             WHERE  ServerName = '{{ ansible_hostname }}' AND UserName = 'sa'"
+
+    Invoke-SqlCmd -query $Qry -serverinstance {{ SQLInst }} -database "master" -username "{{ username }}" -password "{{ password }}"
+  register: pass_row_insert
+  ignore_errors: yes # if already updated means , we are getting error for duplicate
+  no_log: True
+
+- name: Protected Output - Insert Row in Password Table
+  debug:                                                                  
+    var: "pass_row_insert | combine({'cmd': pass_row_insert.cmd | replace(SaPw, '<PASSWORD HIDDEN>') | replace(password, '<PASSWORD HIDDEN>')})"
+  failed_when: pass_row_insert.rc
+
+- include: Add-SQL-Windows-Accts.yml
+
+##################################################################
+## We may be able to get some of this from the ansible hostvars ##
+## but the SQL to set the Max Dop will still need win_shell     ##
+##################################################################
+- name: Set Max Dop
+  win_shell: |
+    #our core vale is 1 1
+    $totalcores = $(Get-WmiObject -class win32_processor).numberofcores
+    If ("$totalcore" -gt "1"){ $allcores = ($totalcores | Measure-Object -Sum).Sum } else { $allcores = $totalcores }
+    
+    $MaxDop = [System.Math]::Round($allcores[0]/1.5, 0)
+    If ($MaxDop -gt 8) { $MaxDop = "8" }
+    $Qry = "EXEC sys.sp_configure N'show advanced options', N'1'  RECONFIGURE WITH OVERRIDE EXEC sys.sp_configure N'max degree of parallelism', N'$MaxDop' RECONFIGURE WITH OVERRIDE EXEC sys.sp_configure N'show advanced options', N'0'  RECONFIGURE WITH OVERRIDE"
+    $allcores
+    $totalcores
+    $Qry
+
+    Invoke-SqlCmd -query $Qry -serverinstance {{ ansible_hostname }} -database "master" -username "sa" -password "{{ SaPw }}"
+  register: output  
+- set_fact:
+    Allcores: "{{ output.stdout_lines[0] }}"
+     
+- include: Alter-tempdb.yml
+
+- name: Run SQL Configuration Script 
+  win_shell: |
+    SQLCMD -S {{ ansible_hostname }} -d "master" -E -x -i "D:\Install\SQL-CFG\SqlCfg.sql"
+
+    $Qry = "EXEC xp_instance_regwrite N'HKEY_LOCAL_MACHINE', N'Software\Microsoft\MSSQLServer\MSSQLServer', N'BackupDirectory', REG_SZ, N'{{ BuPath }}{{ BuDir }}\MSSQL\backups'"
+
+    Invoke-SqlCmd -QueryTimeout 0 -query $Qry -serverinstance {{ ansible_hostname }} -database "master" -username "sa" -password "{{ SaPw }}"
+
+- include: Configure-SSIS-Catalog.yml
+
+- include: Optimize-System-Databases.yml
+
+- include: Install-SQLDBA-databse.yml
+
+- include: Install-HOLDING-databse.yml
+
+- include: Import-Client-Parameters.yml
+
+- include: Update-Job-Script.yml
+
+- include: Run-SQL-Jobs-Script.yml
+
+- include: Install-updated-code.yml
+
+- include: Enable-TCP-and-Set-port.yml
+
+- name: Stop SQL service
+  win_service:
+    name: MSSQLSERVER
+    state: stopped
+    force_dependent_services: yes
+
+- name: Remove old tempdb Directory
+  win_file:
+    path: '{{ TempdbPath }}{{ TempDir }}\MSSQL\data'
+    state: absent
+#Got below error after restart while accessing sql server
+#FCB::Open failed: 
+#Could not open file E:\Tempdb\MSSQL\Data\tempdb.mdf for file number 1.  
+#OS error: 3(The system cannot find the path specified.).
+- name: Create Directory
+  win_file:
+    path: I:\Tempdb\MSSQL\Data
+    state: directory
+- name: create empty tempdb.mdf file
+  win_file:
+    path: I:\Tempdb\MSSQL\Data\tempdb.mdf
+    state: touch
+
+- include: Install-SSMS.yml
+
+- name: Turn On Smartscreen
+  win_regedit: 
+    path: HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer
+    name: SmartScreenEnabled
+    type: string
+    data: Prompt
+  tags:
+  - smartscreen
+
+- name: Remove ansible temp Directory
+  win_file:
+    path: 'C:\Ansible\Temp'
+    state: absent
+  
+- name: Reboot Server
+  win_reboot:
+    pre_reboot_delay: 10
+    post_reboot_delay: 0
+    test_command: whoami
+    shutdown_timeout: 600
+    reboot_timeout: 600
+    msg: Reboot initiated by Ansible
+    connect_timeout: 5
+

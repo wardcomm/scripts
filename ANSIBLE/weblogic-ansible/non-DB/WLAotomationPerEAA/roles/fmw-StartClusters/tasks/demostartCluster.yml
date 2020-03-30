@@ -1,0 +1,42 @@
+---
+
+ - name: Copy Start Cluster Script to Stage directory
+   become: yes 
+   become_user: root
+   template:
+     src:  roles/fmwWL12C/files/demostartCluster.py
+     dest: "{{ STAGE_DIR }}/demostartCluster.py"
+     owner: "{{ install_user }}"
+     group: "{{ install_group }}"
+     mode:  0664
+
+ # - name: Confirming NodeManager on all servers reachable from DEMOAdmin before starting the cluster
+   # wait_for:
+     # host: "{{ item }}"
+     # port: "{{ DEMO_NODEMGR_PORT }}"
+     # state: started
+   # with_items:
+     # - "{{ NODE_1 }}"
+     # - "{{ NODE_2 }}"
+     #- "{{ NODE_3 }}"
+
+ - name: Start DEMO
+   become: yes 
+   become_user: "{{ install_user }}"
+   #command: "./wlst.sh {{ STAGE_DIR }}/demostartCluster.py provdemo_cluster > ./demo_cluster.out"
+   command: "nohup ./wlst.sh {{ STAGE_DIR }}/demostartCluster.py provdemo_cluster >|  ./demo_cluster.out 2>&1 &"
+#"nohup ./startNodeManager.sh $HOSTNAME {{ DEMO_NODEMGR_PORT }} >| ./nm_demo.out 2>&1 &"
+   args:
+     chdir: "{{ COMMON }}/bin"
+   environment:
+     JAVA_HOME: "{{ JAVA_HOME }}"
+   ignore_errors: yes
+
+ #- name: Clean Directories
+ #  become: yes 
+ #  become_user: root
+ #  file:
+ #    path: "{{ item }}"
+ #    state: absent
+ #  with_items:
+ #    - "{{ STAGE_DIR }}"

@@ -1,0 +1,11 @@
+---
+
+- name: Send e-mail to a bunch of users, attaching files
+  when: inventory_hostname in groups['admin']
+  mail:
+    host: localhost
+    port: 25
+    to: Mohan Kovvali <Mohan.Kovvali@charter.com>
+    cc: Srinivasa Bonu <c-srinivasa.bonu@charter.com>
+    subject: Ansible-report
+    body: System {{ ansible_hostname }} has been successfully provisioned.

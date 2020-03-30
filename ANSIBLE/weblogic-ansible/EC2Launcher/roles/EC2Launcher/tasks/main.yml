@@ -1,0 +1,13 @@
+---
+- include_tasks: createSecurityGroup.yml
+  tags: "createSecurityGroup"
+
+- include_tasks: createEC2instance.yml 
+  tags: "createEC2instance"
+  
+- include_tasks: createHostGroup.yml 
+  tags: "createHostGroup"
+  
+- include_tasks: provisonEC2Host.yml 
+  tags: "provisonEC2Host"
+

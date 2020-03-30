@@ -1,0 +1,64 @@
+- name: Create groups
+  when: inventory_hostname in groups['fmw']
+  become: yes
+  become_user: root
+  group:
+    state: present
+    name:  "{{ install_group }}"
+
+- name: Create user
+  when: inventory_hostname in groups['fmw']
+  become: yes
+  become_user: root
+  user:
+    name:     "{{ install_user }}"
+    groups:   "{{ install_group }}"
+
+- name: Clean Existing Installations 
+  when: inventory_hostname in groups['fmw']
+  become: yes
+  become_user: root 
+  file:
+    path: "{{ item }}"
+    owner: "{{ install_user }}"
+    group: "{{ install_group }}"
+    state: absent
+  with_items:
+    - "{{ WL_ROOT_DIR }}"
+
+- name: Create Directories
+  when: inventory_hostname in groups['fmw']
+  become: yes
+  become_user: root
+  file:
+    state: directory
+    path: "{{ STAGE_DIR }}"
+    owner: "{{ install_user }}"
+    group: "{{ install_group }}"
+    mode: 0755
+
+- name: Copy kill java processes script to Stage directory
+  when: inventory_hostname in groups['fmw']
+  become: yes
+  become_user: "{{ install_user }}"
+  copy:
+    src: gkill
+    dest: "{{ STAGE_DIR }}/gkill"
+    owner: "{{ install_user }}"
+    group: "{{ install_group }}"
+    mode: 0755
+
+- name: Running gkill script   
+  when: inventory_hostname in groups['fmw']
+  become: yes
+  become_user: "{{ install_user }}"
+  shell: ./gkill java
+  args:
+    chdir: "{{ STAGE_DIR }}"
+  # environment:
+    # JAVA_HOME: "{{ JAVA_HOME }}"
+  ignore_errors: yes
+
+- name: waiting for the uninstall to complete
+  wait_for: timeout=30
+  delegate_to: localhost

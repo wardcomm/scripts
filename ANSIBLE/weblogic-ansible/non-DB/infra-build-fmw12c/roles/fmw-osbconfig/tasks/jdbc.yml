@@ -1,0 +1,24 @@
+---
+
+ - name: Copy JDBC Script to Stage Directory
+   template:
+     src:   roles/fmw-osbconfig/files/configOSBJDBC.py
+     dest:  "{{ STAGE_DIR }}/configOSBJDBC.py"
+     owner: "{{ install_user }}"
+     group: "{{ install_group }}"
+
+ - name: Copy JDBC Properties to Stage Directory
+   template:
+     src:   roles/fmw-osbconfig/files/OSB_JDBC.properties
+     dest:  "{{ STAGE_DIR }}/OSB_JDBC.properties"
+     owner: "{{ install_user }}"
+     group: "{{ install_group }}"
+
+ - name: Config JDBC
+   command: "./wlst.sh {{ STAGE_DIR }}/configOSBJDBC.py"
+   args:
+     chdir: "{{ ORACLE_BIN }}"
+   environment:
+     JAVA_HOME: "{{ JAVA_HOME }}"
+
+

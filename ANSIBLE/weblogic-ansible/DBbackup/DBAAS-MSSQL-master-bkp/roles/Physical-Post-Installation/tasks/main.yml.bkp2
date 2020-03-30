@@ -1,0 +1,40 @@
+--- 
+#Got below error after restart while accessing sql server
+#FCB::Open failed: 
+#Could not open file E:\Tempdb\MSSQL\Data\tempdb.mdf for file number 1.  
+#OS error: 3(The system cannot find the path specified.).
+- name: Create Directory
+  win_file:
+    path: I:\Tempdb\MSSQL\Data
+    state: directory
+- name: create empty tempdb.mdf file
+  win_file:
+    path: I:\Tempdb\MSSQL\Data\tempdb.mdf
+    state: touch
+
+- include: Install-SSMS.yml
+
+- name: Turn On Smartscreen
+  win_regedit: 
+    path: HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer
+    name: SmartScreenEnabled
+    type: string
+    data: Prompt
+  tags:
+  - smartscreen
+
+- name: Remove ansible temp Directory
+  win_file:
+    path: 'C:\Ansible\Temp'
+    state: absent
+  
+- name: Reboot Server
+  win_reboot:
+    pre_reboot_delay: 10
+    post_reboot_delay: 0
+    test_command: whoami
+    shutdown_timeout: 600
+    reboot_timeout: 600
+    msg: Reboot initiated by Ansible
+    connect_timeout: 5
+

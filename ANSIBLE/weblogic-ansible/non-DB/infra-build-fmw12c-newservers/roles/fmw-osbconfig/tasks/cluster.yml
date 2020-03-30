@@ -1,0 +1,16 @@
+---
+
+ - name: Copy Start Cluster Script
+   template:
+    src:   roles/fmw-domain/files/startClusters.py
+    dest:  "{{ STAGE_DIR }}/startClusters.py"
+    owner: "{{ install_user }}"
+    group: "{{ install_group }}"
+
+ - name: Start Cluster
+   command: "./wlst.sh {{ STAGE_DIR }}/startClusters.py"
+   args:
+    chdir: "{{ ORACLE_BIN }}"
+   environment:
+    JAVA_HOME: "{{ JAVA_HOME }}"
+

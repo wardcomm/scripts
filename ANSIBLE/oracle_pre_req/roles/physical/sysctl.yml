@@ -1,0 +1,89 @@
+---
+  - name: kernel.sem
+    sysctl:
+      name: kernel.sem
+      value: '250 32000 100 128'
+      sysctl_file: /etc/sysctl.conf
+      reload: no
+
+  - name: fs.aio-max-nr
+    sysctl:
+      name: fs.aio-max-nr
+      value: '3145728'
+      sysctl_file: /etc/sysctl.conf
+      reload: no
+
+  - name: net.ipv4.ip_local_port_range
+    sysctl:
+      name: net.ipv4.ip_local_port_range
+      value: '9000 65500'
+      sysctl_set: yes
+      state: present
+      reload: yes
+
+
+  - name: net.ipv4.conf.p3p1.rp_filter
+    sysctl:
+      name: net.ipv4.conf.p3p1.rp_filter
+      value: '0'
+      state: present
+
+  - name:  this is net.ipv4.conf.all.rp_filter # https://access.redhat.com/solutions/53031
+    sysctl:
+      name: net.ipv4.conf.all.rp_filter
+      value: '0'
+      state: present
+
+  - name: net.core.rmem_default
+    sysctl:
+      name: net.core.rmem_default
+      value: '262144'
+      state: present
+
+  - name: net.core.rmem_max
+    sysctl:
+      name: net.core.rmem_max
+      value: '4194304'
+      state: present
+
+  - name: net.core.wmem_default
+    sysctl:
+      name: net.core.wmem_default
+      value: '262144'
+      state: present
+
+  - name: nwr.core.wbem_max
+    sysctl:
+      name: nwr.core.wbem_max
+      value: '1048576'
+      state: present
+
+  - name: fs.file-max
+    sysctl:
+      name: fs.file-max
+      value: '13631488'
+      state: present
+
+  - name: kernel.shmmax
+    sysctl:
+      name: kernel.shmmax
+      value: '4398046511104'
+      state: present
+
+  - name:     kernel.shmall
+    sysctl:
+      name: kernel.shmall
+      value: '1073741824'
+      state: present
+
+  - name:    kernel.shmmni
+    sysctl:
+      name: kernel.shmmni
+      value: '4096'
+      state: present
+
+  - name:   kernel.panic_on_oops
+    sysctl:
+      name: kernel.panic_on_oops
+      value: '1'
+      state: present

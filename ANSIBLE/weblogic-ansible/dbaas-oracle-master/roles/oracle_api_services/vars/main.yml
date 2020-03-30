@@ -1,0 +1,9 @@
+---
+
+apex_url: https://apex-dev.techlab.com:8443/ords/invent2/charter
+
+json_backup_dir: /apex/unsent_json_body/{{ ansible_hostname }}
+
+cluster_nodes: "{{ ansible_play_hosts }}"
+
+master_node: "{{ ansible_play_hosts | first }}"

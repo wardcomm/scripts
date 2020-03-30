@@ -1,0 +1,27 @@
+################################################################################
+# ==> Tasks for install Oracle Fussion Middleware Infrastructure software 12c R2
+# ==> to an Oracle Linux 7.1 system. Supports version 12.2.1
+################################################################################
+
+- name: Place config/reponse files
+  become: yes
+  become_user: "{{ install_user }}"
+  template:
+    src:  "{{ item }}"
+    dest: "{{ STAGE_DIR }}"
+  with_items:
+    - oraInst.loc
+    - infrastructure.rsp
+    - soa.rsp
+    - osb.rsp
+
+- name: execute installers
+  become: yes
+  become_user: "{{ install_user }}"
+  command: "{{ jrun }} -jar {{ STAGE_DIR }}/{{ item.jar }} -silent -responseFile {{ STAGE_DIR }}/{{ item.rsp }} -invPtrLoc {{ STAGE_DIR }}/oraInst.loc"
+  with_items:
+    - { jar: '{{ mw_installer }}',     rsp: 'infrastructure.rsp', }
+    - { jar: '{{ mw_soa_installer }}', rsp: 'soa.rsp',            }
+    - { jar: '{{ mw_osb_installer }}', rsp: 'osb.rsp',            }
+
+

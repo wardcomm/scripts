@@ -1,0 +1,34 @@
+---
+
+- include_tasks: get_host_code.yml
+  when: host_code is not defined
+
+- include_vars: var_host_inventory_insertion.yml
+
+- name: POST in V_HOST_INV_TBL
+  block: 
+  - name: Insert node into Host Inventory
+    uri:
+      url: "{{ apex_url }}/insert_host_inventory"
+      validate_certs: no  # should be removed after https certs becomes renewed
+      method: POST
+      body_format: json
+      body: "{{ host_inventory_insrt_body }}"
+      headers:
+          Content-Type: "application/json"
+    register: v_host_detail_insertion_response
+  
+  - name: set host_id
+    set_fact:
+      host_id: "{{ v_host_detail_insertion_response.json | default('{`items`:[{`ID`:``}]}') | json_query('ID') }}"
+
+
+  rescue:
+  - name: Store the Json If APEX Server Is Down
+    delegate_to: localhost
+    lineinfile:
+      path: "{{ json_backup_dir }}/host_inv_insertion.json"
+      line: "{{ host_inventory_insrt_body  | to_json }}"
+      create: yes
+    when: v_host_detail_insertion_response.status == "500" or  v_host_detail_insertion_response.status == -1
+

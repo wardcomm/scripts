@@ -1,0 +1,31 @@
+---
+
+  - debug:
+      var: hostvars[inventory_hostname]
+      # ram_size: "{{ ansible_memtotal_mb * 1024 * 1024 * 0.9 | float }}"
+
+  - debug:
+      msg:
+      - "this is ansible mem total {{ ansible_memtotal_mb }}"
+      - "this is ansible swap total {{ ansible_swaptotal_mb }}"
+      # - "{{ 1024 * 1024 * float(.9) }}"
+  #943718
+  # - set_fact:
+  #    ansible_memtotal_mb: "65536"
+  - set_fact:
+      ram_size: "{{ ansible_memtotal_mb * 1024 | float | int }}"
+      # ram_math: "{{ ram_size * 0.9 }}"
+  - set_fact:
+      ram_math: "{{ ram_size |float * 0.9 }}"
+  - debug:
+      msg:
+      - "{{ ansible_memtotal_mb * 1024 * 1024 * 0.9 | float }}"
+      - "{{ ram_size }}"
+      - "{{ram_math | float | round(1, 'floor') | int}}"
+  #ansible_memtotal_mb
+  # ---
+  #     - name: check uptime
+  #       shell: cat /proc/uptime
+  #       register: reboot_check
+  #     - debug:
+  #         msg: this is the kernel   {{ ansible_kernel }}

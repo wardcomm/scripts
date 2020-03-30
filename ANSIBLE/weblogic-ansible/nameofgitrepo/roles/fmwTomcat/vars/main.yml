@@ -1,0 +1,32 @@
+---
+
+# Oracle os user and group
+
+tc_install_user  : 'tomcat'
+tc_install_group : 'tomcat'
+
+#required WAS Directories
+
+ANS_DEV_ROOT : /apps
+
+# jdk installer and target folder
+jdk_installation_archive: 'jdk-8u181-linux-x64.tar.gz'
+
+jdk_url: "https://vm0qnyumxxw0001.twcable.com/drop/binup/FMWSW/WEBLOGIC"
+#java_home : '{{ oracle_base }}/jdk1.8.0_131'
+
+
+# tomcat installer and target folder
+tc_installation_archive: 'apache-tomcat-8.0.53.tar.gz'
+tc_url: "http://www-us.apache.org/dist/tomcat/tomcat-8/v8.0.53/bin/{{ tc_installation_archive }}"
+
+
+TC_DEV_ROOT : /apps
+TC_DEV_HOME : /apps/tomcat
+#TC_STAGE_DIR : "{{ TC_DEV_HOME }}/stage"
+TC_STAGE_DIR : /opt/stage
+TC_JAVA9_INST_DIR : "{{ TC_DEV_HOME }}/java"
+
+CATALINA_HOME : "/apps/tomcat/apache-tomcat-8.0.53"
+
+

@@ -1,0 +1,17 @@
+---
+
+ - name: Copy Start Cluster Script to Stage directory
+   become: yes 
+   become_user: root
+   debug:
+     msg: "{{ WLCluster }}[0]"
+   loop: "{{ WLCluster }}"   
+
+ - name: print host ip address
+   shell: echo "{{ WLCluster }}["[0]
+   register: my_hostIP
+   
+ - name: print hosts
+   debug: 
+     var: my_hostIP.stdout_lines
+ 

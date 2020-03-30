@@ -1,0 +1,46 @@
+---
+- name: Configure YUM repository
+  become: yes
+  become_user: root 
+  lineinfile:
+    path: /etc/yum/pluginconf.d/rhnplugin.conf
+    line: 'exclude=postgresql*'
+
+- name: Install PGDG RPM file
+  become: yes
+  become_user: root 
+  yum:
+    name:  "{{ item }}" 
+    state: latest
+  with_items:
+    - "{{ PGDG_RPM_URL }}"
+
+- name: Install PostgreSQL Server
+  become: yes
+  become_user: root 
+  yum:
+    name:  "{{ item }}" 
+    state: latest
+  with_items:
+    - "{{ PSQL_SERVER }}"
+
+- name: Initiating PostgreSQL Service   
+  become: yes
+  become_user: root
+  command: "./postgresql-10-setup initdb"
+  args:
+    chdir: "{{ PSQL_USR_BIN }}"
+
+- name: Start PostgreSQL Service   
+  become: yes
+  become_user: root
+  command: "systemctl start postgresql-10"
+  args:
+    chdir: "{{ PSQL_USR_BIN }}"
+
+- name: Enable PostgreSQL Service   
+  become: yes
+  become_user: root
+  command: "systemctl enable postgresql-10"
+  args:
+    chdir: "{{ PSQL_USR_BIN }}"

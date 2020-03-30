@@ -1,0 +1,17 @@
+---
+
+  - name: Copy user-ignore with owner and permissions back in place
+    copy:
+      src: file/ad_user_ignore
+      dest: /etc/pbis/user-ignore
+      owner: root
+      group: root
+      mode: '0644'
+
+  - name: Copy temp group-ignore with owner and permissions back in place
+    copy:
+      src: file/ad_group_ignore
+      dest: /etc/pbis/group-ignore
+      owner: root
+      group: root
+      mode: '0644'

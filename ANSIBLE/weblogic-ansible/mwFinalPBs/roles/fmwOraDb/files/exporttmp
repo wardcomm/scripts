@@ -1,0 +1,7 @@
+####################################################################################################
+##Deletes environment file if already exits, creates environment file  and adds the following 
+##environment variables to the file
+####################################################################################################
+
+export TMP=/mytmp 
+

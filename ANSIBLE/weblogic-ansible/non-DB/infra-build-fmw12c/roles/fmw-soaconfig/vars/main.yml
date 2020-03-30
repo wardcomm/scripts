@@ -1,0 +1,94 @@
+---
+# File Store List
+# Example -   FileStoreName1:FileStoreDirectory1:Target1,FileStoreName2:FileStoreDirectory2:Target2,FileStoreName3:FileStoreDirectory3:Target3
+#FILE_STORE_LIST : uim_oss_jms_store_MS1:/charter/apps/uim/FileStores:uim_ms1,uim_oss_jms_store_MS2:/charter/apps/uim/FileStores:uim_ms2
+
+#FILE_STORE_LIST: soa_osm_jms_store_ms1:/charter/apps/esbauth/FileStores:soa_ms1,soa_osm_jms_store_ms2:/charter/apps/esbauth/FileStores:soa_server2,soa_osm_jms_store_ms3:/charter/apps/esbauth/FileStores:soa_ms3
+
+#FILE_STORE_LIST: soa_osm_jms_store_ms1:/charter/apps/esbauth/FileStores:soa_server1,soa_osm_jms_store_ms2:/charter/apps/esbauth/FileStores:soa_server2,soa_osm_jms_store_ms3:/charter/apps/esbauth/FileStores:soa_server3
+
+# Create JDBC Store List
+# Example - JDBCStoreName1:Datasourname:prefixName1:Target1
+
+#JDBC_STORE_LIST : soa_osm_jms_store_ms1:NextGenSOLODB:CHTR_UATASOA2OSM_MS1_:soa_server1
+
+#JDBC_STORE_LIST : soa_osm_jms_store_ms1:NextGenSOLODB:CHTR_UATASOA2OSM_MS1_:provsoa_server1,soa_osm_jms_store_ms2:NextGenSOLODB:CHTR_UATASOA2OSM_MS2_:provsoa_server2,soa_osm_jms_store_ms3:NextGenSOLODB:CHTR_UATASOA2OSM_MS3_:provsoa_server3
+
+
+JDBC_STORE_LIST : soa_osm_jms_store_ms1:NextGenSOLODB:CHTR_UATASOA2OSM_MS1_:provsoa_server1,soa_osm_jms_store_ms2:NextGenSOLODB:CHTR_UATASOA2OSM_MS2_:provsoa_server2,soa_osm_jms_store_ms3:NextGenSOLODB:CHTR_UATASOA2OSM_MS3_:provsoa_server3,soa_osm_jms_store_ms4:NextGenSOLODB:CHTR_UATASOA2OSM_MS4_:provsoa_server4,soa_osm_jms_store_ms5:NextGenSOLODB:CHTR_UATASOA2OSM_MS5_:provsoa_server5,soa_osm_jms_store_ms6:NextGenSOLODB:CHTR_UATASOA2OSM_MS6_:provsoa_server6
+
+
+
+# SAF AGENT LIST
+# Example - SAFAgentName1:SAFAgentFileStore1:SAFAgentTarget1,SAFAgentName2:SAFAgentFileStore2:SAFAgentTarget2,SAFAgentName3:SAFAgentFileStore3:SAFAgentTarget3
+#SAF_AGENT_LIST : uim_oss_saf_agent_MS1:uim_oss_jms_store_MS1:uim_ms1,uim_oss_saf_agent_MS2:uim_oss_jms_store_MS2:uim_ms2
+
+SAF_AGENT_LIST : soa_osm_saf_agent_ms1:soa_osm_jms_store_ms1:provsoa_server1,soa_osm_saf_agent_ms2:soa_osm_jms_store_ms2:provsoa_server2,soa_osm_saf_agent_ms3:soa_osm_jms_store_ms3:provsoa_server3,soa_osm_saf_agent_ms4:soa_osm_jms_store_ms4:provsoa_server4,soa_osm_saf_agent_ms5:soa_osm_jms_store_ms5:provsoa_server5,soa_osm_saf_agent_ms6:soa_osm_jms_store_ms6:provsoa_server6
+
+
+# JMS SERVERS LIST
+# Example - JMSServerName1:Target1:PersistentStore,JMSServerName2:Target2:PersistentStore:Target2,JMSServerName3:PersistentStore:Target3
+
+#JMS_SERVER_LIST : soa_osm_jms_server_ms1:soa_osm_jms_store_ms1:soa_ms1,soa_osm_jms_server_ms2:soa_osm_jms_store_ms2:soa_server2,soa_osm_jms_server_ms3:soa_osm_jms_store_ms3:soa_server3
+
+#JMS_SERVER_LIST : soa_osm_jms_server_ms1:soa_osm_jms_store_ms1:soa_server1,soa_osm_jms_server_ms2:soa_osm_jms_store_ms2:soa_server2,soa_osm_jms_server_ms3:soa_osm_jms_store_ms3:soa_server3
+
+# Create JMS SERVERS with JDBC Stores
+# Example - JMSServerName1:JDBC stoer Name1:Target1
+
+
+JMS_SERVER_LIST : soa_osm_jms_server_ms1:soa_osm_jms_store_ms1:provsoa_server1,soa_osm_jms_server_ms2:soa_osm_jms_store_ms2:provsoa_server2,soa_osm_jms_server_ms3:soa_osm_jms_store_ms3:provsoa_server3,soa_osm_jms_server_ms4:soa_osm_jms_store_ms4:provsoa_server4,soa_osm_jms_server_ms5:soa_osm_jms_store_ms5:provsoa_server5,soa_osm_jms_server_ms6:soa_osm_jms_store_ms6:provsoa_server6
+
+
+# JMS MODULE LIST
+# Example - JMSModuleName1:Target1,JMSModuleName2:Target2,JMSModuleName3:Target3
+#JMS_MODULE_LIST : uim_osm_jms_module:uim01_cluster
+
+JMS_MODULE_LIST : soa_csg_jms_module:provsoa_cluster
+
+# SAF CONTEXT LIST
+# Example - SAFContext1%JMSModule1%SAFURL1%SAFUsername1%SAFPassword1%RemoteSAFContext1,SAFContext2%JMSModule2%SAFURL2%SAFUsername2%SAFPassword2%RemoteSAFContext2
+#SAF_CONTEXT_LIST : uim_osm_saf_context%uim_osm_jms_module%t3://nexgen01.corp.chartercom.com:8001%test%test123%osm_uim_jms_module!osm_uim_saf_context
+#SAF_CONTEXT_LIST : uim_osm_saf_context%uim_osm_jms_module%t3://{{ SAF_CONTEXT }}%test%test123%osm_uim_jms_module!osm_uim_saf_context
+
+#SAF_CONTEXT_LIST : soa_osm_saf_context%soa_csg_jms_module%t3://{{ kstllosmd21.corp.chartercom.com:9001,kstllosmd22.corp.chartercom.com:9001,kstllosmd23.corp.chartercom.com:9001 }}%OSMSOASIT%charter123
+
+SAF_CONTEXT_LIST : soa_osm_saf_context%soa_csg_jms_module%t3://kstllosmd07.corp.chartercom.com:9001%OSMSOAUAT%charter123%osm_uim_jms_module!osm_uim_saf_context
+
+# UDD QUEUE LIST
+# Example - UDDQueueName1:UDDModuleName1,UDDQueueName2:UDDModuleName2
+#UDD_QUEUE_LIST : uim_osm_saf_error_Queue:uim_osm_jms_module
+
+UDD_QUEUE_LIST : SODIClosureErrorQueue:soa_csg_jms_module
+
+# SAF SUB DEPLOY
+# Example - SAFDeployName1:JMSModuleName1:Target1.1%Target1.2%Target1.3,SAFDeployName2:JMSModuleName2:Target2.1%Target2.2%Target2.3
+#SUB_DEPLOY_LIST : uim_osm_subdeploy:uim_osm_jms_module:uim_oss_saf_agent_MS1%uim_oss_saf_agent_MS2
+
+#SUB_DEPLOY_LIST : soa_osm_saf_destination:soa_csg_jms_module:soa_osm_saf_agent_ms1, soa_osm_saf_agent_ms2, soa_osm_saf_agent_ms3
+
+SUB_DEPLOY_LIST : soa_osm_SubDeployment:soa_csg_jms_module:soa_osm_saf_agent_ms1%soa_osm_saf_agent_ms2%soa_osm_saf_agent_ms3
+
+# SAF ERRROR IMPORT DESTINATION
+# Example - DestinationName1:JMSModule1:Target1,DestinationName2:JMSModule2:Target2
+#SAF_ERROR_IMPORT_DEST_LIST : uim_osm_saf_error_Dest:uim_osm_jms_module:uim_osm_subdeploy
+
+SAF_ERROR_IMPORT_DEST_LIST : soa_osm_saf_error_Dest:soa_csg_jms_module:soa_osm_SubDeployment
+
+# SAF QUEUES
+# Example - SAFQueueName1:JMSModuleName1:SAFImportedDestinationName1:QueueRemoteJNDIName1,SAFQueueName2:JMSModuleName2:SAFImportedDestinationName2:QueueRemoteJNDIName2
+#SAF_QUEUE_LIST : local_uim_osm_saf_error_Queue:uim_osm_jms_module:uim_osm_saf_error_Dest:uim_osm_saf_error_Queue,inventoryWSResponse_saf_queue:uim_osm_jms_module:uim_osm_saf_destinations:inventoryWSResponseQueue
+
+SAF_QUEUE_LIST : soa_osm_saf_error:soa_csg_jms_module:soa_osm_saf_error_Dest:SODIClosureErrorQueue
+
+# SAF Error Handler
+# Example - saf_error_name1:sc_module_name1:saf_error_redirect1:saf_import_dest1,saf_error_name2:sc_module_name2:saf_error_redirect2:saf_import_dest2
+#SAF_ERROR_LIST : uim_osm_saf_error:uim_osm_jms_module:local_uim_osm_saf_error_Queue:uim_osm_saf_error_Dest
+
+SAF_ERROR_LIST : soa_osm_saf_error:soa_csg_jms_module:soa_osm_saf_error:soa_osm_saf_error_Dest
+
+# SAF IMPORT DESTINATION
+# Example - DestinationName1:JMSModule1:Target1:RemoteSAF1:SAFError1:SAFTTL1,DestinationName2:JMSModule2:Target2:RemoteSAF2:SAFError2:SAFTTL2
+#SAF_IMPORT_DEST_LIST : uim_osm_saf_destinations:uim_osm_jms_module:uim_osm_subdeploy:uim_osm_saf_context:uim_osm_saf_error:3600000
+
+SAF_IMPORT_DEST_LIST :  soa_osm_saf_destination:soa_csg_jms_module:soa_osm_SubDeployment:soa_osm_saf_context:soa_osm_saf_error:3600000

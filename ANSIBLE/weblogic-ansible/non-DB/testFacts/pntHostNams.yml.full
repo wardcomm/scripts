@@ -1,0 +1,59 @@
+---
+
+- name: Set up user and software
+  hosts: fmw  
+  #hosts: '{{ host }}'
+  vars_files:
+    - vars.yml
+  
+  tasks:
+    # - name: print all host names from fmw
+      # shell: echo "{{ cluster_nodes}}"
+      # register: my_cluster_nodes      
+    
+    # - debug: 
+        # msg: "{{ hostvars[current_node]['ansible_hostname'] }}"
+      # loop: "{{ cluster_nodes }}"
+      # loop_control:
+        # loop_var: current_node        
+        # #msg: "{{ ansible_play_hosts[0] }}"
+        
+    
+    # - debug: 
+        # msg: "{{ hostvars[host]['ansible_facts']['hostname']}}"
+        
+    - debug: 
+        msg: "{{ servers }}"
+        
+    - debug: 
+        msg: "{{ servers[0] }}"
+    
+    # - debug: 
+        # msg: "{{ my_cluster_nodes }}"
+        
+    # - debug:
+        # msg: "{{ InvHostLst }}"
+        # #msg: "{{ InvHostLst }}"        
+     
+    # - debug:
+        # msg: "{{ InvHostLst }}[0]"
+     
+    # - debug: 
+        # msg: "{{ item }}"
+      # with_items: "{{ ansible_play_hosts }}"
+
+    - debug: 
+        msg: "{{ ansible_play_hosts[1]}}"
+      #with_items: "{{ ansible_play_hosts }}"              
+
+    - debug: 
+        msg: "{{ noOfhosts }}"  
+  
+    # - debug:        
+        # msg: "{{ hostName }}"
+        
+    # - debug:
+        # msg: "{{ ansible_machine }}"
+      # #loop: "{{ ansible_play_batch }}"
+      # #loop: "{{ ansible_play_hosts_all }}"      
+    

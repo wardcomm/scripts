@@ -1,0 +1,10 @@
+
+---
+
+- hosts: all
+  tasks:
+    - import_role:
+        name: fmwwas
+
+
+

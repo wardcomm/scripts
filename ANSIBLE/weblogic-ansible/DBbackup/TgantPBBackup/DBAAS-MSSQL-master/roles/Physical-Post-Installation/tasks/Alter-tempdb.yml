@@ -1,0 +1,12 @@
+---
+
+- name: copy the Alter-tempdb-SQL2 file
+  win_template:
+      src: ../templates/Alter-tempdb-SQL2.j2
+      dest: c:\Ansible\Temp\Alter-tempdb-SQL2.ps1
+  diff: false
+
+- name: Alter-tempdb-SQL2 file
+  win_shell: 
+     C:\Ansible\Temp\Alter-tempdb-SQL2.ps1 > C:\Ansible\Logs\Alter-tempdb-SQL2.log
+  no_log: true

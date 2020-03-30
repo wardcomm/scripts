@@ -1,0 +1,13 @@
+---
+- name: Copy the Install-SQL
+  win_template:
+    src: ../templates/Install-SQL.j2
+    dest: c:\Ansible\Temp\Install-SQL.ps1
+
+- name: Install-SQL
+  win_shell:
+    C:\Ansible\Temp\Install-SQL.ps1 > C:\Ansible\Logs\Install-SQL.log
+
+- name: Read SQL Installation Log file
+  win_shell:
+    gc C:\Ansible\Logs\Install-SQL.log

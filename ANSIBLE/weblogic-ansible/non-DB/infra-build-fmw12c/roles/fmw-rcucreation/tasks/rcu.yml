@@ -1,0 +1,36 @@
+---
+
+ - name: Clean Directories
+   become: yes
+   become_user: root
+   file:
+    state: absent
+    path: "{{ STAGE_DIR }}/rcu"
+ 
+ - name: Copy RCU Creation Script to Stage Directory
+   become: yes
+   become_user: "{{ install_user }}"
+   template:
+    src:  roles/fmw-domain/files/manageRCU.sh
+    dest: "{{ STAGE_DIR }}/manageRCU.sh"
+    mode: 0777
+
+ - name: Execute Repository Creation Utility
+   become: yes
+   become_user: "{{ install_user }}"
+   shell: " ./manageRCU.sh {{ item }} "
+   args:
+    chdir: "{{ STAGE_DIR }}"
+   environment:
+    JAVA_HOME: "{{ JAVA_HOME }}"
+   with_items:
+     - "{{ OSB_SCHEMA_PREFIX }}"
+     - "{{ SOA_SCHEMA_PREFIX }}"
+
+ - name: Clean Directories
+   become: yes
+   bec:ome_user: root
+   file:
+    state: absent
+    path: "{{ STAGE_DIR }}/rcu"
+ 

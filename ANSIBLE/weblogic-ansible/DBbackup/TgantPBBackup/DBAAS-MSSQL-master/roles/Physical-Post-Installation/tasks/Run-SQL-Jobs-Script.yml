@@ -1,0 +1,12 @@
+---
+
+- name: Copy Run-SQL-Jobs-Script file
+  win_template: 
+    src: ../templates/Run-SQL-Jobs-Script-SQL2.j2
+    dest: c:\Ansible\Temp\Run-SQL-Jobs-Script-SQL2.ps1
+  diff: false
+
+- name: Run SQL Jobs Script
+  win_shell: |
+     c:\Ansible\Temp\Run-SQL-Jobs-Script-SQL2.ps1 > c:\Ansible\Logs\Run-SQL-Jobs-Script-SQL2.log
+  no_log: true

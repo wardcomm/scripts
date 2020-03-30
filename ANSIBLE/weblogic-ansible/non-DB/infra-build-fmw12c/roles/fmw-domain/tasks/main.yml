@@ -1,0 +1,4 @@
+---
+
+ - include: createOSBDomain.yml
+ #- include: createSOADomain.yml

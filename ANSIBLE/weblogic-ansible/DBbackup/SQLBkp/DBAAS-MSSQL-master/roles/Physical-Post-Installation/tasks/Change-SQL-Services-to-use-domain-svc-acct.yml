@@ -1,0 +1,18 @@
+---
+
+- name: Copy Change SQL Services to use domain svc acct file
+  win_template:
+     src: ../templates/SQL_Services_use_domain_svc_acct-SQL2.j2
+     dest: c:\Ansible\Temp\SQL_Services_use_domain_svc_acct-SQL2.ps1
+  diff: false
+
+- name: Change SQL Services to use domain svc acct
+  win_shell: |
+    C:\Ansible\Temp\SQL_Services_use_domain_svc_acct-SQL2.ps1 > C:\Ansible\Logs\SQL_Services_use_domain_svc_acct-SQL2.log
+  register: Change_SQL
+  no_log: true
+
+- name: Protected Output - Change SQL Services to use domain svc acct
+  debug:                                                                  
+    var: "Change_SQL | combine({'cmd': Change_SQL.cmd | replace(SaPw, '<PASSWORD HIDDEN>') | replace(password, '<PASSWORD HIDDEN>')})"
+  failed_when: Change_SQL.rc

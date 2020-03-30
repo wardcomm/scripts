@@ -1,0 +1,37 @@
+---
+
+- include_vars: var_cluster_inventory_insertion.yml
+
+- name: POST into V_CLUSTER_MEMBER_TBL
+  block:
+  - name: Insert {{ cluster_name }} into Cluster Inventory
+    uri:
+      url: "{{ apex_url }}/insertclustermember"
+      validate_certs: no  # should be removed after https certs becomes renewed
+      method: POST
+      body_format: json
+      body: "{{ cluster_invntry_body }}"
+      headers:
+        Content-Type: "application/json"
+    register: v_cluster_membr_detail_insertion_response
+    when: inventory_hostname == master_node
+
+  - name: Get The HOST_CODE From Response
+    set_fact:
+      host_code: "{{ hostvars[master_node].v_cluster_membr_detail_insertion_response.json | json_query('HOST_CODE') }}"
+  
+  - name: set cluster_id
+    set_fact:
+      cluster_id: "{{ v_cluster_membr_detail_insertion_response.json | default('{`items`:[{`ID`:``}]}') | json_query('ID') }}"
+    when: inventory_hostname == master_node
+      
+  rescue:
+  - name: Store the Json If APEX Server Is Down
+    delegate_to: localhost
+    lineinfile:
+      path: "{{ json_backup_dir }}/{{ cluster_name }}_cluster_inv_insertion.json"
+      line: "{{ cluster_invntry_body  | to_json }}"
+      create: yes
+    when: 
+    - inventory_hostname == master_node
+    - v_cluster_membr_detail_insertion_response.status == "500" or v_cluster_membr_detail_insertion_response.status == -1

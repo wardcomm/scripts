@@ -1,0 +1,11 @@
+---
+  - name: reboot_server
+    become: true
+    reboot:
+      reboot_timeout: 300
+      msg: "Reboot initiated by Ansible"
+
+  - name: reload_oracleasm
+    systemd:
+      name: oracleasm
+      state: reloaded

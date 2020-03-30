@@ -1,0 +1,12 @@
+---
+- hosts: all
+  gather_facts: no
+  tasks:
+    - shell: "echo 'should say sbonu'; whoami"
+
+    - shell: "echo 'should say root'; whoami"
+      become: true
+
+    - shell: "echo 'should say splunk'; whoami"
+      become_user: "splunk"
+      become: true

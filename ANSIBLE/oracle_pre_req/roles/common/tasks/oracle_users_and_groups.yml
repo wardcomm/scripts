@@ -1,0 +1,64 @@
+---
+- include_vars: /REPO/ansible-playbooks/roles/common/vars/password.yml
+
+- name: Copy user-ignore with owner and permissions
+  copy:
+    src: files/temp_user_ignore
+    dest: /etc/pbis/user-ignore
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Copy temp group-ignore with owner and permissions
+  copy:
+    src: files/temp_group_ignore
+    dest: /etc/pbis/group-ignore
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Add "{{ oracle_dba_group }}" group
+  group:
+    name: "{{ oracle_dba_group }}"
+    gid: 900
+    state: present
+
+- name: Add "{{ oracle_oinstall_group }}" group
+  group:
+    name: "{{ oracle_oinstall_group }}"
+    gid: 901
+    state: present
+
+
+# - name: Add "{{ oracle_asmadmin_group }}" group
+#   group:
+#     name: "{{ oracle_asmadmin_group }}"
+#     gid: 902
+#     state: present
+
+- name: Create Oracle user
+  user:
+    name: "{{ oracle_user }}"
+    uid: 900
+    state: present
+
+- name: added groups to oracle user
+  user:
+    name: "{{ oracle_user }}"
+    groups: "{{ oracle_oinstall_group }}, {{ oracle_dba_group }}"
+    shell: /bin/ksh
+    home: /export/home/oracle
+    password: "{{ 'oracle_os_user_pass' | password_hash('sha512') }}"
+    append: yes
+  # - name: Add extra groups
+  #   user:
+  #     name: "{{ oracle_user }}"
+  #     group: "{{ item }}"
+  #     append: true
+  #   with_items:
+  #     - dba
+  #     - oper
+
+- name: Check Oracle user and groups are there
+  shell: id -a oracle
+  register: check_oracle_id

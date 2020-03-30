@@ -1,0 +1,8 @@
+---  
+- name: Add all instance public IPs to host group
+  become: yes
+  become_user: root
+  add_host: hostname={{ item.public_ip }} groups=ec2hosts
+  loop: "{{ ec2.instances }}"
+
+

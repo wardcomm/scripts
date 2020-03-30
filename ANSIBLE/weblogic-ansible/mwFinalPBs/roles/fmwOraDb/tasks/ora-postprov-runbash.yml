@@ -1,0 +1,15 @@
+---
+- name: Copy runbash.sh file to /home/sbonu folder
+  become: yes
+  become_user: root 
+  copy:
+    src:  "runbash.sh" 
+    dest: "/home/sbonu"
+    mode: 0755
+
+- name: Source the updated bash profile file    
+  become: yes
+  become_user: root
+  command: "sh runbash.sh"
+  args:
+    chdir: "/home/sbonu"

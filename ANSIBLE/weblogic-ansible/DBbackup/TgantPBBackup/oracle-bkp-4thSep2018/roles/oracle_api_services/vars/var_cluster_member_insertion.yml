@@ -1,0 +1,10 @@
+---
+
+master_node: "{{ ansible_play_hosts | first }}"
+
+cluster_membr_body:
+    cluster_name: "{{ cluster_name | mandatory }}"
+    cluster_type: "{{ cluster_type }}"
+    gi_version: "{{ grid_version | mandatory}}"
+    gi_current_patchset: "{{ gi_current_patchset }}"
+    env_source: "{{ env_source | mandatory }}" 

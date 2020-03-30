@@ -1,0 +1,107 @@
+---
+
+- name: Set up user and software
+  hosts: fmw
+  vars_files:
+    #- Custom.yml
+    - vars.yml
+  roles:
+    - os-config
+    - jdk
+    - fmw-software
+
+- name: Creating RCU  
+  hosts: admin 
+  vars_files:
+   #- Custom.yml
+    - vars.yml
+  roles:
+    - fmw-rcucreation
+
+- name: Create WebLogic 12c R2 domain and start WebLogic AdminServer
+  hosts: admin
+  strategy: debug
+  vars_files:
+    #- Custom.yml
+    - vars.yml
+  roles:
+    - fmw-domain
+
+- name: Copy Domain 12c R2 domain on hosts and Enroll NM s to thier domains
+  hosts: managed
+  vars_files:
+    #- Custom.yml
+    - vars.yml
+  roles:
+    - distribute-domain
+
+- name: Start the Nodemanger on Admin Server
+  hosts: admin
+  vars_files:
+    #- Custom.yml
+    - vars.yml
+  roles:
+    - startNMonAdminServer
+
+- name: Start the Nodemanger on managed servers
+  hosts: managed
+  vars_files:
+    #- Custom.yml
+    - vars.yml
+  roles:
+    - startNMonManagedservers
+
+#- name: Start the Nodemanger on managed servers
+#  hosts: 22.85.211.65
+#  vars_files:
+#    #- Custom.yml
+#    - vars.yml
+#  roles:
+#    - startNMonManagedservers
+#
+#- name: Start the Nodemanger on managed servers
+#  hosts: 192.168.128.135
+#  vars_files:
+#    #- Custom.yml
+#    - vars.yml
+#  roles:
+#    - startNMonManagedservers
+
+- name: Start the clusters
+  hosts: managed
+  vars_files:
+    #- Custom.yml
+    - vars.yml
+  roles:
+    - fmw-StartClusters
+
+#- name: Configure
+#  hosts: admin
+#  vars_files:
+#    #- Custom.yml
+#    - vars.yml
+#  roles:
+#    - fmw-soaconfig
+#
+#- name: Configure
+#  hosts: admin
+#  vars_files:
+#    #- Custom.yml
+#    - vars.yml
+#  roles:
+#    - fmw-osbconfig
+#
+##  pre_tasks:
+##    # ==> Fix hosts file. Remove hostname from local loop. A workaround for
+##    # remove hostname to local loop
+##    - name: fix host file 192.168.128.135 entry
+##      become: yes
+##      become_user: root
+##      lineinfile:
+##        dest: /etc/hosts
+##        regexp: '^[     ]*127\.0\.0\.1[     ]'
+##        line: '127.0.0.1 localhost localhost.localdomain localhost4 localhost4.localdomain4'
+##        #line: '192.168.128.135 localhost localhost.localdomain localhost4 localhost4.localdomain4'
+##        owner: root
+##        group: root
+##        mode: 0644

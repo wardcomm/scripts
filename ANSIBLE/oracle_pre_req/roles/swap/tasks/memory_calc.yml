@@ -1,0 +1,60 @@
+---
+#  vars:
+#    - scale: 1024
+#    - scoggins_constant: 262144
+
+- name: register varible for memory
+  shell: cat /proc/meminfo | grep MemTotal | awk '{print $2}'
+  register: memory_on_system_kb
+
+- name: register varible for real memory
+  shell:  dmidecode -t 17 | grep Size |awk '{print $2}' | paste -sd+ - | bc
+  register: real_memory_on_system_kb
+
+- name: this is the standard out from register above
+  debug:
+    msg:
+    - "{{ memory_on_system_kb.stdout | int }}"
+    - "{{ scale }}"
+    - "{{ scoggins_constant }}"
+    - "This is real memory {{ real_memory_on_system_kb.stdout }}"
+
+- name: this is a test of set_fact for kb -> mb
+  set_fact:
+    kb_mb_convert: "{{ (memory_on_system_kb.stdout | int) // (scale | int) | int }}"
+
+- name: calculating percent error to value
+  set_fact:
+    calculating_error: "{{ (real_memory_on_system_kb.stdout  | int) - (kb_mb_convert |int )  }}"
+
+- name: divide error
+  set_fact:
+    divide_error: "{{ (calculating_error | int)  / (real_memory_on_system_kb.stdout | int)  | float()  }}"
+
+- name: percent of exact value
+  set_fact:
+    percentage_error: "{{ (divide_error | float) * (percent | int) | round(2, 'common')}}"
+
+- name: round down the float
+  set_fact:
+    round_percent_error: "{{ percentage_error | round (3 , 'common') | int }}"
+
+- name: this is set_fact for big_swap
+  set_fact:
+    big_swap: "{{ kb_mb_convert  >= scoggins_constant }}"
+
+- name: this is to set_fact for big_swap
+  set_fact:
+    small_swap: "{{ kb_mb_convert < scoggins_constant }}"
+
+- name: show the variables
+  debug:
+    msg:
+      - "This is the kb mb convert integer{{ kb_mb_convert |int }}"
+      - "This is small swap variable {{ small_swap  }}"
+      - "this is big swap variable {{ big_swap }}"
+      - "this is  scale variable {{ scale }}"
+      - "this is soggins constant variable {{ scoggins_constant }}"
+      - "This is calculating percent error at run time {{ calculating_error }}"
+      - "This is divide the error {{ divide_error }}"
+      - "This is the percentage of error {{ percentage_error }}"

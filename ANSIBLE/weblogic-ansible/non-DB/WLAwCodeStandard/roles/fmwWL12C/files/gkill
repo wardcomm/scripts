@@ -1,0 +1,11 @@
+cnt=`ps aux|grep $1| grep -v "grep" -c`
+if [ "$cnt" -gt 0 ]
+then
+    ##echo "count is: $cnt \n"
+    echo "Found $cnt processes - killing them"
+    ##ps aux|grep $1| grep -v "grep"| awk '{print $2}' >> processID.txt
+    ps aux|grep $1| grep -v "grep"| awk '{print $2}'| xargs kill
+else
+    echo "No processes found"
+fi
+

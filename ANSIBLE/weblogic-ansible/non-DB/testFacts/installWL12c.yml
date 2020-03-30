@@ -1,0 +1,12 @@
+---
+
+- name: Set up user and software
+  hosts: fmw
+  vars_files:
+    - vars.yml
+  roles:
+    - os-config
+    - jdk
+    - fmw-software
+
+

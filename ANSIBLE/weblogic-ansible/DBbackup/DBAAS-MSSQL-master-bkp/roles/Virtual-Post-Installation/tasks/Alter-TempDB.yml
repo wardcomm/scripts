@@ -1,0 +1,9 @@
+- name: copy alter tempdb file
+  win_template: 
+    src: ../templates/Alter-TempDB.j2
+    dest: C:\Ansible\Temp\Alter-TempDB.ps1
+
+- name: Alter tempdb
+  win_shell: |
+    C:\Ansible\Temp\Alter-TempDB.ps1 > C:\Ansible\Logs\Alter-TempDB.log
+

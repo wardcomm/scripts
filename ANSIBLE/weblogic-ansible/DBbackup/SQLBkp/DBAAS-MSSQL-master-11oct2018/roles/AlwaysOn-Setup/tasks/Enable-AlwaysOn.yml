@@ -1,0 +1,9 @@
+---
+- name: Copy Enable-AlwaysOn
+  win_template:
+    src: ../files/Enable-AlwaysOn.ps1
+    dest: c:\Ansible\Temp\Enable-AlwaysOn.ps1
+
+- name: Run Enable-AlwaysOn
+  win_shell:
+    c:\Ansible\Temp\Enable-AlwaysOn.ps1

@@ -1,0 +1,15 @@
+---
+
+- name: Starting Tomcat   
+  become: yes
+  #become_user: root
+  become_user: "{{ tc_install_user }}"
+  command: "nohup ./startup.sh"
+  args:
+    chdir: "{{ CATALINA_HOME }}/bin"
+  environment:
+    JAVA_HOME: "{{ JAVA_HOME }}"
+  #ignore_errors: yes
+
+
+

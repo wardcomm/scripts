@@ -1,0 +1,28 @@
+---
+#FTP Server Deatils
+bin_server: https://vm0pnyumxxw0001.twcable.com/yum/source/SQL/
+ansible_tmp: C:\Ansible\Temp
+installer_location: '{{ ansible_tmp }}\mssql_bin'
+#Enter an Environment (LAB, DEV, UAT, TST, QA, SIT, DR, PRD)
+Env1: DEV
+#What Data Center is this being built in? (GVL, NCE, NCW)
+DC: NCE
+#What Domain is this being installed on? (CHTR, Corp, DEV, TWCCORP, TWZDMZ, UAT)
+Domain: CHTR
+#Backup Path
+BuPath: H:\
+BuDir: Backups
+#Data Path
+DataPath: G:\
+DataDir: Data
+#Log Path
+LogPath: J:\
+LogDir: Logs
+#System Path
+SystemPath: F:\
+SystemDir: System
+#Temdb Path
+TempdbPath: I:\
+TempDir: Tempdb
+#Enter SQL Version (2012, 2014, 2016, 2017)
+SqlVersion: 2016

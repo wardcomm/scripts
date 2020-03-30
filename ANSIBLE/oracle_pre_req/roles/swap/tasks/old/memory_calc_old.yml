@@ -1,0 +1,35 @@
+---
+- block:
+  - name: register varible for memory
+    shell: cat /proc/meminfo | grep MemTotal | awk '{print $2}'
+    register: memory_on_system_kb
+
+  - name: set variables
+    set_fact:
+      # box_memtotal: "{{ cat /proc/meminfo | grep MemTotal | awk '{print $2}' }}"
+      kb_mb_convert: "{{ memory_on_system_kb / 1024 }}"
+      big_swap: "{{ kb_mb_convert >= 262144 }}"
+      small_swap: "{{ kb_mb_convert < 262144 }}"
+
+
+  - debug:
+    msg:
+    - "{{ memory_on_system_kb }}"
+    - "{{ kb_mb_convert }}"
+    - "{{ small_swap }}"
+    - "{{ big_swap }}"
+    # - "{{ box_memtotal }}"
+    - "{{ kb_mb_convert }}"
+
+
+  # - name: Ensure small swap file of 16 Gigs exits
+  # shell:
+  #   cmd: "{{ small_swap_file_create_command }}"
+  #   creates: "{{ swap_file_path }}"
+  # register: swap_file_create
+  # when: small_swap
+    # var:
+    #   # box_memtotal: "cat /proc/meminfo | grep MemTotal | awk '{print $2}'"
+    #   kb_mb_convert:  "{{ memory_on_system_kb  / '1024' }}"
+    #   big_swap: "{{ kb_mb_convert >= '262144'}}"
+    #   small_swap: "{{ kb_mb_convert < '262144'}}"

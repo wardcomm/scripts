@@ -1,0 +1,105 @@
+---
+
+- name: Create groups
+  become: yes
+  become_user: root
+  group:
+    state: present
+    name:  "{{ tc_install_group }}"
+
+- name: Create user
+  become: yes
+  become_user: root
+  user:
+    name:     "{{ tc_install_user }}"
+    groups:   "{{ tc_install_group }}"
+    #generate_ssh_key: yes
+
+- name: Clean Existing Installations 
+  become: yes
+  become_user: root 
+  #become_user: "{{ tc_install_user }}"
+  file:
+    path: "{{ item }}"
+    owner: "{{ tc_install_user }}"
+    group: "{{ tc_install_group }}"
+    state: absent
+  with_items:
+    - "{{ TC_DEV_HOME }}"
+
+- name: Create Directories
+  become: yes
+  become_user: root
+  file:
+    state: directory
+    path: "{{ item }}"
+    owner: "{{ tc_install_user }}"
+    group: "{{ tc_install_group }}"
+    mode: 0755
+  with_items:
+    - "{{ TC_DEV_ROOT }}"
+    - "{{ TC_DEV_HOME }}"
+    - "{{ TC_STAGE_DIR }}"
+    - "{{ TC_JAVA9_INST_DIR }}"
+
+- name: Copy gkill script to Stage directory
+  become: yes
+  become_user: "{{ tc_install_user }}"
+  #template:
+    #src:  roles/fmwTomcat/files/gkill
+  copy:
+    src:  gkill
+    dest: "{{ TC_DEV_HOME }}/gkill"
+    owner: "{{ tc_install_user }}"
+    group: "{{ tc_install_group }}"
+    mode: 0777
+
+- name: killing existing tomcat if any    
+  become: yes
+  become_user: root
+  #become_user: "{{ tc_install_user }}"
+  shell: ./gkill java
+  args:
+    chdir: "{{ TC_DEV_HOME }}"
+  #environment:
+  #  JAVA_HOME: "{{ JAVA_HOME }}"
+  ignore_errors: yes
+
+- name: Copy/unarchive java9 installation archive to java install directory 
+  become: yes
+  #become_user: "{{ tc_install_user }}"
+  become_user: root
+  unarchive:
+    remote_src: yes
+    src: "{{ jdk_url }}/{{ item }}" 
+    dest: "{{ TC_JAVA9_INST_DIR }}"
+    owner: "{{ tc_install_user }}"
+    group: "{{ tc_install_group }}"
+    mode:  0777
+    validate_certs: no
+  with_items: 
+    -  "{{ jdk_installation_archive }}"
+
+- name: Copy setenv script to Stage directory
+  become: yes
+  become_user: "{{ tc_install_user }}"
+  copy:
+    src:  setenv
+    dest: "{{ TC_JAVA9_INST_DIR }}/setenv"
+    owner: "{{ tc_install_user }}"
+    group: "{{ tc_install_group }}"
+    mode: 0777
+
+- name: Running setenv script   
+  become: yes
+  become_user: root
+  #become_user: "{{ tc_install_user }}"
+  shell: ./setenv
+  args:
+    chdir: "{{ TC_JAVA9_INST_DIR }}"
+  #environment:
+  #  JAVA_HOME: "{{ JAVA_HOME }}"
+  ignore_errors: yes
+
+
+

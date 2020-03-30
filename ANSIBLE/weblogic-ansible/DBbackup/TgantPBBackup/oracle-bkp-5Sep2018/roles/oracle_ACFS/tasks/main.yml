@@ -1,0 +1,9 @@
+---
+
+- import_tasks: reco_disks.yml
+  vars: 
+    diskgroup_name: "{{ asm_reco_group }}"
+
+- import_tasks: exp_disks.yml
+  vars:
+    diskgroup_name: "{{ asm_exp_group }}"

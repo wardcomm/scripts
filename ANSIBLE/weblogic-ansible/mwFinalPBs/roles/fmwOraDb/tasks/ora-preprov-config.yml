@@ -1,0 +1,69 @@
+---
+
+- name: Upgrade Packages (yum upgrade)
+  become: yes
+  become_user: root
+  yum:
+    name:  '*' 
+    state: latest
+  ignore_errors: yes
+
+- name: Install all the required Packages to install Oracle DB 
+  become: yes
+  become_user: root
+  yum:
+    name:  "{{ item }}" 
+    state: latest
+  with_items:
+    - "{{ packages }}"
+  ignore_errors: yes
+
+- name: Create groups
+  become: yes
+  become_user: root
+  group:
+    state: present
+    name:  "{{ item }}"
+  with_items:
+    - "{{ ora_install_group }}"
+    - "{{ dba_install_group }}"
+
+- name: Create user
+  become: yes
+  become_user: root
+  user:
+    name:     "{{ ora_install_user }}"
+    groups:   "{{ item }}"
+    #password: "oracle"
+  with_items:
+    - "{{ ora_install_group }}"
+    - "{{ dba_install_group }}"
+
+- name: Copy sysctl.conf file to /etc directory
+  become: yes
+  become_user: root 
+  copy:
+    src:  sysctl.conf
+    dest: "/etc/sysctl.conf"
+
+- name: Running systrl -p    
+  become: yes
+  become_user: root 
+  command: "sysctl -p"
+  args:
+    chdir: "/root"
+    
+- name: Running systrl -a    
+  become: yes
+  become_user: root 
+  command: "sysctl -a"
+  args:
+    chdir: "/root"
+
+- name: Copy limits.conf file to /etc/security directory
+  become: yes
+  become_user: root 
+  copy:
+    src:  limits.conf
+    dest: "/etc/security/limits.conf"
+

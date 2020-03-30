@@ -1,0 +1,12 @@
+---
+
+- name: Oracle Pre-Reqs
+  hosts: '{{ host }}'
+  become: yes
+  tasks:
+  - import_role:
+      name: oracle_post_provisioning_validation
+
+# variables required
+# oracle_context
+# oracle_db_name

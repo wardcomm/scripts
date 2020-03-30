@@ -1,0 +1,34 @@
+---
+
+- name: Set up user and software
+  hosts: fmw
+  vars_files:
+   #- Custom.yml
+    - vars.yml
+  roles:
+    - os-config
+    - jdk
+    - fmw-software
+
+- name: Creating RCU  
+  hosts: admin 
+  vars_files:
+   #- Custom.yml
+    - vars.yml
+  roles:
+    - fmw-rcucreation
+
+#- name: Configure
+#  hosts: admin
+#  vars_files:
+#    #- Custom.yml
+#    - fmw-soaconfig
+#
+#- name: Configure
+#  hosts: admin
+#  vars_files:
+#    #- Custom.yml
+#    - vars.yml
+#  roles:
+#    - fmw-osbconfig
+#

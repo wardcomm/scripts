@@ -1,0 +1,39 @@
+---
+
+- include_tasks: fmw-uninstallWL12C.yml
+  tags: "fmw-uninstallWL12C"
+
+- include_tasks: fmw-osConfig.yml 
+  tags: "fmw-osConfig"
+
+- include_tasks: fmw-installJDK.yml 
+  tags: "fmw-installJDK"
+
+- include_tasks: fmw-installWL12cSW.yml
+  tags: "fmw-installWL12cSW"
+
+- include_tasks: fmw-createDEMODomain.yml 
+  tags: "fmw-createDEMODomain"
+
+- include_tasks: fmw-StartAdminServer.yml 
+  tags: "fmw-StartAdminServer"
+
+- include_tasks: fmw-NMEnroll.yml
+  tags: "fmw-NMEnroll"
+
+- include_tasks: fmw-StartNMonAdminServer.yml 
+  tags: "fmw-StartNMonAdminServer"
+
+- include_tasks: fmw-StartNMonManagedservers.yml 
+  tags: "fmw-StartNMonManagedservers"
+  
+- include_tasks: fmw-StartCluster.yml 
+  tags: "fmw-StartCluster"
+  
+- include_tasks: fmw-CleanupStage.yml 
+  tags: "fmw-CleanupStage"
+  
+- include_tasks: fmw-SendEmail.yml 
+  tags: "fmw-SendEmail.yml"
+  
+  

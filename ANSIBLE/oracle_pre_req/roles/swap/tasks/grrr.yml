@@ -1,0 +1,47 @@
+---
+  vars:
+    - scale: 1024
+    - scoggins_constant: 262144
+ 
+  tasks:
+  - name: register varible for memory
+    shell: cat /proc/meminfo | grep MemTotal | awk '{print $2}'
+    register: memory_on_system_kb
+
+  - name: dumping standard out lines
+    debug:
+      msg: "{{ memory_on_system_kb.stdout_lines }}"
+
+  - name: Reset variable...
+    set_fact:
+      memory_on_system_kb: "{{ memory_on_system_kb.stdout | int }}"
+
+  - name: Dump some vars yo...
+    debug:
+      msg:
+      - "{{ memory_on_system_kb |int }}"
+      - "{{ scale }}"
+
+  - name: Dump some vars again fool...
+    debug:
+      msg:
+      - "{{ (memory_on_system_kb | int)  // scale | int }}"
+
+  - name: Set the rest!
+    set_fact:
+      kb_mb_convert: "{{ (memory_on_system_kb | int) // (scale | int) | int }}"
+
+  - name: Set the rest!
+    set_fact:
+      small_swap: "{{ kb_mb_convert < scoggins_constant }}"
+
+  - name: Set the rest!
+    set_fact:
+      big_swap: "{{ kb_mb_convert >= scoggins_constant }}"
+
+  - name: Dump some vars yo...
+    debug:
+      msg:
+      - "{{ kb_mb_convert |int }}"
+      - "{{ big_swap }}"
+      - "{{ small_swap }}"

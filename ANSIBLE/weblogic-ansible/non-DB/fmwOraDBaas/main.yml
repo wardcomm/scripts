@@ -1,0 +1,9 @@
+---
+
+- name: Install Java 
+  hosts: dbhost
+  vars_files:
+    - vars.yml
+  roles:
+    - DbaaS-createUsers
+

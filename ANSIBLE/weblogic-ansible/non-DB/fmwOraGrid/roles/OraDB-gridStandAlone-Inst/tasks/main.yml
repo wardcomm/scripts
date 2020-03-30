@@ -1,0 +1,51 @@
+---
+- name: Upgrade Packages (yum upgrade)
+  become: yes
+  become_user: root
+  yum:
+    name:  '*' 
+    state: latest
+
+- name: Install all the required Packages to install Oracle DB 
+  become: yes
+  become_user: root
+  yum:
+    name:  "{{ item }}" 
+    state: latest
+  with_items:
+    - "{{ packages }}"
+  ignore_errors: yes
+
+- name: Copy sysctl.conf file to /etc directory
+  become: yes
+  become_user: root 
+  template:
+    src:  roles/OraDB-gridStandAlone-Inst/files/sysctl.conf
+    dest: "/etc/sysctl.conf"
+    #owner: "{{ ora_install_user }}"
+    #group: "{{ ora_install_group }}"
+    #mode: 0644
+
+- name: Running systrl -p    
+  become: yes
+  become_user: root 
+  command: "sysctl -p"
+  args:
+    chdir: "/root"
+  #environment:
+    #JAVA_HOME: "{{ JAVA_HOME }}"
+    
+- name: Running systrl -a    
+  become: yes
+  become_user: root 
+  command: "sysctl -a"
+  args:
+    chdir: "/root"
+
+- name: Copy limits.conf file to /etc/security directory
+  become: yes
+  become_user: root 
+  template:
+    src:  roles/OraDB-gridStandAlone-Inst/files/limits.conf
+    dest: "/etc/security/limits.conf"
+

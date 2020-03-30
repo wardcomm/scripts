@@ -1,0 +1,11 @@
+---
+- name: Create install directory
+  become: yes
+  become_user: root
+  file:
+    state: directory
+    path: /var/www/html
+    # owner: root
+    # group: www-data
+    mode: 0755
+

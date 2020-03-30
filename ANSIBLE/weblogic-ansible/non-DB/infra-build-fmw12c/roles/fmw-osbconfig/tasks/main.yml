@@ -1,0 +1,47 @@
+---
+
+ - name: Clean Directories
+   file:
+    path: "{{ item }}"
+    owner: "{{ install_user }}"
+    group: "{{ install_group }}"
+    state: absent
+   with_items:
+    - "{{ STAGE_DIR }}"
+   become: yes
+
+ - name: Create Directories
+   file:
+    path: "{{ item }}"
+    owner: "{{ install_user }}"
+    group: "{{ install_group }}"
+    state: directory
+    mode: 0755
+   with_items:
+    - "{{ STAGE_DIR }}"
+   become: yes
+
+# - include: jdbc.yml
+#   become: yes
+#   become_user: "{{ install_user }}"
+
+# - include: jms.yml
+#   become: yes
+#   become_user: "{{ install_user }}"
+
+# - include: createSAFAgents.yml
+#   become: yes
+#   become_user: "{{ install_user }}"
+
+# - include: createSAFQueues.yml
+#   become: yes
+#   become_user: "{{ install_user }}"
+
+# - include: cluster.yml
+#   become: yes
+#   become_user: "{{ install_user }}"
+
+ - include: workmanager.yml
+   become: yes
+   become_user: "{{ install_user }}"
+

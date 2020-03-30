@@ -1,0 +1,75 @@
+$Qry = "TRUNCATE TABLE [SQLDBA].[dbo].[Parameters]"
+Invoke-SqlCmd -QueryTimeout 0 -query $Qry -serverinstance {{ ansible_hostname }} -database "master" -username "sa" -password {{ SaPw }}
+
+$Qry = "CREATE TABLE HOLDING.[dbo].[Temp]([Pname] [varchar](50) NULL,[PValue] [varchar](500) NULL,[Notes] [varchar](500) NULL,) ON [PRIMARY]"
+Invoke-SqlCmd -QueryTimeout 0 -query $Qry -serverinstance {{ ansible_hostname }} -database "master" -username "sa" -password {{ SaPw }}
+
+$Qry = "BULK INSERT HOLDING.dbo.Temp FROM 'D:\Install\SQL-CFG\Hyperv-SQL2012-Parameters.csv' WITH (FIELDTERMINATOR = ',',ROWTERMINATOR = '\n')"
+Invoke-SqlCmd -QueryTimeout 0 -query $Qry -serverinstance {{ ansible_hostname }} -database "master" -username "sa" -password {{ SaPw }}
+
+$Qry = "INSERT INTO [SQLDBA].[dbo].[Parameters] ([Pname],[PValue],[Notes]) SELECT [Pname],[PValue],[Notes] FROM [HOLDING].[dbo].[Temp]"
+Invoke-SqlCmd -QueryTimeout 0 -query $Qry -serverinstance {{ ansible_hostname }} -database "master" -username "sa" -password {{ SaPw }}
+
+$Qry = "DROP TABLE [HOLDING].[dbo].[Temp]"
+Invoke-SqlCmd -QueryTimeout 0 -query $Qry -serverinstance {{ ansible_hostname }} -database "master" -username "sa" -password {{ SaPw }}
+
+$Qry = "UPDATE [SQLDBA].[dbo].[Parameters]
+		SET [PValue] = REPLACE([PValue],'H:\MSSQL\Backup\','{{ BuPath }}{{ BuDir }}\MSSQL\Backups\')"
+Invoke-SqlCmd -QueryTimeout 0 -query $Qry -serverinstance {{ ansible_hostname }} -database "master" -username "sa" -password {{ SaPw }}
+
+$Qry = "UPDATE [SQLDBA].[dbo].[Parameters]
+		SET [PValue] = REPLACE([PValue],'H:\Refresh','{{ BuPath }}{{ BuDir }}Refresh\')"
+Invoke-SqlCmd -QueryTimeout 0 -query $Qry -serverinstance {{ ansible_hostname }} -database "master" -username "sa" -password {{ SaPw }}
+
+If ("{{ SqlVersion }}" -eq "2012")
+{
+	$Qry = "UPDATE [SQLDBA].[dbo].[Parameters]
+	SET [PValue] = REPLACE([PValue],'F:\MSSQL11.MSSQLSERVER\','{{ SystemPath }}{{ SystemDir }}\MSSQL11.MSSQLSERVER\')"
+}
+
+If ("{{ SqlVersion }}" -eq "2014")
+{
+	$Qry = "UPDATE [SQLDBA].[dbo].[Parameters]
+	SET [PValue] = REPLACE([PValue],'F:\MSSQL11.MSSQLSERVER\','{{ SystemPath }}{{ SystemDir }}\MSSQL12.MSSQLSERVER\')"
+}
+
+If ("{{ SqlVersion }}" -eq "2016")
+{
+	$Qry = "UPDATE [SQLDBA].[dbo].[Parameters]
+	SET [PValue] = REPLACE([PValue],'F:\MSSQL11.MSSQLSERVER\','{{ SystemPath }}{{ SystemDir }}\MSSQL13.MSSQLSERVER\')"
+}
+
+If ("{{ SqlVersion }}" -eq "2017")
+{
+	$Qry = "UPDATE [SQLDBA].[dbo].[Parameters]
+	SET [PValue] = REPLACE([PValue],'F:\MSSQL11.MSSQLSERVER\','{{ SystemPath }}{{ SystemDir }}\MSSQL14.MSSQLSERVER\')"
+}
+
+Invoke-SqlCmd -QueryTimeout 0 -query $Qry -serverinstance {{ ansible_hostname }} -database "master" -username "sa" -password {{ SaPw }}
+
+$Qry = "UPDATE [SQLDBA].[dbo].[Parameters]
+		SET [PValue] = REPLACE([PValue],'F:\DBA\','{{ SystemPath }}{{ SystemDir }}\DBA\')"
+Invoke-SqlCmd -QueryTimeout 0 -query $Qry -serverinstance {{ ansible_hostname }} -database "master" -username "sa" -password {{ SaPw }}
+
+$Qry = "DELETE [SQLDBA].[dbo].[Parameters] WHERE pname = 'MONITORED DRIVES'"
+Invoke-SqlCmd -QueryTimeout 0 -query $Qry -serverinstance {{ ansible_hostname }} -database "master" -username "sa" -password {{ SaPw }}
+
+$Qry = "INSERT [SQLDBA].[dbo].[Parameters](pname,PValue,Notes) VALUES('MONITORED DRIVES','{{ TempdbPath }}{{ TempDir }}','Drives to monitor')"
+Invoke-SqlCmd -QueryTimeout 0 -query $Qry -serverinstance {{ ansible_hostname }} -database "master" -username "sa" -password {{ SaPw }}
+
+$Qry = "INSERT [SQLDBA].[dbo].[Parameters](pname,PValue,Notes) VALUES('MONITORED DRIVES','{{ SystemPath }}{{ SystemDir }}','Drives to monitor')"
+Invoke-SqlCmd -QueryTimeout 0 -query $Qry -serverinstance {{ ansible_hostname }} -database "master" -username "sa" -password {{ SaPw }}
+
+$Qry = "INSERT [SQLDBA].[dbo].[Parameters](pname,PValue,Notes) VALUES('MONITORED DRIVES','{{ LogPath }}{{ LogDir }}','Drives to monitor')"
+Invoke-SqlCmd -QueryTimeout 0 -query $Qry -serverinstance {{ ansible_hostname }} -database "master" -username "sa" -password {{ SaPw }}
+
+$Qry = "INSERT [SQLDBA].[dbo].[Parameters](pname,PValue,Notes) VALUES('MONITORED DRIVES','{{ DataPath }}{{ DataDir }}','Drives to monitor')"
+Invoke-SqlCmd -QueryTimeout 0 -query $Qry -serverinstance {{ ansible_hostname }} -database "master" -username "sa" -password {{ SaPw }}
+
+$Qry = "INSERT [SQLDBA].[dbo].[Parameters](pname,PValue,Notes) VALUES('MONITORED DRIVES','{{ BuPath }}{{ BuDir }}','Drives to monitor')"
+Invoke-SqlCmd -QueryTimeout 0 -query $Qry -serverinstance {{ ansible_hostname }} -database "master" -username "sa" -password {{ SaPw }}
+
+$Qry = "UPDATE [SQLDBA].[dbo].[Parameters]
+		SET [PValue] = 'DLCorpIT-SQLServerAdmins@charter.com'
+        WHERE pname = 'DBA Dist List'"
+Invoke-SqlCmd -QueryTimeout 0 -query $Qry -serverinstance {{ ansible_hostname }} -database "master" -username "sa" -password {{ SaPw }}

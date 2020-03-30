@@ -1,0 +1,18 @@
+---
+- name: create ec2 instance
+  become: yes
+  become_user: root
+  ec2:
+    aws_access_key: "{{ AWS_ACC_KEY }}"
+    aws_secret_key: "{{ AWS_SEC_KEY }}"
+    image: ami-02da3a138888ced85
+    wait: yes
+    instance_type: t2.micro
+    #group_id: sg-79fceb05
+    group: dmz
+    keypair: my-ec2-key
+    region: us-east-1
+    count_tag:
+      Name: webserver
+    exact_count: 1
+  register: ec2

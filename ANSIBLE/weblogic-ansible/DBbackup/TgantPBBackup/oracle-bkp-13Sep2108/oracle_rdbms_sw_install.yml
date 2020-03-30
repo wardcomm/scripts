@@ -1,0 +1,12 @@
+---
+
+- name: install oracle database
+  hosts: '{{ host }}'
+  become: yes
+  tasks:
+  - import_role:
+      name: oracle_rdbms_install
+
+  ## Optional vars
+  # oracle_version (default: 12.1.0.2) 
+  # oracle_db_home (default: auto-generated based on next available; e.g. db_2)

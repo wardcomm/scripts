@@ -1,0 +1,8 @@
+---
+
+ - include: demodomain-paste.yml
+ #- include: soadomain-paste.yml
+
+ - include: demonmEnroll.yml
+ #- include: soanmEnroll.yml
+

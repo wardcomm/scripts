@@ -1,0 +1,157 @@
+---
+
+- name: Upgrade Packages (yum upgrade)
+  become: yes
+  become_user: root
+  yum:
+    name:  '*' 
+    state: latest
+
+- name: Install all the required Packages to install Oracle DB 
+  become: yes
+  become_user: root
+  yum:
+    name:  "{{ item }}" 
+    state: latest
+  with_items:
+    - "{{ packages }}"
+  ignore_errors: yes
+
+- name: Copy oracleasm library binaries /root directory
+  become: yes
+  become_user: root 
+  template:
+    src:  "/opt/orainstallers/{{ item }}"
+    dest: "/root/{{ item }}"
+    with_items: 
+      - "{{ oracleasmlib-2.0.12-1.el7.x86_64.rpm }}
+         {{ oracleasm-support-2.1.8-3.el7.x86_64.rpm }}"
+
+- name: Create groups
+  become: yes
+  become_user: root
+  group:
+    state: present
+    name:  "{{ item }}"
+  with_items:
+    - "{{ ora_install_group }}"
+    - "{{ dba_install_group }}"
+
+- name: Create user
+  become: yes
+  become_user: root
+  user:
+    name:     "{{ ora_install_user }}"
+    groups:   "{{ item }}"
+  with_items:
+    - "{{ ora_install_group }}"
+    - "{{ dba_install_group }}"
+    #generate_ssh_key: yes
+
+
+- name: Copy sysctl.conf file to /etc directory
+  become: yes
+  become_user: root 
+  template:
+    src:  roles/OraDB-gridStandAlone-Inst/files/sysctl.conf
+    dest: "/etc/sysctl.conf"
+    #owner: "{{ ora_install_user }}"
+    #group: "{{ ora_install_group }}"
+    #mode: 0644
+
+- name: Running systrl -p    
+  become: yes
+  become_user: root 
+  command: "sysctl -p"
+  args:
+    chdir: "/root"
+  #environment:
+    #JAVA_HOME: "{{ JAVA_HOME }}"
+    
+- name: Running systrl -a    
+  become: yes
+  become_user: root 
+  command: "sysctl -a"
+  args:
+    chdir: "/root"
+
+- name: Copy limits.conf file to /etc/security directory
+  become: yes
+  become_user: root 
+  template:
+    src:  roles/OraDB-gridStandAlone-Inst/files/sysctl.conf
+    dest: "/etc/security/limits.conf"
+
+- name: Create Directories
+  become: yes
+  become_user: root
+  file:
+    state: directory
+    path: "{{ item }}"
+    owner: "{{ ora_install_user }}"
+    group: "{{ ora_install_group }}"
+    mode: 0777
+  with_items:
+    - "{{ ORA_STAGE }}"
+    - "{{ ORA_DEV_HOME }}"
+    - "{{ ORA_DB_REC_DIR }}"
+    - "{{ TMP }}"
+
+- name: Install Java 
+  become: yes
+  become_user: root
+  yum:
+    name:  java 
+    state: present
+
+- name: Unpack DB package and install
+  become: yes
+  become_user: "{{ ora_install_user }}"
+  unarchive:
+    remote_src: yes
+    src:   "{{ ORA_INST_DIR }}/{{ item }}"
+    dest:  "{{ ORA_STAGE }}"
+    owner: "{{ ora_install_user }}"
+    group: "{{ ora_install_group }}"
+    mode:  0777
+  with_items : 
+    - "{{ ORA_GRID_BINARY1 }}"
+    - "{{ ORA_GRID_BINARY2 }}"
+
+- name: Copy response file /stage/database/response folder
+  become: yes
+  become_user: root 
+  copy:
+    src: "roles/OraDB-gridStandAlone-Inst/files/grid_install.rsp"
+    dest: "/stage/grid/response/grid_install.rsp"
+
+- name: Copy installOracle.sh file /stage/database folder
+  become: yes
+  become_user: "{{ ora_install_user }}"
+  copy:
+    src: "roles/OraDB-gridStandAlone-Inst/files/installOracle.sh"
+    dest: "/stage/grid/installOracle.sh"
+    mode: 0777
+
+- name: install Oracle Database    
+  become: yes
+  become_user: "{{ ora_install_user }}"
+  command: "./installOracle.sh"
+  args:
+    chdir: "/stage/grid"
+
+#- name: Run orainstRoot.sh file    
+#  become: yes
+  #become_user: root 
+#  become_user: "{{ ora_install_user }}"
+#  command: "./orainstRoot.sh"
+#  args:
+#    chdir: "/u01/app/oraInventory"
+
+#- name: Run root.sh file    
+#  become: yes
+#  become_user: root 
+  #become_user: "{{ ora_install_user }}"
+#  command: "./root.sh"
+#  args:
+#    chdir: "/u01/app/oracle/product/12.1.0/dbhome_1"

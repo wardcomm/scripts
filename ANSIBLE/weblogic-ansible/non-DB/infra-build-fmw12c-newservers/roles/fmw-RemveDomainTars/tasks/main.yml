@@ -1,0 +1,10 @@
+---
+
+ - name: Remove the domain tar ball from local server
+   become: yes
+   become_user: sbonu
+   file:
+     path:  "roles/distribute-domain/files/vm0dntestxa0119"
+     state: absent
+   delegate_to: 127.0.0.1
+

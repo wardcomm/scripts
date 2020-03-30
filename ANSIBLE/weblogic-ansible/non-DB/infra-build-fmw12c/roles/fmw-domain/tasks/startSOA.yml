@@ -1,0 +1,45 @@
+---
+
+ - name: Create AdminServer Security, Log Directories
+   become: yes
+   become_user: "{{ install_user }}"
+   file:
+    path: "{{ item }}"
+    owner: "{{ install_user }}"
+    group: "{{ install_group }}"
+    state: directory
+    mode: 0755
+   with_items:
+    - "{{ DOMAIN_HOME }}/servers/SoaAdmin/security"
+    - "{{ DOMAIN_HOME }}/servers/SoaAdmin/logs"
+    - "{{ DOMAIN_HOME }}/SOA/tmp"
+    - "{{ DOMAIN_HOME }}/SOA/lib"
+
+ - name: Copy boot.properties to SoaAdmin/security
+   become: yes
+   become_user: "{{ install_user }}"
+   template:
+    src: domain/files/boot.properties
+    dest: "{{ DOMAIN_HOME }}/servers/SoaAdmin/security"
+    owner: "{{ install_user }}"
+    group: "{{ install_group }}"
+    mode: 0755
+
+ - name: Copy StartAdmin.sh to "{{ DOMAIN_HOME }}"
+   become: yes
+   become_user: "{{ install_user }}"
+   template:
+    src: domain/files/startAdmin.sh
+    dest: "{{ DOMAIN_HOME }}/startAdmin.sh"
+    owner: "{{ install_user }}"
+    group: "{{ install_group }}"
+    mode: 0777
+
+ - name: Starting SoaAdmin
+   become: yes
+   become_user: "{{ install_user }}"
+   shell: ./startAdmin.sh
+   args:
+    chdir: "{{ DOMAIN_HOME }}"
+   environment:
+    JAVA_HOME: "{{ JAVA_HOME }}"

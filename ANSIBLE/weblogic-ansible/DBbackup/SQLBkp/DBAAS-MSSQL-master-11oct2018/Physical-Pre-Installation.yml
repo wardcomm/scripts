@@ -1,0 +1,4 @@
+- name: install pre Installation on mssql Physical Machine
+  hosts: Physical-Windows 
+  roles:
+     - Physical-Pre-Installation

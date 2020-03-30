@@ -1,0 +1,17 @@
+---
+
+oracle_group: oinstall
+
+oracle_version: 12.1.0.2
+
+oracle_base: /u01/app/oracle
+
+oracle_db_home: db_1 
+
+oracle_db_name: db
+
+asm_data_group: DATA
+
+oracle_pdb_name: ""
+
+rac_install: false

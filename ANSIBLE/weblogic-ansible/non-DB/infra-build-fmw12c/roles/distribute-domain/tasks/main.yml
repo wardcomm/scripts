@@ -1,0 +1,8 @@
+---
+
+ - include: osbdomain-paste.yml
+ #- include: soadomain-paste.yml
+
+ - include: osbnmEnroll.yml
+ #- include: soanmEnroll.yml
+

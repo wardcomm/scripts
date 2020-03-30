@@ -1,0 +1,9 @@
+---
+  - include_tasks: "{{ task }}"
+    tags: "always"
+    loop:
+      - kernel_parameter.yml
+      - sysctl.yml
+
+    loop_control:
+      loop_var: task

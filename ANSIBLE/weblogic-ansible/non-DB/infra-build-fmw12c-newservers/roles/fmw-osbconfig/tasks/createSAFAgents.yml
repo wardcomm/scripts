@@ -1,0 +1,63 @@
+---
+
+ - name: Clean Directories
+   file:
+    path: "{{ item }}"
+    owner: "{{ install_user }}"
+    group: "{{ install_group }}"
+    state: absent
+   with_items:
+    - "{{ STAGE_DIR }}"
+
+ - name: Create Directories
+   file:
+    path: "{{ item }}"
+    owner: "{{ install_user }}"
+    group: "{{ install_group }}"
+    state: directory
+    mode: 0755
+   with_items:
+    - "{{ STAGE_DIR }}"
+
+ - name: Copy create JDBC Store  script to Stage directory
+   template:
+    src:   roles/fmw-osbconfig/files/createJDBCStore.py
+    dest: "{{ STAGE_DIR }}/createJDBCStore.py"
+    owner: "{{ install_user }}"
+    group: "{{ install_group }}"
+
+ - name: Create JDBC Store in osb
+   command: "./wlst.sh {{ STAGE_DIR }}/createJDBCStore.py"
+   args:
+    chdir: "{{ ORACLE_BIN }}"
+   environment:
+    JAVA_HOME: "{{ JAVA_HOME }}"
+
+# - name: Copy create SAF Agent  script to Stage directory
+#   template:
+#    src:   roles/fmw-osbconfig/files/createSAFAgent.py
+#    dest: "{{ STAGE_DIR }}/createSAFAgent.py"
+#    owner: "{{ install_user }}"
+#    group: "{{ install_group }}"
+
+# - name: Create SAF Agent in weblogic
+#   command: "./wlst.sh {{ STAGE_DIR }}/createSAFAgent.py"
+#   args:
+#    chdir: "{{ ORACLE_BIN }}"
+#   environment:
+#    JAVA_HOME: "{{ JAVA_HOME }}"
+ 
+# - name: Copy create JMS Server script to Stage directory
+#   template:
+#    src:   roles/fmw-osbconfig/files/createJMSServer.py
+#    dest: "{{ STAGE_DIR }}/createJMSServer.py"
+#    owner: "{{ install_user }}"
+#    group: "{{ install_group }}"
+
+# - name: Create JMS Server in weblogic
+#   command: "./wlst.sh {{ STAGE_DIR }}/createJMSServer.py"
+#   args:
+#    chdir: "{{ ORACLE_BIN }}"
+#   environment:
+#    JAVA_HOME: "{{ JAVA_HOME }}"
+

@@ -1,0 +1,40 @@
+- name: register varible for memory
+  shell: cat /proc/meminfo | grep MemTotal | awk '{print $2}'
+  register: memory_on_system_kb
+
+- name: register varible for real memory
+  shell:  "{{ physical_memory_command }}"
+  register: real_memory_on_system_kb
+
+- name: this is a test of set_fact for kb -> mb
+  set_fact:
+    kb_mb_convert: "{{ (memory_on_system_kb.stdout | int ) // (scale | int) | int }}"
+
+- name: this is set_fact for big_swap
+  set_fact:
+    big_swap: "{{ (real_memory_on_system_kb.stdout |int ) >= ( scoggins_constant |int ) }}"
+
+- name: this is to set_fact for small_swap
+  set_fact:
+    small_swap: "{{ (real_memory_on_system_kb.stdout |int ) <= ( scoggins_constant |int) - (1 | int) }}"
+
+- name: this a test for arithmatic
+  set_fact:
+    fud_test: "{{ ( scoggins_constant |int)  / (real_memory_on_system_kb.stdout |int | abs) }}"
+
+- name: show the variables
+  debug:
+    msg:
+      - "This is the kb mb convert integer{{ kb_mb_convert |int }}"
+      - "This is real memory on system {{ real_memory_on_system_kb.stdout_lines }}"
+      - "This is small swap variable {{ small_swap  }}"
+      - "this is big swap variable {{ big_swap }}"
+      - "this is  scale variable {{ scale }}"
+      - "this is scoggins constant variable {{ scoggins_constant }}"
+      - "{{ big_swap | type_debug }}"
+      - "{{ small_swap | type_debug }}"
+      - "{{real_memory_on_system_kb.stdout_lines | int | type_debug }}"
+      - "this is a fud test{{ fud_test }}"
+      # - "This is calculating percent error at run time {{ calculating_error }}"
+      # - "This is divide the error {{ divide_error }}"
+      # - "This is the percentage of error {{ percentage_error }}"

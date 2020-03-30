@@ -1,0 +1,26 @@
+---
+
+# extract and upload the created domain templates from the admin server 
+
+ - name: Create the domain TAR
+   become: yes
+   become_user: "{{ install_user }}" 
+   shell: " tar cvzf /tmp/{{ osb_domain_archive }} {{ OSB_DOMAIN_NAME }} "
+   args:
+     chdir: "{{ OSB_DOMAIN_ROOT }}"
+
+ - name: Copy domain TAR to local server
+   become: yes
+   become_user: "{{ install_user }}" 
+   fetch:
+    src: "/tmp/{{ osb_domain_archive }}"
+    dest: roles/distribute-domain/files
+
+ - name: Remove the domain tar ball from local server
+   become: yes
+   become_user: root
+   file:
+     path:  "/tmp/{{ osb_domain_archive }}"
+     state: absent
+
+

@@ -1,0 +1,9 @@
+---
+
+- name: Uninstalling WebLogic Software  
+  hosts: fmw 
+  vars_files:
+    - vars.yml
+  roles:
+    - fmw-uninstallWL
+

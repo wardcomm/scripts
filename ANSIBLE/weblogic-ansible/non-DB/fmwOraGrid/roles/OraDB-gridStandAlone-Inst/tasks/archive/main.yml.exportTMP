@@ -1,0 +1,9 @@
+
+- name: Exporting TMP folder     
+  become: yes
+  become_user: "{{ ora_install_user }}"
+  #shell: "export TMP=/mytmp"
+  shell: ./exporttmp
+  #command: "source exporttmp"
+  args:
+    chdir: "/stage/database"

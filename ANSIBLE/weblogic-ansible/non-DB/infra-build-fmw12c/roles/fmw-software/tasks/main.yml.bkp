@@ -1,0 +1,100 @@
+################################################################################
+# ==> Tasks for install Oracle Fussion Middleware Infrastructure software 12c R2
+# ==> to an Oracle Linux 7.1 system. Supports version 12.2.1
+################################################################################
+
+#- name: Create stage directory
+#  become: yes
+#  become_user: root
+#  file:
+#    state: directory
+#    path: "{{ item }}"
+#    owner: "{{ install_user }}"
+#    mode: 0777
+#  with_items:
+#    - "{{ BASE_DIR }}"
+#    - "{{ STAGE_DIR }}" 
+#
+#- name: Copy Installers
+#  become: yes
+#  become_user: "{{ install_user }}"
+#  get_url:
+#    tmp_dest: "{{ BASE_DIR }}"
+#    force: yes
+#    dest:  "{{ STAGE_DIR }}"
+#    url:   "{{ item }}"
+#    validate_certs: no
+#  with_items:
+#    - "{{ mw_url }}"
+#    - "{{ mw_soa_url }}"
+#    - "{{ mw_osb_url }}"
+#
+#- name: Copy SOA Installer
+#  become: yes
+#  become_user: "{{ install_user }}"
+#  #shell: "wget -nv -N -P {{ STAGE_DIR }} {{ mw_soa_url }}"  
+#  get_url:
+#    tmp_dest: /charter
+#    force: yes
+#    dest:  "{{ STAGE_DIR }}"
+#    url:   "{{ mw_soa_url }}"
+#
+#- name: Copy OSB Installer
+#  become: yes
+#  become_user: "{{ install_user }}"
+#  #shell: "wget -nv -N -P {{ STAGE_DIR }} {{ mw_osb_url }}"  
+#  get_url:
+#    tmp_dest: /charter
+#    force: yes
+#    dest:  "{{ STAGE_DIR }}"
+#    url:   "{{ mw_osb_url }}"
+
+- name: Place config/reponse files
+  become: yes
+  become_user: "{{ install_user }}"
+  template:
+    src:  "{{ item }}"
+    dest: "{{ STAGE_DIR }}"
+  with_items:
+    - oraInst.loc
+    - infrastructure.rsp
+    - soa.rsp
+    - osb.rsp
+
+#- name: Copy infrastructure.rsp
+#  become: yes
+#  become_user: "{{ install_user }}"
+#  template:
+#    src:  infrastructure.rsp 
+#    dest: "{{ STAGE_DIR }}"
+#
+#- name: Copy soa.rsp
+#  become: yes
+#  become_user: "{{ install_user }}"
+#  template: src=soa.rsp dest={{ STAGE_DIR }}
+#
+#- name: Copy osb.rsp
+#  become: yes
+#  become_user: "{{ install_user }}"
+#  template: src=osb.rsp dest={{ STAGE_DIR }}
+
+- name: execute installers
+  become: yes
+  become_user: "{{ install_user }}"
+  #command: "{{ jrun }} -jar {{ STAGE_DIR }}/fmw_12.2.1.3.0_infrastructure.jar -silent -responseFile {{ STAGE_DIR }}/infrastructure.rsp -invPtrLoc {{ STAGE_DIR }}/oraInst.loc"
+  command: "{{ jrun }} -jar {{ STAGE_DIR }}/{{ item.jar }} -silent -responseFile {{ STAGE_DIR }}/{{ item.rsp }} -invPtrLoc {{ STAGE_DIR }}/oraInst.loc"
+  with_items:
+    - { jar: '{{ mw_installer }}',     rsp: 'infrastructure.rsp', }
+    - { jar: '{{ mw_soa_installer }}', rsp: 'soa.rsp',            }
+    - { jar: '{{ mw_osb_installer }}', rsp: 'osb.rsp',            }
+
+#- name: execute soa installer
+#  become: yes
+#  become_user: "{{ install_user }}"
+#  command: "{{ JAVA_HOME }}/bin/java -Xms1024m -Xmx1024m -Djava.io.tmpdir={{ STAGE_DIR }} -jar {{ STAGE_DIR }}/{{ mw_soa_installer }} -silent -responseFile {{ STAGE_DIR }}/soa.rsp -invPtrLoc {{ STAGE_DIR }}/oraInst.loc" 
+#
+#- name: execute osb installer
+#  become: yes
+#  become_user: "{{ install_user }}"
+#  command: "{{ JAVA_HOME }}/bin/java -Xms1024m -Xmx1024m -Djava.io.tmpdir={{ STAGE_DIR }} -jar {{ STAGE_DIR }}/{{ mw_osb_installer }} -silent -responseFile {{ STAGE_DIR }}/osb.rsp -invPtrLoc {{ STAGE_DIR }}/oraInst.loc"
+

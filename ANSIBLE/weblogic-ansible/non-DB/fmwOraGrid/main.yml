@@ -1,0 +1,10 @@
+---
+
+- name: Install Java 
+  #hosts: all
+  hosts: dbserver
+  vars_files:
+    - vars.yml
+  roles:
+    -  OraDB-gridStandAlone-Inst 
+

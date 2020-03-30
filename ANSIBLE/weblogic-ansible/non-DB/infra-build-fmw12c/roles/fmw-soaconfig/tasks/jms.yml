@@ -1,0 +1,16 @@
+---
+
+ - name: Copy JMS Script to Stage Directory
+   template:
+    src:   roles/fmw-soaconfig/files/configJMS.py
+    dest: "{{ STAGE_DIR }}/configJMS.py"
+    owner: "{{ install_user }}"
+    group: "{{ install_group }}"
+
+ - name: Config JMS
+   command: "./wlst.sh {{ STAGE_DIR }}/configJMS.py"
+   args:
+    chdir: "{{ ORACLE_BIN }}"
+   environment:
+    JAVA_HOME: "{{ JAVA_HOME }}"
+

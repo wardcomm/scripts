@@ -1,0 +1,16 @@
+---
+
+ - name: Starting DEMO NodeManager on Admin Server
+   become: yes
+   become_user: "{{ install_user }}"
+   ##shell: ./osbrestartNM.sh
+   shell: "nohup ./startNodeManager.sh $HOSTNAME {{ DEMO_NODEMGR_PORT }} >| ./nm_demo.out 2>&1 &"
+   args:
+     chdir: "{{ DEMO_DOMAIN_HOME }}/bin"
+   environment:
+     JAVA_HOME: "{{ JAVA_HOME }}"
+
+ - name: Sleep for 30 sec before starting DEMO NodeManager on Managed Nodes 
+   wait_for: timeout=30
+   delegate_to: localhost
+

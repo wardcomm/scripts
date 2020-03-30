@@ -1,0 +1,22 @@
+####################################################################################################
+##Deletes environment file if already exits, creates environment file  and adds the following 
+##environment variables to the file
+####################################################################################################
+cd /etc
+if [ -f /etc/environment ]
+
+then
+     rm -f /etc/environment
+     #echo "file deleted" >> error.txt
+else
+     echo "file does nor exist" 
+fi
+
+echo export JAVA_HOME=/apps/tomcat/java/jdk1.8.0_181 >> /etc/environment
+echo export PATH="$PATH:$JAVA_HOME/bin" >> /etc/environment
+
+echo export CATALINA_HOME=/apps/tomcat/apache-tomcat-8.0.53 >> /etc/environment
+
+echo "source /etc/environment"
+
+source /etc/environment

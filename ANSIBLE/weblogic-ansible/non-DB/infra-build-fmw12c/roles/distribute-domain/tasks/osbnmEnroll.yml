@@ -1,0 +1,98 @@
+---
+
+ - name: Clean Directories
+   become: yes
+   become_user: root
+   file:
+     path: "{{ item }}"
+     owner: "{{ install_user }}"
+     group: "{{ install_group }}"
+     state: absent
+   with_items:
+     - "{{ STAGE_DIR }}"
+
+ - name: Create Directories
+   become: yes
+   become_user: root
+   file:
+     path: "{{ item }}"
+     owner: "{{ install_user }}"
+     group: "{{ install_group }}"
+     state: directory
+     mode: 0755
+   with_items:
+     - "{{ STAGE_DIR }}"
+     - "{{ COMMON }}/nodemanager"
+     - "{{ COMMON }}/nodemanager/security"
+
+ - name: Copy Nodemanager Properties
+   become: yes
+   become_user: root
+   template:
+     src:  roles/distribute-domain/files/nodemanager.properties.osb
+     dest: "{{ COMMON }}/nodemanager/nodemanager.properties.osb"
+     owner: "{{ install_user }}"
+     group: "{{ install_group }}"
+     mode: 0777
+
+ - name: Copy Node Manager Domains file to target directories
+   become: yes
+   become_user: root
+   template:
+     src:   roles/distribute-domain/files/osbnodemanager.domains
+     dest:  "{{ item }}/osbnodemanager.domains"
+     owner: "{{ install_user }}"
+     group: "{{ install_group }}"
+   with_items:
+     - "{{ COMMON }}/nodemanager"
+
+ - name: Copy StartNM script
+   become: yes
+   become_user: root
+   template:
+     src:  roles/distribute-domain/files/osbrestartNM.sh
+     dest: "{{ WLSERVER }}/server/bin/osbrestartNM.sh"
+     owner: "{{ install_user }}"
+     group: "{{ install_group }}"
+     mode: 0777
+
+ - name: Copy register node manager script to Stage directory
+   become: yes
+   become_user: root
+   template:
+     src:  roles/distribute-domain/files/osbenrollNM.py
+     dest: "{{ STAGE_DIR }}/osbenrollNM.py"
+     owner: "{{ install_user }}"
+     group: "{{ install_group }}"
+
+ - name: Assure working keystore
+   become: yes
+   become_user: "{{ install_user }}"
+   shell: " cp {{ OSB_DOMAIN_HOME }}/security/DemoIdentity.jks {{ COMMON }}/nodemanager/security/DemoIdentity.jks "
+
+ - name: Register Node Manager with the domain for managed servers
+   become: yes
+   become_user: "{{ install_user }}"
+   command: "./wlst.sh {{ STAGE_DIR }}/osbenrollNM.py"
+   args:
+     chdir: "{{ COMMON }}/bin"
+   environment:
+     JAVA_HOME: "{{ JAVA_HOME }}"
+   ignore_errors: yes 
+
+ - name: Sleep for 30 sec before starting NodeManagers on ManagedNodes
+   wait_for: timeout=10
+   delegate_to: localhost
+
+ - name: Clean Directories
+   become: yes
+   become_user: root
+   file:
+     path: "{{ item }}"
+     state: absent
+   with_items:
+     - "{{ STAGE_DIR }}"
+
+ - name: Sleep for 10 sec before starting NodeManagers on ManagedNodes
+   wait_for: timeout=10
+   delegate_to: localhost

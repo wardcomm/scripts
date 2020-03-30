@@ -1,0 +1,90 @@
+---
+
+ - name: Copy Domain Creation Script to Stage Directory
+   become: yes
+   become_user: "{{ install_user }}"
+   template:
+     src:   roles/fmw-domain/files/createSOADomain.py
+     dest:  "{{ STAGE_DIR }}/createSOADomain.py"
+
+ - name: Creating Domain "{{ DOMAIN_HOME }}"
+   become: yes
+   become_user: "{{ install_user }}"
+   command: "./wlst.sh {{ STAGE_DIR }}/createSOADomain.py"
+   args:
+     chdir: "{{ ORACLE_BIN }}"
+   environment:
+     JAVA_HOME: "{{ JAVA_HOME }}"
+
+ - name: Create SOA AdminServer log files
+   become: yes
+   become_user: root
+   file:
+     state: directory
+     path:  "{{ item }}"
+     owner: "{{ install_user }}"
+     group: "{{ install_group }}"
+     mode:  0755
+   with_items:
+     - "{{ DOMAIN_HOME }}/servers/AdminServer/logs"
+
+ - name: Enable JDBC Remote
+   become: yes
+   become_user: root
+   replace:
+     destfile: "{{ DOMAIN_HOME }}/bin/setDomainEnv.sh"
+     regexp: 'Dweblogic.jdbc.remoteEnabled=false'
+     replace: 'Dweblogic.jdbc.remoteEnabled=true'
+     owner: "{{ install_user }}"
+     group: "{{ install_group }}"
+
+ - name: Enable Production Mode
+   become: yes
+   become_user: "{{ install_user }}"
+   replace:
+     destfile: "{{ DOMAIN_HOME }}/bin/setDomainEnv.sh"
+     regexp:   'PRODUCTION_MODE=""'
+     replace:  'PRODUCTION_MODE="true"'
+
+ - name: Start AdminServer
+   become: yes
+   become_user: "{{ install_user }}"
+   shell: "nohup ./startWebLogic.sh >| {{ DOMAIN_HOME }}/servers/AdminServer/logs/AdminServer.out 2>&1 &"
+   args:
+     chdir: "{{ DOMAIN_HOME }}"
+   environment:
+     JAVA_HOME: "{{ JAVA_HOME }}"
+
+ # replace with a wait_for
+ - name: wait a minute
+   shell: sleep 60
+
+ - name: Start NodeManager
+   become: yes
+   become_user: "{{ install_user }}"
+   shell: "nohup ./startNodeManager.sh $HOSTNAME {{ NODEMGR_PORT }} >| ./nm_soa.out 2>&1 &"
+   args:
+     chdir: "{ ORACLE_HOME }}/wlserver/server/bin"
+   environment:
+     JAVA_HOME: "{{ JAVA_HOME }}"
+
+# - name: Place script to start clusters
+#   become: yes
+#   become_user: "{{ install_user }}"
+#   template:
+#     path: "{{ STAGE_DIR }}/startClusters.py"
+#     src:  roles/fmw-domain/files/startClusters.py
+
+# - name: Start the clusters
+#   become: yes
+#   become_user: "{{ install_user }}"
+#   command: "./wlst.sh {{ STAGE_DIR }}/startClusters.py"
+#   args:
+#     chdir: "{{ ORACLE_BIN }}"
+#   environment:
+#     JAVA_HOME: "{{ JAVA_HOME }}"
+       
+   
+
+
+

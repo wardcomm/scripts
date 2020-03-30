@@ -1,0 +1,69 @@
+---
+
+- name: Set up user and software
+  hosts: fmw
+  vars_files:
+    #- Custom.yml
+    - vars.yml
+  roles:
+    - os-config
+    - jdk
+    - fmw-software
+
+- name: Creating RCU  
+  hosts: admin 
+  vars_files:
+   #- Custom.yml
+    - vars.yml
+  roles:
+    - fmw-rcucreation
+
+- name: Create WebLogic 12c R2 domain and start WebLogic AdminServer
+  hosts: admin
+  strategy: debug
+  vars_files:
+    #- Custom.yml
+    - vars.yml
+  roles:
+    - fmw-domain
+
+#- name: Copy Domain 12c R2 domain on hosts and Enroll NM s to thier domains
+#  hosts: managed
+#  vars_files:
+#    #- Custom.yml
+#    - vars.yml
+#  roles:
+#    - distribute-domain
+#
+#- name: Start the Nodemanger on Admin Server
+#  hosts: admin
+#  vars_files:
+#    #- Custom.yml
+#    - vars.yml
+#  roles:
+#    - startNMonAdminServer
+#
+#- name: Start the Nodemanger on managed servers
+#  hosts: managed
+#  vars_files:
+#    #- Custom.yml
+#    - vars.yml
+#  roles:
+#    - startNMonManagedservers
+#
+#- name: Start the clusters
+#  hosts: managed
+#  vars_files:
+#    #- Custom.yml
+#    - vars.yml
+#  roles:
+#    - fmw-StartClusters
+#
+#- name: Remove the domain tar files from the local host (ansible controller)
+#  hosts: controller
+#  become: yes
+#  become_user: root
+#  file:
+#    path:  "roles/distribute-domain/files/vm0dntestxa0119"
+#    state: absent
+

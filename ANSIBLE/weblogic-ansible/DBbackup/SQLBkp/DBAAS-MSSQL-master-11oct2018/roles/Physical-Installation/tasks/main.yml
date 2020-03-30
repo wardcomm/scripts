@@ -1,0 +1,191 @@
+---
+- include_vars: Physical-Secrets.yml
+  no_log: True
+
+- name: Create Directory
+  win_file:
+    path: "{{ item }}"
+    state: directory
+  loop: 
+     - D:\Program Files\Microsoft SQL Server
+     - '{{ SystemPath }}{{ SystemDir }}\MSSQL{{ ext }}.MSSQLSERVER\MSSQL\DATA'
+     - '{{ DataPath }}{{ DataDir }}\MSSQL\Data'
+     - '{{ LogPath }}{{ LogDir }}\MSSQL\Logs'
+     - '{{ TempdbPath }}{{ TempDir }}\MSSQL\Data'
+
+- name: Uncompressed the Directory
+  win_shell: |
+     compact /s /u "D:\Program Files\Microsoft SQL Server"
+     compact /s /u "{{ SystemPath }}{{ SystemDir }}\MSSQL{{ ext }}.MSSQLSERVER\MSSQL\DATA"
+     compact /s /u "{{ DataPath }}{{ DataDir }}\MSSQL\Data"
+     compact /s /u "{{ LogPath }}{{ LogDir }}\MSSQL\Logs"
+     compact /s /u "{{ TempdbPath }}{{ TempDir }}\MSSQL\Data"
+
+##########################################################################
+## Possibly could be accomplished with:                                 ##
+##  - win_disk_image - to mount/unmount ISO                             ##
+##    (https://docs.ansible.com/ansible/2.4/win_disk_image_module.html) ##
+##  - win_package - to install.                                         ##
+##    It's possible this won't work and win_shell will be required      ##
+##    If so, the 'creates' field could be used for idempotency          ##
+##                                                                      ##
+##  Jinja filters could probably make this much simpler as well         ##
+##########################################################################
+- name: Check if MSSQLSERVER service is installed
+  win_service:
+    name: MSSQLSERVER
+  register: MSSQLservice_info
+
+- include: Install-SQL.yml
+  when: MSSQLservice_info.exists == false
+
+- name: Find latest log file
+  win_find:
+    paths: c:\Program Files\Microsoft SQL Server\
+    age: -3m
+    patterns: 'Summary.txt'
+    recurse: yes
+  register: logfile
+  when: MSSQLservice_info.exists == false
+
+- name: read output
+  win_shell:
+    'gc "{{ logfile.files[0].path }}"'
+  register: checklog
+  failed_when: '"Failed" in checklog.stdout'
+  when: MSSQLservice_info.exists == false
+
+- name: Create local Directory
+  win_file:
+    path: "{{ SourceDir }}"
+    state: directory
+  loop:
+  - '{{ SystemPath }}{{ SystemDir }}\MSSQL{{ ext }}.MSSQLSERVER\MSSQL\Output'
+  - '{{ SystemPath }}{{ SystemDir }}\MSSQL{{ ext }}.MSSQLSERVER\MSSQL\SSIS'
+  - '{{ SystemPath }}{{ SystemDir }}\MSSQL{{ ext }}.MSSQLSERVER\MSSQL\SSIS\Checkpoints'
+  - '{{ SystemPath }}{{ SystemDir }}\MSSQL{{ ext }}.MSSQLSERVER\MSSQL\SSIS\Configurations'
+  - '{{ SystemPath }}{{ SystemDir }}\MSSQL{{ ext }}.MSSQLSERVER\MSSQL\SSIS\ErrorFiles'
+  - '{{ SystemPath }}{{ SystemDir }}\MSSQL{{ ext }}.MSSQLSERVER\MSSQL\SSIS\Logs'
+  - '{{ SystemPath }}{{ SystemDir }}\MSSQL{{ ext }}.MSSQLSERVER\MSSQL\SSIS\OutPutFiles'
+  - '{{ SystemPath }}{{ SystemDir }}\MSSQL{{ ext }}.MSSQLSERVER\MSSQL\SSIS\Packages'
+  - '{{ SystemPath }}{{ SystemDir }}\MSSQL{{ ext }}.MSSQLSERVER\MSSQL\SSIS\Raw Files'
+  loop_control:
+    loop_var: SourceDir
+
+########################################################
+## There is no way to accomplish this via modules     ##
+## However, it can still be idempotent.               ##
+## Suggestion:                                        ##
+## Add a Reg entry with servername to show completion ##
+##   requested reg_entry: Ansible/task_name           ##
+########################################################
+- name: Check if MSDTC service is installed
+  win_service:
+    name: MSDTC
+  register: MSDTCservice_info
+
+- name: Fix DTC CID and Set Security 
+  win_shell: |
+    #Stop-Dtc -DtcName "Local" –Confirm:$False
+    #Uninstall-Dtc –Confirm:$False
+    Install-Dtc -LogPath "C:\windows\system32\MSDtc" -StartType "AutoStart"
+    Start-Dtc -DtcName "Local"
+    Set-DtcNetworkSetting -DtcName Local -AuthenticationLevel Incoming -InboundTransactionsEnabled 1 -OutboundTransactionsEnabled 1 -RemoteClientAccessEnabled 1 -RemoteAdministrationAccessEnabled 1 -XATransactionsEnabled 1 -confirm:$false
+  when: MSDTCservice_info.exists == false
+    
+- name: regedit to PowerShell Security Fix
+  win_regedit: 
+    path: 'HKLM:\SOFTWARE\Microsoft\PowerShell\1\ShellIds\Microsoft.SqlServer.Management.PowerShell.sqlps{{ ext }}0'
+    name: ExecutionPolicy
+    data: Unrestricted
+
+# Need to remove the below comment while running on Charter Environment
+# Missing "$unc\SQL2008R2" SQLServer2005_BC_x64*.msi" in given media 
+- name: Install Install-Backward-Compatibility-Objects
+  win_package:
+    path: 'D:\Install\SQL{{ SqlVersion }}\SQLServer2005_BC_x64.msi'
+
+####################################################################
+## Possibly use 'win_package' for both IBM and Oracle Drivers     ##
+## (https://docs.ansible.com/ansible/2.4/win_package_module.html) ##
+##                                                                ##
+## I attempted below but was unable to get this working.          ##
+####################################################################
+- name: Using this to validate whether IBM client installed or not
+  win_package:
+    path: 'D:\Install\IBM\Iseries_64 bit\setup.exe'
+    # product_id: '{CF2BEA3C-26EA-32F8-AA9B-331F7E34BA97}'
+    creates_path: 'D:\Program Files (x86)\IBM\Client Access\cwbinarp.exe'
+    arguments: -s -f1D:\Install\IBM\IBMClient.iss
+  register: IBM_check
+
+- name: Install IBM Driver
+  win_shell: |
+    $cmd = "D:\Install\IBM\Iseries_64 bit\setup.exe"
+    $arg = "-s -f1D:\Install\IBM\IBMClient.iss"
+    start-process -wait $cmd $arg
+  when: IBM_check.changed != false
+  # win_package:
+  #   path: D:\Install\IBM\Iseries_64 bit\setup.exe
+  #   # product_id: '{CF2BEA3C-26EA-32F8-AA9B-331F7E34BA97}'
+  #   arguments: -s -f1D:\Install\IBM\IBMClient.iss
+  # register: ibm_drvr_install
+
+- name: Find latest IBM log file
+  win_find:
+    paths: D:\Install\IBM\
+    age: -3m
+    patterns: 'setup.log'
+    recurse: yes
+  register: IBMlogfile
+  when: IBM_check.changed != false
+  
+- name: read output
+  win_shell:
+    'gc "{{ IBMlogfile.files[0].path }}"'
+  register: IBMchecklog
+  failed_when: '"ResultCode=-" in IBMchecklog.stdout'
+  when: IBM_check.changed != false
+
+- name: Install Oracle Driver
+  win_shell: |
+     $PathExist = Test-Path "D:\Oracle\product\12.1.0"
+     If ( $PathExist -eq $false )
+      {
+      Start-Process -wait "D:\Install\Oracle\12C\winnt_12102_client32\client32\setup.exe" "-silent -nowelcome -noconfig -nowait -responseFile D:\Install\Oracle\12C\winnt_12102_client32\Oracle_32Bit_Install_ResponseFile-12C.rsp" 
+      Start-Process -wait "D:\Install\Oracle\12C\winx64_12102_client\client\setup.exe" "-silent -nowelcome -noconfig -nowait -responseFile D:\Install\Oracle\12C\winx64_12102_client\Oracle_64Bit_Install_ResponseFile-12C.rsp"
+      }
+# - name: Install Oracle Driver (32bit)
+#   win_package:
+#     path: D:\Install\Oracle\12C\winnt_12102_client32\client32\setup.exe
+#     arguments: -silent -nowelcome -noconfig -nowait -responseFile D:\Install\Oracle\12C\winnt_12102_client32\Oracle_32Bit_Install_ResponseFile-12C.rsp 
+#     creates_path: D:\Oracle\product\12.1.0\client_3
+#   register: oracle_drvr32_install
+
+# - name: Install Oracle Driver (64bit)
+#   win_package:
+#     path: D:\Install\Oracle\12C\winx64_12102_client\client\setup.exe
+#     arguments: -silent -nowelcome -noconfig -nowait -responseFile D:\Install\Oracle\12C\winx64_12102_client\Oracle_64Bit_Install_ResponseFile-12C.rsp 
+#     creates_path: D:\Oracle\product\12.1.0\client_4
+#   register: oracle_drvr64_install
+
+#######################################################################
+## Added generic checks here but the installs will need some updates ##
+## for this to work.  The 'win_package' module should also have a    ##
+## "reboot_required" field that could be checked instead.            ##
+#######################################################################
+- name: Reboot Server
+  win_reboot:
+    pre_reboot_delay: 10
+    post_reboot_delay: 0
+    test_command: whoami
+    shutdown_timeout: 600
+    reboot_timeout: 600
+    msg: Reboot initiated by Ansible
+    connect_timeout: 5
+  # when:
+  # - oracle_drvr64_install.changed != false
+  # - oracle_drvr32_install.changed != false
+  # - ibm_drvr_install.changed != false
+  # - mssql_install.changed != false
+

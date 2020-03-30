@@ -1,0 +1,73 @@
+---
+- name: Copy Installers
+  when: inventory_hostname in groups['fmw']
+  become: yes
+  become_user: "{{ install_user }}"
+  get_url:
+    tmp_dest: "{{ BASE_DIR }}"
+    force: yes
+    dest:  "{{ STAGE_DIR }}"
+    url:   "{{ item }}"
+    validate_certs: no
+  with_items:
+    - "{{ mw_url }}"
+
+- name: Extract JDK archive
+  when: inventory_hostname in groups['fmw']
+  become: yes
+  become_user: "{{ install_user }}"
+  #become_user: root
+  unarchive:
+    remote_src: yes
+    src:   "{{ jdk_url }}"
+    dest:  "{{ BASE_DIR }}"
+    owner: "{{ install_user }}"
+    group: "{{ install_group }}"
+    mode:  0777
+    validate_certs: no
+  
+- name: locate ALL the java.security files on this system
+  when: inventory_hostname in groups['fmw']
+  become: yes
+  become_user: root
+  shell: find / -name java.security || echo unable to search
+  register: cfg_lst
+  
+- name: Update /dev/urandom entropy gathering to speed the installation process
+  when: inventory_hostname in groups['fmw']
+  become: yes
+  become_user: root
+  lineinfile:
+    dest: '{{ item }}'
+    regexp: '^ *securerandom.source=file:/dev/u?random'
+    line: 'securerandom.source=file:/dev/./urandom'
+  with_items:
+    - "{{ cfg_lst.stdout_lines }}"
+    
+- name: Create a SymLink to JAVA HOME
+  when: inventory_hostname in groups['fmw']
+  become: yes
+  become_user: "{{ install_user }}"
+  #become_user: root
+  file:
+    src: "{{ JAVA_BASE }}"
+    dest: "{{ JAVA_SLNK }}"
+    state: link
+ 
+- name: Setting up JAVA_HOME and PATH
+  when: inventory_hostname in groups['fmw']
+  become: yes
+  become_user: "{{ install_user }}"
+  lineinfile:
+    state: present
+    create: yes
+    #dest: "~/.bash_profile"
+    dest: "~/.bashrc"
+    regexp: "^ *(export)? *{{ item.k }}="
+    line: "{{ item.v }}"
+  with_items:
+    - { k: 'JAVA_HOME', v: 'export JAVA_HOME={{ JAVA_HOME }}' }
+    - { k: 'PATH',      v: 'export PATH=$JAVA_HOME/bin:$PATH' }
+
+  
+

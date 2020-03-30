@@ -1,0 +1,16 @@
+---
+- name: CreateEmptyAvailabilityGroup-2-Node
+  win_template:
+    src: ../templates/CreateEmptyAvailabilityGroup-2-Node.j2
+    dest: c:\Ansible\Temp\CreateEmptyAvailabilityGroup-2-Node.sql
+
+
+- name: CreateEmptyAvailabilityGroup-2-Node
+  win_shell:
+    sqlcmd -i c:\Ansible\Temp\CreateEmptyAvailabilityGroup-2-Node.sql > c:\Ansible\Logs\CreateEmptyAvailabilityGroup-2-Node.log
+  register: checklog
+  failed_when: '"Failed" in checklog.stdout or checklog.stderr != "" '
+
+- name: Read the logfile
+  win_shell:
+    gc c:\Ansible\Logs\CreateEmptyAvailabilityGroup-2-Node.log

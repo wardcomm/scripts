@@ -1,0 +1,12 @@
+---
+
+- name: Copy Install HOLDING databse  file
+  win_template: 
+    src: ../templates/Install-HOLDING-databse-SQL2.j2
+    dest: c:\Ansible\Temp\Install-HOLDING-databse-SQL2.ps1
+  diff: false
+
+- name: Install HOLDING databse 
+  win_shell: |
+     c:\Ansible\Temp\Install-HOLDING-databse-SQL2.ps1 > c:\Ansible\Logs\Install-HOLDING-databse-SQL2.log
+  no_log: true

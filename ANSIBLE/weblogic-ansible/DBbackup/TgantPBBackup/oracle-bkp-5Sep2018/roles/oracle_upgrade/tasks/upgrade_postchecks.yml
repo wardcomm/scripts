@@ -1,0 +1,34 @@
+---
+
+- name: run catuppst.sql script for {{ oracle_db_name }}
+  become_user: '{{ oracle_user }}'
+  environment: "{{ ora_user_env }}"
+  command: "sqlplus / as sysdba @{{ oracle_home }}/rdbms/admin/catuppst.sql"
+  register: catuppst_script
+
+- name: save stdout
+  copy:
+    dest: "{{ oracle_tmp }}/catuppst.sql.out"
+    content: "{{ catuppst_script.stdout }}"
+
+- name: save stderr
+  copy:
+    dest: "{{ oracle_tmp }}/catuppst.sql.err"
+    content: "{{ catuppst_script.stderr }}"
+
+- name: execute post-fixup
+  become_user: '{{ oracle_user }}'
+  environment: "{{ ora_user_env }}"
+  command: sqlplus / as sysdba @{{ oracle_base }}/cfgtoollogs/{{ oracle_db_name }}/preupgrade/postupgrade_fixups.sql
+  register: post_fixup_script
+  when: execute_post_fixup | lower == 'true'
+
+- name: save stdout
+  copy:
+    dest: "{{ oracle_tmp }}/postupgrade_fixups.sql.out"
+    content: "{{ post_fixup_script.stdout }}"
+
+- name: save stderr
+  copy:
+    dest: "{{ oracle_tmp }}/postupgrade_fixups.sql.err"
+    content: "{{ post_fixup_script.stderr }}"

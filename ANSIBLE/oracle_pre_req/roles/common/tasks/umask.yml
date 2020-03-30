@@ -1,0 +1,6 @@
+---
+
+  - name: check oracle umask is set to 022
+    shell: umask 022
+    become: true
+    become_user: oracle

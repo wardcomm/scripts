@@ -1,0 +1,18 @@
+---
+
+- name: Copy Install-updated-code file
+  win_template: 
+    src: ../templates/Install-updated-code-SQL2.j2
+    dest: c:\Ansible\Temp\Install-updated-code-SQL2.ps1
+  diff: false
+
+- name: Run Install updated code
+  win_shell: |
+     c:\Ansible\Temp\Install-updated-code-SQL2.ps1 > c:\Ansible\Logs\Install-updated-code-SQL2.log
+  register: Install_updated
+  no_log: true
+
+- name: Protected Output - Install HOLDING databse  
+  debug:                                                                  
+    var: "Install_updated | combine({'cmd': Install_updated.cmd | replace(SaPw, '<PASSWORD HIDDEN>') | replace(password, '<PASSWORD HIDDEN>')})"
+  failed_when: Install_updated.rc

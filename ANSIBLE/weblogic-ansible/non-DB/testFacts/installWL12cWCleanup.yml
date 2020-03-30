@@ -1,0 +1,53 @@
+---
+
+# - name: Set up user and software
+  # hosts: fmw
+  # vars_files:
+    # - vars.yml
+  # roles:
+    # - os-config
+    # - jdk
+    # - fmw-software
+
+# - name: Create WebLogic 12c R2 domain and start WebLogic AdminServer
+  # hosts: admin
+  # strategy: debug
+  # vars_files:
+    # - vars.yml
+  # roles:
+    # - fmw-domain
+
+# - name: Copy Domain 12c R2 domain on hosts and Enroll NM s to thier domains
+  # hosts: managed
+  # vars_files:
+    # - vars.yml
+  # roles:
+    # - distribute-domain
+
+# - name: Start the Nodemanger on Admin Server
+  # hosts: admin
+  # vars_files:
+    # - vars.yml
+  # roles:
+    # - startNMonAdminServer
+
+# - name: Start the Nodemanger on managed servers
+  # hosts: managed
+  # vars_files:
+    # - vars.yml
+  # roles:
+    # - startNMonManagedservers
+
+ - name: Start the clusters
+   hosts: managed
+   vars_files:
+     - vars.yml
+   # roles:
+    # - fmw-StartClusters
+  
+   tasks:
+   - name: cleanup Local host
+     command: rm -rf roles/distribute-domain/files/vm0dntestxa0119
+     delegate_to: 127.0.0.1   
+
+

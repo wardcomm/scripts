@@ -1,0 +1,12 @@
+---
+
+- name: Copy Optimize-System-Databases file
+  win_template: 
+    src: ../templates/Optimize-System-Databases-SQL2.j2
+    dest: c:\Ansible\Temp\Optimize-System-Databases-SQL2.ps1
+  diff: false
+
+- name: Optimize System Databases
+  win_shell: |
+     c:\Ansible\Temp\Optimize-System-Databases-SQL2.ps1 > c:\Ansible\Logs\Optimize-System-Databases-SQL2.log
+  no_log: true

@@ -1,0 +1,75 @@
+---
+
+- name: Upgrade Packages (yum upgrade)
+  become: yes
+  become_user: root
+  yum:
+    name:  '*' 
+    state: latest
+
+- name: Create groups
+  become: yes
+  become_user: root
+  group:
+    state: present
+    name:  "{{ tc_install_group }}"
+
+- name: Create user
+  become: yes
+  become_user: root
+  user:
+    name:     "{{ tc_install_user }}"
+    groups:   "{{ tc_install_group }}"
+    #generate_ssh_key: yes
+
+- name: Create Directories
+  become: yes
+  become_user: root
+  file:
+    state: directory
+    path: "{{ item }}"
+    owner: "{{ tc_install_user }}"
+    group: "{{ tc_install_group }}"
+    mode: 0755
+  with_items:
+    - "{{ TC_DEV_ROOT }}"
+    - "{{ TC_DEV_HOME }}"
+    - "{{ TC_STAGE_DIR }}"
+    - "{{ TC_JAVA9_INST_DIR }}"
+
+- name: Copy/unarchive java9 installation archive to java install directory 
+  become: yes
+  become_user: "{{ tc_install_user }}"
+  unarchive:
+    remote_src: yes
+    src: "{{ STAGE_DIR }}/{{ item }}" 
+    dest: "{{ TC_JAVA9_INST_DIR }}"
+    owner: "{{ tc_install_user }}"
+    group: "{{ tc_install_group }}"
+    mode:  0777
+  with_items: 
+    - "{{ jdk_installation_archive }}"
+
+- name: Copy setenv script to Stage directory
+  become: yes
+  become_user: "{{ tc_install_user }}"
+  template:
+    src:  roles/tc-installJava/files/setenv
+    dest: "{{ TC_JAVA9_INST_DIR }}/setenv"
+    owner: "{{ tc_install_user }}"
+    group: "{{ tc_install_group }}"
+    mode: 0777
+
+- name: Running setenv script   
+  become: yes
+  become_user: root
+  #become_user: "{{ tc_install_user }}"
+  shell: ./setenv
+  args:
+    chdir: "{{ TC_JAVA9_INST_DIR }}"
+  #environment:
+  #  JAVA_HOME: "{{ JAVA_HOME }}"
+  ignore_errors: yes
+
+
+

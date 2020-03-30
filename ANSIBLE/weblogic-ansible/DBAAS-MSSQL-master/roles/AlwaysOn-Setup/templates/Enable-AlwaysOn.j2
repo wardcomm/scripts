@@ -1,0 +1,5 @@
+Import-Module FailoverClusters
+
+Get-ClusterNode
+
+Enable-SqlAlwaysOn -ServerInstance {{ ansible_hostname }} -Force

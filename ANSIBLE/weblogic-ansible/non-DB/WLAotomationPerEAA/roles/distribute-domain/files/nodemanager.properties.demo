@@ -1,0 +1,5 @@
+DomainsFileEnabled=true
+SecureListener=false
+StartScriptEnabled=true
+#StartScriptName=startUIM.sh
+ListenPort={{ DEMO_NODEMGR_PORT }}

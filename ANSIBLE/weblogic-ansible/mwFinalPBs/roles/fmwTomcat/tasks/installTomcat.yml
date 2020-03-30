@@ -1,0 +1,24 @@
+---
+
+- name: Copy Tomcat 8.5.3 Installers
+  become: yes
+  become_user: "{{ tc_install_user }}"
+  get_url:
+    tmp_dest: "{{ TC_DEV_HOME }}"
+    force: yes
+    dest:  "{{ TC_STAGE_DIR }}"
+    mode: 0777
+    url:   "{{ item }}"
+  with_items:
+    - "{{ tc_url }}"
+
+- name: Unpack tomcat installation archive and install
+  become: yes
+  become_user: "{{ tc_install_user }}"
+  unarchive:
+    remote_src: yes
+    src:   "{{ TC_STAGE_DIR }}/{{ tc_installation_archive }}"
+    dest:  "{{ TC_DEV_HOME }}"
+    owner: "{{ tc_install_user }}"
+    group: "{{ tc_install_group }}"
+    mode:  0777

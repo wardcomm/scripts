@@ -1,0 +1,70 @@
+################################################################################
+# ==> Tasks for linux-wls Role for configure a Oracle Linux 7 system with
+# ==> requirements for Fusion Middleware infrastructrure installation.
+# ==> Supports version 12.2.1
+################################################################################
+
+- name: Install required libraries
+  when: inventory_hostname in groups['fmw']
+  become: yes
+  become_user: root
+  yum:
+    state: present
+    name: "{{ item }}"
+  with_items: "{{ packages_list }}"
+  #ignore_errors: yes
+
+- name: Disable SELinux
+  when: inventory_hostname in groups['fmw']
+  become: yes
+  become_user: root
+  selinux:
+    state: disabled
+
+- name: Change kernel parameters
+  when: inventory_hostname in groups['fmw']
+  become: yes
+  become_user: root
+  sysctl:
+    state: present
+    name:  "{{ item.key }}"
+    value: "{{ item.value }}"
+  with_dict: "{{ kernel_params }}"
+
+- name: check for firewalld
+  when: inventory_hostname in groups['fmw']
+  shell:  service --status-all | grep -q firewalld
+  register: firewalld_check
+  ignore_errors: yes
+
+- name: Disable Firewall Deamon (firewalld)
+  when: inventory_hostname in groups['fmw']
+  become: yes
+  become_user: root
+  service:
+    name: firewalld
+    state: stopped
+    enabled: no
+  when: firewalld_check|succeeded
+
+- name: Create a shell profile with file and process limits for oracle user
+  when: inventory_hostname in groups['fmw']
+  become: yes
+  become_user: root
+  template:
+    src:  oracle-limits.sh
+    dest: /etc/profile.d/
+
+- name: Add oracle user limits
+  when: inventory_hostname in groups['fmw']
+  become: yes
+  become_user: root
+  lineinfile:
+    dest: /etc/security/limits.conf
+    line: '{{ install_user }} {{ item.limit }} {{ item.type}} {{ item.value }}'
+  with_items:
+    - { limit: 'soft', type: nofile, value: '{{ soft_no_file }}' }
+    - { limit: 'hard', type: nofile, value: '{{ hard_no_file }}' }
+    - { limit: 'soft', type: nproc,  value: '{{ soft_nproc }}'   }
+    - { limit: 'hard', type: nproc,  value: '{{ hard_nproc }}'   }
+

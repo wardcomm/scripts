@@ -1,0 +1,7 @@
+- name: AlwaysOn-Pre-Installation-Setup
+  hosts: AlwaysOn-Setup
+  tasks:
+    - name: AlwaysOn-Pre-Installation
+      import_role:
+        name: AlwaysOn-Pre-Installation
+        tasks_from: Failover-Clustering.yml

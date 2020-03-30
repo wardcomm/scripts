@@ -1,0 +1,3 @@
+---
+win_cluster_name: Cluster
+win_cluster_ip: 10.10.98.61

@@ -1,0 +1,125 @@
+---
+#Oracle os user and group
+
+install_user  : 'oracle'
+install_group : 'oinstall'
+saaccount: 'EAA'
+
+#Ansible Defined Variables
+
+noOfhosts: "{{ ansible_play_hosts | length }}"
+WLCluster: "{{ ansible_play_hosts }}"
+
+AdminHost: "{{ groups['admin'][0] }}"
+AdminAddress: "{{ hostvars[groups['admin'][0]]['ansible_default_ipv4']['address']}}"
+
+#Nodes:
+
+ADMIN: "{{ AdminAddress }}"
+NODE_1: "{{ hostvars[groups['managed'][0]]['ansible_default_ipv4']['address']}}"
+NODE_2: "{{ hostvars[groups['managed'][1]]['ansible_default_ipv4']['address']}}"
+
+JVMS_PER_NODE: 2
+
+#WebLogic Directory Structure Variables
+
+WL_ROOT_DIR : /apps
+BASE_DIR : /apps/{{ saaccount }}
+ORACLE_BASE  : '{{ BASE_DIR }}/{{ install_user }}'
+WLSERVER     : '{{ ORACLE_BASE }}/product/Oracle_Home/wlserver'
+COMMON       : '{{ ORACLE_BASE }}/product/Oracle_Home/oracle_common/common'
+ORACLE_INV   : "{{ ORACLE_BASE }}/oraInventory"
+STAGE_DIR    : "{{ ORACLE_BASE }}/stage"
+ORACLE_HOME  : "{{ ORACLE_BASE }}/product/Oracle_Home"
+ORACLE_BIN   : "{{ COMMON }}/bin"
+RCU          : "{{ ORACLE_HOME }}/oracle_common/bin/rcu"
+  
+# JDK installer and target folder
+
+jdk_installation_archive: 'jdk-8u181-linux-x64.tar.gz'
+jdk_url: "https://vm0pnyumxxw0001.twcable.com/yum/source/FMWSW/WEBLOGIC/{{ jdk_installation_archive }}"
+JAVA_BASE : '{{ ORACLE_BASE }}/jdk1.8.0_181'
+JAVA_SLNK : '{{ ORACLE_BASE }}/jdk'
+JAVA_HOME : '{{ ORACLE_BASE }}/jdk'
+
+jrun : "{{ JAVA_HOME }}/bin/java -Xms1024m -Xmx1024m -Djava.io.tmpdir={{ STAGE_DIR }}"
+
+# MW installer url 
+
+mw_installer: 'fmw_12.2.1.3.0_wls.jar'
+#mw_installer: 'fmw_12.2.1.3.0_infrastructure.jar'
+#mw_url: "hthttps://vm0pnyumxxw0001.twcable.com/yum/CharterApps/source/FMWSW/WEBLOGIC/{{ mw_installer }}"
+mw_url: "hthttps://vm0pnyumxxw0001.twcable.com/yum/CharterApps/source/FMWSW/{{ mw_installer }}"
+
+
+# DEOMAIN, DB & RCU related variables
+DB_HOST           : vm0dnansbla0001.twcable.com
+DB_PORT           : 1521
+#DB_SVC            : testdb
+DB_SVC            : pdb3
+DB_URL            : '{{ DB_HOST }}:{{ DB_PORT }}/{{ DB_SVC }}'
+RCU_URL           : '{{ DB_HOST }}:{{ DB_PORT }}:{{ DB_SVC }}'
+DB_USER           : sys
+DB_ROLE           : SYSDBA
+SYS_PASSWORD      : sys1234567890
+DEMO_SCHEMA_PREFIX : DEMO
+SCHEMA_PASSWORD   : sys1234567890
+
+DEMO_WLHOME          : '{{ ORACLE_BASE }}/product/Oracle_Home/wlserver'
+DEMO_DOMAIN_ROOT     : "{{ ORACLE_BASE }}/config/Domains"
+DEMO_DOMAIN_NAME     : demo_domain
+DEMO_DOMAIN_HOME     : "{{ DEMO_DOMAIN_ROOT }}/{{ DEMO_DOMAIN_NAME }}"
+DEMO_LOG_FOLDER      : '{{ BASE_DIR }}/{{ install_user }}/logs/demo'
+JDBC_URL            : "jdbc:oracle:thin:@{{ DB_URL }}"
+
+# Admin, Managed, JMS ports
+PORT_A :  7001
+PORT_B :  7001
+#PORT_J : 11500
+ADMIN_wPORT     : "{{ ADMIN }}:{{ PORT_A }}"
+DEMO_ADMIN_wPORT : "{{ ADMIN }}:{{ PORT_A }}"
+
+MSERVER_PREFIX  : demo_ms
+## the keys of clusterData will be used to create clusters named '{{key}}Cluster'
+## the values will have the node assignment (1,2,3) added as the port for that manged node
+clusterData :
+  DEMO:
+    name     : demo_domain
+    prefix   : demo
+    #portBase : 11403
+    template : "{{ ORACLE_HOME }}/demo/common/templates/wls/oracle.demo_template.jar"
+    group    : DEMO-MGD-SVRS
+# Bam : etc...
+
+WLS_USERNAME  : weblogic
+WLS_PASSWORD  : charter123
+DEMO_NODEMGR_PORT  : 5556
+
+#########################
+
+DEMO_DOMAIN      : 'demo_domain'
+DEMO_APP_HOME    : '{{ ORACLE_BASE }}/config/applications'
+DEMO_APP_PATH    : '{{ DEMO_APP_HOME }}/{{ DEMO_DOMAIN }}'
+
+LOG_FOLDER  : '{{ ORACLE_BASE }}/logs'
+
+JSSE_ENABLED     : true
+DEVELOPMENT_MODE : true
+WEBTIER_ENABLED  : false
+
+ADMIN_SERVER   : 'AdminServer'
+
+base_mins          : '-XX:PermSize=256m -Xms1024m'
+ADM_JAVA_ARGUMENTS : '{{ base_mins }} -XX:MaxPermSize=512m -Xmx1532m -Dweblogic.Stdout:{{ LOG_FOLDER }}/AdminServer.out -Dweblogic.Stderr:{{ LOG_FOLDER }}/AdminServer_err.out '
+DEMO_JAVA_ARGUMENTS : '{{ base_mins }} -XX:MaxPermSize=752m -Xmx1532m '
+BAM_JAVA_ARGUMENTS : '{{ base_mins }} -XX:MaxPermSize=512m -Xmx1532m '
+
+DEMO_REPOS_DBUSER_PREFIX  : 'DEMO'
+DEMO_REPOS_DBPASSWORD     : sys1234567890
+
+BPM_ENABLED : false
+BAM_ENABLED : false
+B2B_ENABLED : false
+ESS_ENABLED : false
+
+

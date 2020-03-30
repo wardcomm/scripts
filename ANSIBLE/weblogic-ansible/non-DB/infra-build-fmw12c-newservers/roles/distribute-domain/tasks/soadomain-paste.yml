@@ -1,0 +1,75 @@
+---
+
+ - name: Clean SOA_DOMAIN_ROOT
+   become: yes
+   become_user: root
+   file:
+     path:  "{{ SOA_DOMAIN_HOME }}"
+     state: absent
+
+ - name: Create Directories
+   become: yes
+   become_user: root
+   file:
+     state: directory
+     path:  "{{ item }}"
+     owner: "{{ install_user }}"
+     mode:  0755
+   with_items:
+     - "{{ CONFIGURATION_HOME }}"
+     - "{{ SOA_DOMAIN_ROOT }}"
+
+ - name: Copy Domain Tar from admin server to managed nodes 
+   become: yes
+   become_user: root
+   copy: 
+     src:  "roles/distribute-domain/files/vm0dnansbla0002/tmp/{{ soa_domain_archive }}"
+     dest: "/tmp/{{ soa_domain_archive }}"
+
+ - name: Download domain from the artifactory
+   become: yes
+   become_user: root
+   unarchive:
+     remote_src: yes
+     src:   "/tmp/{{ soa_domain_archive }}"
+     dest:  "{{ SOA_DOMAIN_ROOT }}/"
+     owner: "{{ install_user }}"
+     mode:  0755
+
+ #- name: Download domain from the artifactory
+ #  become: yes
+ #  become_user: root
+ #  unarchive:
+ #    remote_src: yes
+ #    src:   "{{ artifactory_url }}/temp/{{ soa_domain_archive }}"
+ #    dest:  "{{ SOA_DOMAIN_ROOT }}/"
+ #    owner: "{{ install_user }}"
+ #    mode:  0755
+
+ #- name: Clean the domain zipfile from artifactory
+ #  uri:
+ #    force_basic_auth: yes
+ #    method:           DELETE
+ #    user:             sdp-user
+ #    password:         '{{ jFrogLeg }}'
+ #    url:              "{{ artifactory_url }}/temp/{{ soa_domain_archive }}"
+ #    status_code:      200,204,404
+
+ - name: Update nodemanager listener address
+   become: yes
+   become_user: "{{ install_user }}"
+   shell: " sed -i 's/^ListenAddress=.*/ListenAddress=$HOSTNAME/' {{ SOA_DOMAIN_HOME }}/nodemanager/nodemanager.properties "
+
+
+# - name: Update nodemanager listener address
+#   lineinfile:
+#     path:   "{{ SOA_DOMAIN_HOME }}/nodemanager/nodemanager.properties"
+#     regexp: "^ListenAddress="
+#     line:   "ListenAddress={{ REMOTE_MANAGED }}"
+
+# - name: start the nodemanager
+#    become: yes
+#    become_user: "{{ install_user }}"
+#    shell: " {{ SOA_DOMAIN_HOME }}/bin/startNodeManager.sh 0<&- 1>|/tmp/startNodeManager.log 2>&1 & "
+#    args:
+#      chdir: "{{ SOA_DOMAIN_HOME }}"

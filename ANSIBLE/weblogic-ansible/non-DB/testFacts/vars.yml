@@ -1,0 +1,38 @@
+---
+#Nodes:
+ADMIN : '22.240.7.240'
+NODE_1 : '22.240.7.240'
+NODE_2 : '22.240.7.241'
+NODE_3 : '22.240.7.242'
+
+
+cluster_nodes: "{{ ansible_play_hosts }}"
+
+noOfhosts: "{{ ansible_play_hosts | length }}"
+
+hostName: "{{ inventory_hostname }}"
+
+InvHostLst: "{{ groups['fmw' ]| join(',') }}" 
+
+ListOfIPs:  "{{ groups['fmw'] | map('extract', hostvars, ['ansible_default_ipv4', 'address']) | join(',') }}"
+
+
+Hostnames: "{% for host in groups['admin'] %}
+            {{ inventory_hostname }}            
+            {% endfor %}"
+            
+AdminHost: "{{ groups['admin'][0] }}"
+
+
+
+#ADMIN_ADDRESS:  {{ hostvars ['{{ AdminHost }}']['ansible_default_ipv4']['address'] }}
+
+ADMIN_ADDRESS: "{{ hostvars[groups['admin'][0]]['ansible_default_ipv4']['address']}}"
+
+ADMIN: "{{ ADMIN_ADDRESS }}"
+NODE_1: "{{ hostvars[groups['managed'][0]]['ansible_default_ipv4']['address']}}"
+NODE_2: "{{ hostvars[groups['managed'][1]]['ansible_default_ipv4']['address']}}"
+            
+servers: "{{ groups['fmw'] | join(',') }}"           
+
+

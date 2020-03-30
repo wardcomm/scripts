@@ -1,0 +1,9 @@
+---
+- include_tasks: installJava.yml
+  tags: "installJava"
+
+- include_tasks: installTomcat.yml
+  tags: "installTomcat"
+
+- include_tasks: startTomcat.yml
+  tags: "startTomcat"

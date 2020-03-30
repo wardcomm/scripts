@@ -1,0 +1,50 @@
+---
+
+- name: Set up user and software
+  hosts: fmw  
+  #hosts: '{{ host }}'
+  vars_files:
+    - vars.yml
+  
+  tasks:
+        
+    # - debug: 
+        # msg: "{{ servers }}"
+        
+    # - debug: 
+        # msg: "{{ servers[0] }}"
+    
+    # - debug: 
+        # msg: "{{ ansible_play_hosts[0]}}"
+ 
+    # - debug: 
+        # msg: "{{ noOfhosts }}"  
+        
+    # - debug: 
+        # msg: " {{ ansible_all_ipv4_addresses }}"
+  
+    # - debug:        
+        # msg: "{{ InvHostLst }}"
+        
+    # - debug:        
+        # msg: "{{ ListOfIPs }}"
+        
+    # - debug:        
+        # msg: "{{ AdminHost }}"
+        
+    - debug:        
+        msg: "{{ ADMIN }}"
+      
+    - debug:        
+        msg: "{{ NODE_1 }}"
+        
+    - debug:        
+        msg: "{{ NODE_2 }}"
+        
+        
+        
+    # - debug:
+        # msg: "{{ ansible_machine }}"
+      # #loop: "{{ ansible_play_batch }}"
+      # #loop: "{{ ansible_play_hosts_all }}"      
+    

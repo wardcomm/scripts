@@ -1,0 +1,44 @@
+---
+
+ - name: Copy Start Cluster Script to Stage directory
+   become: yes 
+   become_user: root
+   template:
+     src:  roles/fmw-StartClusters/files/osbstartCluster.py
+     #src:  roles/distribute-domain/files/osbstartCluster.py
+     dest: "{{ STAGE_DIR }}/osbstartCluster.py"
+     owner: "{{ install_user }}"
+     group: "{{ install_group }}"
+     mode:  0664
+
+ - name: Confirming NodeManager on all servers reachable from OSBAdmin before starting the cluster
+   wait_for:
+     host: "{{ item }}"
+     port: "{{ OSB_NODEMGR_PORT }}"
+     state: started
+   with_items:
+     - "{{ NODE_1 }}"
+     - "{{ NODE_2 }}"
+     - "{{ NODE_3 }}"
+
+ - name: Start OSB
+   become: yes 
+   become_user: "{{ install_user }}"
+   command: "./wlst.sh {{ STAGE_DIR }}/osbstartCluster.py provosb_cluster"
+   register: strat_osbcluster
+   args:
+     chdir: "{{ COMMON }}/bin"
+   environment:
+     JAVA_HOME: "{{ JAVA_HOME }}"
+   #with_dict: "{{ clusterData }}"
+   ignore_errors: yes
+   #when: "'Successfully' in start_osbcluster.stderr"
+
+ - name: Clean Directories
+   become: yes 
+   become_user: root
+   file:
+     path: "{{ item }}"
+     state: absent
+   with_items:
+     - "{{ STAGE_DIR }}"

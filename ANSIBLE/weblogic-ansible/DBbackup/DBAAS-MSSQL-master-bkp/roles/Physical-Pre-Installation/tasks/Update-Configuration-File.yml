@@ -1,0 +1,24 @@
+---
+- name : Rename the configuration.ini file
+  win_copy:
+    src: 'D:\Install\SQL{{ SqlVersion }}\{{ SqlVersion }}-StandAlone-ConfigurationFile.ini'
+    dest: 'D:\Install\SQL{{ SqlVersion }}\{{ ansible_hostname }}-ConfigurationFile.ini'
+    remote_src: True
+
+- name: Update the configuration.ini file
+  win_lineinfile:
+    path: 'D:\Install\SQL{{ SqlVersion }}\{{ ansible_hostname }}-ConfigurationFile.ini'
+    backrefs: yes
+    regexp: "{{ ChangeMe.name }}"
+    line: "{{ ChangeMe.value }}"
+  no_log: True
+  loop:
+  - { name: 'ChangeMe-BU', value: '{{ BuPath }}{{ BuDir }}' }
+  - { name: 'ChangeMe-Data', value: '{{ DataPath }}{{ DataDir }}' }
+  - { name: 'ChangeMe-Log', value: '{{ LogPath }}{{ LogDir }}' }
+  - { name: 'ChangeMe-Temp', value: '{{ TempdbPath }}{{ TempDir }}' }
+  - { name: 'ChangeMe-Sys', value: '{{ SystemPath }}{{ SystemDir }}' }
+  - { name: 'ChangeMe-SAPWD', value: '{{ SaPw }}' }
+  - { name: 'ChangeMe-Log', value: '{{ LogPath }}{{ LogDir }}' }
+  loop_control:
+    loop_var: ChangeMe

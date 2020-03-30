@@ -1,0 +1,43 @@
+---
+
+# extract and upload the created domain templates from the admin server 
+
+ - name: Create the Domain TAR
+   become: yes
+   become_user: "{{ install_user }}" 
+   shell: " tar cvzf /tmp/{{ soa_domain_archive }} {{ SOA_DOMAIN_NAME }} "
+   args:
+     chdir: "{{ SOA_DOMAIN_ROOT }}" 
+
+ - name: Copy domain TAR to local server
+   become: yes
+   become_user: "{{ install_user }}" 
+   fetch:
+    src: "/tmp/{{ soa_domain_archive }}"
+    dest: roles/distribute-domain/files
+
+ #- name: Pull the upload tool to use the artifactory as temp space later for transferring domains between servers
+ #  become: yes
+ #  become_user: root
+ #  get_url:
+ #    url: "{{ artifactory_url }}/repotools/toRepo"
+ #    dest: /tmp/toRepo
+ #    owner: '{{ install_user }}'
+ #    mode: 0777
+
+ #- name: upload domain tarball to artifactory
+ #  become: yes
+ #  become_user: "{{ install_user }}" 
+ #  shell: " export jFrogLeg='{{ jFrogLeg }}'; /tmp/toRepo temp {{ soa_domain_archive }} "
+ #  args:
+ #    chdir: /tmp
+
+
+#- name: upload domain zipfile to artifactory
+#   uri:
+#     force_basic_auth: yes
+#     method:           PUT
+#     user:             sdp-user
+#     password:         '{{ jFrogLeg }}'
+#     url:              "{{ artifactory_url }}/temp/{{ soa_domain_archive }}"
+#     status_code:      200,204

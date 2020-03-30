@@ -1,0 +1,197 @@
+:Connect CHARTER2
+ 
+USE [master]
+GO
+declare @AVGLogin as sysname
+declare @CMD nvarchar(max)
+ 
+select @AVGLogin=service_account from sys.dm_server_services
+where servicename like 'SQL Server (%'
+ 
+if not exists(select name from sys.syslogins where name=@AVGLogin)
+begin
+ set @CMD=N'CREATE LOGIN [' + @AVGLogin + '] FROM WINDOWS WITH DEFAULT_DATABASE=[master], DEFAULT_LANGUAGE=[us_english]'
+ print 'Create service account as server login...'
+ exec sp_executesql @CMD
+end
+ 
+if not exists (select name from sys.endpoints where name='Hadr_endpoint')
+begin
+print 'Create HA/DR endpoint...'
+CREATE ENDPOINT [Hadr_endpoint] 
+ AS TCP (LISTENER_PORT = 5022)
+ FOR DATA_MIRRORING (ROLE = ALL, ENCRYPTION = REQUIRED ALGORITHM AES)
+end
+ 
+IF (SELECT state FROM sys.endpoints WHERE name = N'Hadr_endpoint') <> 0
+BEGIN
+ ALTER ENDPOINT [Hadr_endpoint] STATE = STARTED
+END
+ 
+ 
+set @CMD=N'GRANT CONNECT ON ENDPOINT::[Hadr_endpoint] TO [' + @AVGLogin + ']'
+print 'GRANT CONNECT ON ENDPOINT...'
+exec sp_executesql @CMD
+ 
+GO
+ 
+:Connect CHARTER1
+ 
+USE [master]
+GO
+ 
+declare @AVGLogin as sysname
+declare @CMD nvarchar(max)
+ 
+select @AVGLogin=service_account from sys.dm_server_services
+where servicename like 'SQL Server (%'
+ 
+if not exists(select name from syslogins where name=@AVGLogin)
+begin
+ set @CMD=N'CREATE LOGIN [' + @AVGLogin + '] FROM WINDOWS WITH DEFAULT_DATABASE=[master], DEFAULT_LANGUAGE=[us_english]'
+ print 'Create service account as server login...'
+ exec sp_executesql @CMD
+end
+ 
+if not exists (select name from sys.endpoints where name='Hadr_endpoint')
+begin
+print 'Create HA/DR endpoint...'
+CREATE ENDPOINT [Hadr_endpoint] 
+ AS TCP (LISTENER_PORT = 5022)
+ FOR DATA_MIRRORING (ROLE = ALL, ENCRYPTION = REQUIRED ALGORITHM AES)
+end
+ 
+IF (SELECT state FROM sys.endpoints WHERE name = N'Hadr_endpoint') <> 0
+BEGIN
+ ALTER ENDPOINT [Hadr_endpoint] STATE = STARTED
+END
+ 
+set @CMD=N'GRANT CONNECT ON ENDPOINT::[Hadr_endpoint] TO [' + @AVGLogin + ']'
+print 'GRANT CONNECT ON ENDPOINT...'
+exec sp_executesql @CMD
+ 
+GO
+ 
+:Connect CHARTER2
+ 
+IF EXISTS(SELECT * FROM sys.server_event_sessions WHERE name='AlwaysOn_health')
+BEGIN
+ ALTER EVENT SESSION [AlwaysOn_health] ON SERVER WITH (STARTUP_STATE=ON);
+END
+IF NOT EXISTS(SELECT * FROM sys.dm_xe_sessions WHERE name='AlwaysOn_health')
+BEGIN
+ ALTER EVENT SESSION [AlwaysOn_health] ON SERVER STATE=START;
+END
+ 
+GO
+ 
+:Connect CHARTER1
+ 
+IF EXISTS(SELECT * FROM sys.server_event_sessions WHERE name='AlwaysOn_health')
+BEGIN
+ ALTER EVENT SESSION [AlwaysOn_health] ON SERVER WITH (STARTUP_STATE=ON);
+END
+IF NOT EXISTS(SELECT * FROM sys.dm_xe_sessions WHERE name='AlwaysOn_health')
+BEGIN
+ ALTER EVENT SESSION [AlwaysOn_health] ON SERVER STATE=START;
+END
+ 
+GO
+ 
+:Connect CHARTER2
+ 
+USE [master]
+GO
+ 
+declare @SystemAddressPrimary nvarchar(256)
+declare @SystemAddressSecondary nvarchar(256)
+ 
+if charindex('','CHARTER2')=0
+ set @SystemAddressPrimary='CHARTER2'
+else
+ select @SystemAddressPrimary=substring('CHARTER2',0,charindex('','CHARTER2'))
+ 
+if charindex('','CHARTER1')=0
+ set @SystemAddressSecondary='CHARTER1'
+else
+ select @SystemAddressSecondary=substring('CHARTER1',0,charindex('','CHARTER1'))
+ 
+declare @CMD nvarchar(max)
+set @CMD='
+CREATE AVAILABILITY GROUP [VS0]
+WITH (AUTOMATED_BACKUP_PREFERENCE = PRIMARY)
+FOR 
+REPLICA ON N''CHARTER2'' WITH (ENDPOINT_URL = N''TCP://' + @SystemAddressPrimary + ':5022'', FAILOVER_MODE = AUTOMATIC, AVAILABILITY_MODE = SYNCHRONOUS_COMMIT, BACKUP_PRIORITY = 50, SECONDARY_ROLE(ALLOW_CONNECTIONS = READ_ONLY)),
+ N''CHARTER1'' WITH (ENDPOINT_URL = N''TCP://' + @SystemAddressSecondary + ':5022'', FAILOVER_MODE = AUTOMATIC, AVAILABILITY_MODE = SYNCHRONOUS_COMMIT, BACKUP_PRIORITY = 50, SECONDARY_ROLE(ALLOW_CONNECTIONS = READ_ONLY));'
+ 
+print 'Create the availability group...'
+exec sp_executesql @CMD
+ 
+print 'Create the availability group listener...'
+ALTER AVAILABILITY GROUP [VS0]
+ADD LISTENER N'VS0_VM0PWCYARADVS0' (
+WITH IP
+((N'10.10.98.150', N'255.255.255.0')
+)
+, PORT=1433);
+ 
+GO
+ 
+:Connect CHARTER1
+ 
+ALTER AVAILABILITY GROUP [VS0] JOIN;
+ 
+GO
+
+:Connect CHARTER2
+ 
+USE [master]
+GO
+ 
+DECLARE @SystemAddressPrimary NVARCHAR(256)
+DECLARE @SystemAddressSecondary NVARCHAR(256)
+ 
+IF CHARINDEX('','CHARTER2')=0
+ SET @SystemAddressPrimary='CHARTER2'
+ELSE
+ SELECT @SystemAddressPrimary=SUBSTRING('CHARTER2',0,CHARINDEX('','CHARTER2'))
+ 
+IF CHARINDEX('','CHARTER1')=0
+ SET @SystemAddressSecondary='CHARTER1'
+ELSE
+ SELECT @SystemAddressSecondary=SUBSTRING('CHARTER1',0,CHARINDEX('','CHARTER1'))
+ 
+DECLARE @CMD NVARCHAR(MAX)
+
+SET @CMD = 'ALTER AVAILABILITY GROUP [VS0]
+ MODIFY REPLICA ON
+N''CHARTER2'' WITH 
+(SECONDARY_ROLE (ALLOW_CONNECTIONS = READ_ONLY));
+
+ALTER AVAILABILITY GROUP [VS0]
+ MODIFY REPLICA ON
+N''CHARTER2'' WITH 
+(SECONDARY_ROLE (READ_ONLY_ROUTING_URL = N''TCP://' + @SystemAddressPrimary + '.CORP.CHARTERCOM.COM:1433''));
+
+ALTER AVAILABILITY GROUP [VS0]
+ MODIFY REPLICA ON
+N''CHARTER1'' WITH 
+(SECONDARY_ROLE (ALLOW_CONNECTIONS = READ_ONLY));
+
+ALTER AVAILABILITY GROUP [VS0]
+ MODIFY REPLICA ON
+N''CHARTER1'' WITH 
+(SECONDARY_ROLE (READ_ONLY_ROUTING_URL = N''TCP://' + @SystemAddressSecondary + '.CORP.CHARTERCOM.COM:1433''));
+
+ALTER AVAILABILITY GROUP [VS0]
+MODIFY REPLICA ON
+N''CHARTER2'' WITH 
+(PRIMARY_ROLE (READ_ONLY_ROUTING_LIST=(N''CHARTER1'',N''CHARTER2'')));
+
+ALTER AVAILABILITY GROUP [VS0]
+MODIFY REPLICA ON
+N''CHARTER1'' WITH 
+(PRIMARY_ROLE (READ_ONLY_ROUTING_LIST=(N''CHARTER2'',N''CHARTER1'')));'
+
+--PRINT @CMD
+EXEC sp_executesql @CMD

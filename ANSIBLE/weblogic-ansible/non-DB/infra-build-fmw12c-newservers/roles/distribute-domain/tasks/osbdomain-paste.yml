@@ -1,0 +1,61 @@
+---
+
+ - name: Clean OSB_DOMAIN_ROOT
+   become: yes
+   become_user: root
+   file:
+     path:  "{{ OSB_DOMAIN_HOME }}"
+     state: absent
+
+ - name: Create Directories
+   become: yes
+   become_user: root
+   file:
+     state: directory
+     path:  "{{ item }}"
+     owner: "{{ install_user }}"
+     mode:  0755
+   with_items:
+     - "{{ CONFIGURATION_HOME }}"
+     - "{{ OSB_DOMAIN_ROOT }}"
+
+ - name: Copy Domain Tar from admin server to managed nodes 
+   become: yes
+   become_user: root
+   copy: 
+     src:  "roles/distribute-domain/files/vm0dntestxa0119/tmp/{{ osb_domain_archive }}"
+     dest: "/tmp/{{ osb_domain_archive }}"
+
+ - name: Download domain from the artifactory
+   become: yes
+   become_user: root
+   unarchive:
+     remote_src: yes
+     src:   "/tmp/{{ osb_domain_archive }}"
+     dest:  "{{ OSB_DOMAIN_ROOT }}/"
+     owner: "{{ install_user }}"
+     mode:  0755
+
+ - name: Update nodemanager listener address
+   become: yes
+   become_user: "{{ install_user }}"
+   shell: " sed -i 's/^ListenAddress=.*/ListenAddress=$HOSTNAME/' {{ OSB_DOMAIN_HOME }}/nodemanager/nodemanager.properties "
+
+
+ - name: Remove the domain tar ball from local server
+   become: yes
+   become_user: root
+   file:
+     path:  "/tmp/{{ osb_domain_archive }}"
+     state: absent
+
+
+
+
+
+ ##- name: Remove the domain tar ball from local server 
+ #  become: yes
+ #  become_user: root
+ #  file:
+ #    path:  "roles/distribute-domain/files/vm0dntestxa0119"
+ #    state: absent

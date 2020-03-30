@@ -1,0 +1,23 @@
+---
+
+oracle_group: oinstall
+
+oracle_version: 12.1.0.2
+
+grid_version: 12.1.0.2
+
+install_base: /u01/app
+
+oracle_base: "{{ install_base }}/oracle"
+
+oracle_db_home: db_1 
+
+oracle_db_name: db
+
+asm_data_group: DATA
+
+oracle_pdb_name: ""
+
+db_config_type: "{% if ansible_play_hosts | length == 1 -%}STANDALONE
+                 {%- else -%}RAC
+                 {%- endif %}"

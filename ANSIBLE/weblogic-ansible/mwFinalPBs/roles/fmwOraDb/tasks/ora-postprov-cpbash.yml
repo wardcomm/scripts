@@ -1,0 +1,38 @@
+---
+
+- name: Run orainstRoot.sh file    
+  become: yes
+  become_user: root 
+  command: "./orainstRoot.sh"
+  args:
+    chdir: "/u01/app/oraInventory"
+
+- name: Run root.sh file    
+  become: yes
+  become_user: root 
+  command: "./root.sh"
+  args:
+    chdir: "/u01/app/oracle/product/12.1.0/dbhome_1"
+
+- name: Copy .basrc_profile to /home/sbonu folder
+  become: yes
+  become_user: root
+  copy:
+    src:  ".bash_profile" 
+    dest: "/home/sbonu"
+    mode: 0755
+
+- name: Copy runbash.sh file to /home/sbonu folder
+  become: yes
+  become_user: root 
+  copy:
+    src:  "runbash.sh" 
+    dest: "/home/sbonu"
+    mode: 0755
+
+- name: Source the updated bash profile file    
+  become: yes
+  become_user: root
+  command: "sh runbash.sh"
+  args:
+    chdir: "/home/sbonu"

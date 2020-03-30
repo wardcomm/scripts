@@ -1,0 +1,12 @@
+---
+
+- name: install Oracle Database    
+  become: yes
+ #become_user: root 
+  become_user: "{{ ora_install_user }}"
+  command: "./runInstaller -silent -responseFile /stage/database/response/db_install.rsp -ignorePrereq -ignoreSysPrereqs -waitforcompletion"
+  args:
+    chdir: "/stage/database"
+ # environment:
+  #  JAVA_HOME: "{{ JAVA_HOME }}"
+

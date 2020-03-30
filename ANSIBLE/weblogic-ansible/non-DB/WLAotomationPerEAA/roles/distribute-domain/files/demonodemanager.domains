@@ -1,0 +1,2 @@
+#Domains and directories created by Configuration Wizard
+{{ DEMO_DOMAIN_NAME }}={{ DEMO_DOMAIN_HOME }}

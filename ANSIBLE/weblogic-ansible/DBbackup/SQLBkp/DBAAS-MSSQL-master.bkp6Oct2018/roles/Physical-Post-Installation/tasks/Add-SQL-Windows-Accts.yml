@@ -1,0 +1,12 @@
+---
+
+- name: copy the Add-SQL-Windows-Accts-SQL2 file
+  win_template:
+      src: ../templates/Add-SQL-Windows-Accts-SQL2.j2
+      dest: c:\Ansible\Temp\Add-SQL-Windows-Accts-SQL2.ps1
+  diff: false
+
+- name: Add SQL Windows Accts SQL2
+  win_shell: |
+     C:\Ansible\Temp\Add-SQL-Windows-Accts-SQL2.ps1 > C:\Ansible\Logs\Add-SQL-Windows-Accts-SQL2.log
+  #no_log: true

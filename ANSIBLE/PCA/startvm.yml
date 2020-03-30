@@ -1,0 +1,20 @@
+---
+- name: Start a VM on PCA
+  hosts: ovm 
+
+  tasks:
+
+    - name: Start a Virtual Machine
+      ovmm_vm:
+        state: start
+        name: ST_vm1 
+        ovm_user: admin
+        ovm_pass: xxxxx
+        ovm_host: dhcp-xx-xxx-xx
+        ovm_port: 7002
+
+      register: testout
+
+    - name: dump test output
+      debug:
+        msg: '{{ testout }}'

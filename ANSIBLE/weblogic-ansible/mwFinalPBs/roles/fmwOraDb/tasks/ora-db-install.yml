@@ -1,0 +1,58 @@
+---
+- name: Create Directories
+  become: yes
+  become_user: root
+  file:
+    state: directory
+    path: "{{ item }}"
+    owner: "{{ ora_install_user }}"
+    group: "{{ ora_install_group }}"
+    mode: 0777
+  with_items:
+    - "{{ ORA_STAGE }}"
+    - "{{ ORA_DEV_HOME }}"
+    - "{{ ORA_DB_REC_DIR }}"
+    - "{{ TMP }}"
+
+- name: Install Java 
+  become: yes
+  become_user: root
+  yum:
+    name:  java 
+    state: present
+
+- name: Unpack DB package and install
+  become: yes
+  become_user: "{{ ora_install_user }}"
+  unarchive:
+    remote_src: yes
+    src:   "{{ ORA_INST_DIR }}/{{ item }}"
+    dest:  "{{ ORA_STAGE }}"
+    owner: "{{ ora_install_user }}"
+    group: "{{ ora_install_group }}"
+    mode:  0777
+  with_items : 
+    - linuxamd64_12102_database_1of2.zip
+    - linuxamd64_12102_database_2of2.zip
+
+- name: Copy response file /stage/database/response folder
+  become: yes
+  become_user: root 
+  copy:
+    src:  db_install.rsp
+    dest: "/stage/database/response/db_install.rsp"
+
+- name: Copy installOracle.sh file /stage/database folder
+  become: yes
+  become_user: "{{ ora_install_user }}"
+  copy:
+    src: installOracle.sh
+    dest: "/stage/database/installOracle.sh"
+    mode: 0777
+
+- name: install Oracle Database    
+  become: yes
+  become_user: "{{ ora_install_user }}"
+  command: "./installOracle.sh"
+  args:
+    chdir: "/stage/database"

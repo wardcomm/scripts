@@ -1,0 +1,44 @@
+---
+
+grid_version: 12.1.0.2
+
+# installation mode. Avaialable modes are : CRS_CONFIG | HA_CONFIG | UPGRADE | CRS_SWONLY | HA_SWONLY
+grid_install_mode: HA_CONFIG
+
+cluster_type: STANDARD
+
+cluster_name: scan1
+
+# location for temporary installation files
+oracle_tmp: /u01/tmp/{{ grid_version }}
+
+oracle_base: /u01/app
+
+oracle_db_home: db_1 
+
+oracle_db_name: db
+
+# LOCAL_ASM_STORAGE | FLEX_ASM_STORAGE | CLIENT_ASM_STORAGE | FILE_SYSTEM_STORAGE
+grid_storage_type: LOCAL_ASM_STORAGE
+
+domain: localdomain
+
+scan_port: 1521
+
+asm_disk_location: /dev/oracleasm/disks
+
+asm_data_group: DATA
+
+asm_data_pattern: D*
+
+asm_reco_group: RECO
+
+asm_reco_pattern: R*
+
+asm_ocr_group: OCR
+
+asm_ocr_pattern: GRID_DISK*
+
+## TODO: Get standard location where binaries can reliably be found
+# For the lab, this path can be mounted using: `mount 10.10.98.164:/export/techlab/ovm /ansible` (nfs-utils & nfs-utils-lib will need to be installed)
+oracle_installer_path: "/ansible"

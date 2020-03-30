@@ -1,0 +1,16 @@
+---
+
+- include_tasks: ora-preprov-config.yml
+  tags: "ora-preprov-config.yml"
+
+- include_tasks: ora-db-install.yml 
+  tags: "ora-db-install.yml"
+
+- include_tasks: ora-postprov-config.yml
+  tags: "ora-postprov-config.yml"
+
+#- include_tasks: ora-postprov-cpbash.yml
+#  tags: "ora-postprov-cpbash.yml"
+
+#- include_tasks: ora-postprov-runbash.yml 
+#  tags: "ora-postprov-runbash.yml"

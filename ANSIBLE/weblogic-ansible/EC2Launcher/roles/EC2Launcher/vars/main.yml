@@ -1,0 +1,11 @@
+---
+# vars file for deployWebAPPonAWS
+
+iinstance_type : 't1.micra'
+#security_group : 'CodeTestEC2' # Change the security group name here
+image : 'ami-98aa1cf0' # Change the AMI, from which you want to launch the server
+region : 'us-east-1' # Change the Region
+#keypair : 'EC2Installer' # Change the keypair name
+AWS_ACC_KEY: AKIAJB5DSJ2TAEUWDO5Q
+AWS_SEC_KEY: o9a7lSEUE77d5ohKd0ZAut74je/uyZjokhvfVHEN
+count : 1

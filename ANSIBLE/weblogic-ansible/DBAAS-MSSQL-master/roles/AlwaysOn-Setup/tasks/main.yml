@@ -1,0 +1,25 @@
+---
+- name: Create Ansible Log and Temp  Directory
+  win_file:
+    path: "{{ ansible_directory }}"
+    state: directory
+  loop:
+  - C:\Ansible\Temp
+  - C:\Ansible\Logs
+  loop_control:
+    loop_var: ansible_directory
+
+- include: Enable-AlwaysOn.yml
+
+- include: CreateEmptyAvailabilityGroup-{{ node_count }}-Node{{ dr_flag }}.yml
+
+- include: AAG-Configuration.yml
+  when: (ansible_hostname | lower ) == ( PrimaryReplica | lower )
+
+- include: AAG-Security-Cleanup.yml
+  when: (ansible_hostname | lower ) == ( PrimaryReplica | lower )
+  
+- name: Remove tempdb Directory
+  win_file:
+    path: C:\Ansible\Temp
+    state: absent

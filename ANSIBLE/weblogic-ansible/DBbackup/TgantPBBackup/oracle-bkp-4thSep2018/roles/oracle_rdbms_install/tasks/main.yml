@@ -1,0 +1,38 @@
+---
+
+- include_vars: secrets.yml
+  no_log: true
+
+- import_role:
+    name: oracle_api_services
+    tasks_from: host_checklist_update.yml
+  vars:
+    update_host_cklist_body:
+      - { key: checklist_type , value: "2" }
+      - { key: db_install_status, value: "IN PROGRESS"}
+  tags:
+  - apex_api
+
+- include: determine_db_home.yml
+  when: 
+  - oracle_db_home is not defined
+  - inventory_hostname == master_node
+
+- name: copy oracle_db_home fact to other nodes
+  set_fact:
+    oracle_db_home: "{{ hostvars[master_node]['oracle_db_home'] }}"
+  when: inventory_hostname != master_node
+
+- include: copy_archives.yml
+
+- name: create cluster_node_string
+  set_fact:
+    cluster_node_string: "{{ cluster_node_string | default([]) }} + [ '{{ hostvars[node_name]['ansible_hostname'] }}' ]"
+  loop: "{{ cluster_nodes }}"
+  loop_control:
+    loop_var: node_name
+
+- include: prep_rsp_file.yml
+  when: inventory_hostname == master_node
+
+- include: oracle.yml

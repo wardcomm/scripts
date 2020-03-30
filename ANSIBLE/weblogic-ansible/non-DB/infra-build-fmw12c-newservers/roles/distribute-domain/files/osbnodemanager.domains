@@ -1,0 +1,2 @@
+#Domains and directories created by Configuration Wizard
+{{ OSB_DOMAIN_NAME }}={{ OSB_DOMAIN_HOME }}

@@ -1,0 +1,147 @@
+---
+
+ - name: Clean Directories
+   file:
+    path: "{{ item }}"
+    owner: "{{ install_user }}"
+    group: "{{ install_group }}"
+    state: absent
+   with_items:
+    - "{{ STAGE_DIR }}"
+
+ - name: Create Directories
+   file:
+    path: "{{ item }}"
+    owner: "{{ install_user }}"
+    group: "{{ install_group }}"
+    state: directory
+    mode: 0755
+   with_items:
+    - "{{ STAGE_DIR }}"
+
+ - name: Copy create JMS Module script to Stage directory
+   template:
+    src:   roles/fmw-soaconfig/files/createJMSModule.py
+    dest: "{{ STAGE_DIR }}/createJMSModule.py"
+    owner: "{{ install_user }}"
+    group: "{{ install_group }}"
+
+ - name: Create JMS Module in weblogic
+   command: "./wlst.sh {{ STAGE_DIR }}/createJMSModule.py"
+   args:
+    chdir: "{{ ORACLE_BIN }}"
+   environment:
+    JAVA_HOME: "{{ JAVA_HOME }}"
+
+ - name: Copy create SAF context script to Stage directory
+   template:
+    src:   roles/fmw-soaconfig/files/createSAFContext.py
+    dest: "{{ STAGE_DIR }}/createSAFContext.py"
+    owner: "{{ install_user }}"
+    group: "{{ install_group }}"
+
+ - name: Create SAF context in Weblogic
+   command: "./wlst.sh {{ STAGE_DIR }}/createSAFContext.py"
+   args:
+    chdir: "{{ ORACLE_BIN }}"
+   environment:
+    JAVA_HOME: "{{ JAVA_HOME }}"
+
+ - name: Copy create SAF Error Queue script to Stage directory
+   template:
+    src:   roles/fmw-soaconfig/files/createUDDQueue.py
+    dest: "{{ STAGE_DIR }}/createUDDQueue.py"
+    owner: "{{ install_user }}"
+    group: "{{ install_group }}"
+
+ - name: Create SAF Error Queue in Weblogic
+   command: "./wlst.sh {{ STAGE_DIR }}/createUDDQueue.py"
+   args:
+    chdir: "{{ ORACLE_BIN }}"
+   environment:
+    JAVA_HOME: "{{ JAVA_HOME }}"
+
+ - name: Copy create JMS Sub Deployment  script to Stage directory
+   template:
+    src:   roles/fmw-soaconfig/files/createSAFAgentSubDeploy.py
+    dest: "{{ STAGE_DIR }}/createSAFAgentSubDeploy.py"
+    owner: "{{ install_user }}"
+    group: "{{ install_group }}"
+
+ - name: Create JMS sub deployment  in Weblogic
+   command: "./wlst.sh {{ STAGE_DIR }}/createSAFAgentSubDeploy.py"
+   args:
+    chdir: "{{ ORACLE_BIN }}"
+   environment:
+    JAVA_HOME: "{{ JAVA_HOME }}"
+
+ - name: Copy create SAF Error Imported Destination  script to Stage directory
+   template:
+    src:   roles/fmw-soaconfig/files/createSAFErrorImportedDestination.py
+    dest: "{{ STAGE_DIR }}/createSAFErrorImportedDestination.py"
+    owner: "{{ install_user }}"
+    group: "{{ install_group }}"
+
+ - name: Create SAF Error Imported Destination in Weblogic
+   command: "./wlst.sh {{ STAGE_DIR }}/createSAFErrorImportedDestination.py"
+   args:
+    chdir: "{{ ORACLE_BIN }}"
+   environment:
+    JAVA_HOME: "{{ JAVA_HOME }}"
+
+ - name: Copy create SAF Error Queues script to Stage directory
+   template:
+    src:   roles/fmw-soaconfig/files/createSAFQueue.py
+    dest: "{{ STAGE_DIR }}/createSAFQueue.py"
+    owner: "{{ install_user }}"
+    group: "{{ install_group }}"
+
+ - name: Create SAF Error Queueus in Weblogic
+   command: "./wlst.sh {{ STAGE_DIR }}/createSAFQueue.py"
+   args:
+    chdir: "{{ ORACLE_BIN }}"
+   environment:
+    JAVA_HOME: "{{ JAVA_HOME }}"
+
+ - name: Copy create SAF Error Handler script to Stage directory
+   template:
+    src:   roles/fmw-soaconfig/files/createSAFErrorHandler.py
+    dest: "{{ STAGE_DIR }}/createSAFErrorHandler.py"
+    owner: "{{ install_user }}"
+    group: "{{ install_group }}"
+
+ - name: Create SAF Error Handler in Weblogic
+   command: "./wlst.sh {{ STAGE_DIR }}/createSAFErrorHandler.py"
+   args:
+    chdir: "{{ ORACLE_BIN }}"
+   environment:
+    JAVA_HOME: "{{ JAVA_HOME }}"
+
+ - name: Copy create SAF Imported Destination  script to Stage directory
+   template:
+    src:   roles/fmw-soaconfig/files/createSAFImportedDestination.py
+    dest: "{{ STAGE_DIR }}/createSAFImportedDestination.py"
+    owner: "{{ install_user }}"
+    group: "{{ install_group }}"
+
+ - name: Create SAF Imported Destination in Weblogic
+   command: "./wlst.sh {{ STAGE_DIR }}/createSAFImportedDestination.py"
+   args:
+    chdir: "{{ ORACLE_BIN }}"
+   environment:
+    JAVA_HOME: "{{ JAVA_HOME }}"
+
+ - name: Copy create SAF Queues script to Stage directory
+   template:
+    src:   roles/fmw-soaconfig/files/createSAFQueue.py
+    dest: "{{ STAGE_DIR }}/createSAFQueue.py"
+    owner: "{{ install_user }}"
+    group: "{{ install_group }}"
+
+ - name: Create SAF Queueus in Weblogic
+   command: "./wlst.sh {{ STAGE_DIR }}/createSAFQueue.py"
+   args:
+    chdir: "{{ ORACLE_BIN }}"
+   environment:
+    JAVA_HOME: "{{ JAVA_HOME }}"
+

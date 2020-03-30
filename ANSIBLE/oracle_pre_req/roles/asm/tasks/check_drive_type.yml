@@ -1,0 +1,13 @@
+---
+- name: check for mpath disk
+  shell: multipath -v3 -d -ll
+  register: mpath_disks
+  ignore_errors: True
+
+- name: debug_mpath
+  debug:
+    msg: "{{ mpath_disks.stdout }}"
+
+- name: dump test output
+  debug:
+    msg: '{{ testout }}'

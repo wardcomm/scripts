@@ -4,11 +4,18 @@
   connection: local
 
   roles:
+    - role: host_vars
+    - role: common
     - role: redhat_7
       when: ansible_distribution == 'RedHat' and ansible_distribution_version >= '7.6'
-    - role: host_vars
     - role: swap
-    - oel
+    - role: oel_7
+      when: ansible_distribution == 'OracleLinux' and ansible_distribution_version >= '7.5'
+    - role: asm
     - rac
     - rac_one_node
     - gi_standalone
+    - role: virtual
+      when: ansible_virtualization_role == 'guest' and ansible_distribution == 'RedHat' and ansible_distribution_version >= '7.6'
+    - role: physical
+      when: ansible_virtualization_role != 'guest' and ansible_distribution == 'RedHat' and ansible_distribution_version >= '7.6'

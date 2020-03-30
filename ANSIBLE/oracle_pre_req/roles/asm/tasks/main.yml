@@ -1,0 +1,9 @@
+---
+  - include_tasks: "{{ task }}"
+    tags: "always"
+    loop:
+      - asmlib_install.yml
+      - check_drive_type.yml
+
+    loop_control:
+      loop_var: task

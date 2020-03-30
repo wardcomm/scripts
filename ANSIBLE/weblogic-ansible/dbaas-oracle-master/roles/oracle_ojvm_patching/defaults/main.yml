@@ -1,0 +1,24 @@
+oracle_version: 12.1.0.2
+
+grid_version: 12.1.0.2
+
+install_base: /u01/app
+
+oracle_base: "{{ install_base }}/oracle"
+
+oracle_tmp: /u01/tmp/ojvm_patch
+
+oracle_user: oracle
+
+oracle_group: oinstall
+
+ojvm_patch: 27923320
+
+master_node: "{{ ansible_play_hosts | first }}"
+
+db_list: []
+
+
+# vars to be taken care
+# ojvm_patch
+    

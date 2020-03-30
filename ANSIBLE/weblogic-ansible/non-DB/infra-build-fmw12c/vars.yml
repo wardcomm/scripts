@@ -1,0 +1,189 @@
+---
+#Nodes:
+ADMIN : '142.136.197.116'
+NODE_1 : '142.136.197.116'
+NODE_2 : '142.136.197.117'
+NODE_3 : '142.136.197.118'
+
+#Oracle os user and group
+install_user  : 'oracle'
+install_group : 'oinstall'
+
+BASE_DIR : /charter/apps
+ORACLE_BASE  : /charter/apps/{{ install_user }}/fmw
+WLSERVER     : '{{ ORACLE_BASE }}/product/Oracle_Home/wlserver'
+COMMON       : '{{ ORACLE_BASE }}/product/Oracle_Home/oracle_common/common'
+ORACLE_INV   : "{{ ORACLE_BASE }}/oraInventory"
+STAGE_DIR    : "{{ ORACLE_BASE }}/stage"
+ORACLE_HOME  : "{{ ORACLE_BASE }}/product/Oracle_Home"
+ORACLE_BIN   : "{{ COMMON }}/bin"
+RCU          : "{{ ORACLE_HOME }}/oracle_common/bin/rcu"
+
+
+required_dirs:
+  - "{{ BASE_DIR }}"
+  - "{{ BASE_DIR }}/{{ install_user }}"
+  - "{{ ORACLE_BASE }}"
+#  - "{{ ORACLE_HOME }}"
+  - "{{ ORACLE_INV }}"
+#  - "{{ ORACLE_BIN }}"
+  - "{{ STAGE_DIR }}"
+
+# JDK installer and target folder
+jdk_installation_archive: 'jdk-8u181-linux-x64.tar.gz'
+jdk_url: "https://vm0pnyumxxw0001.twcable.com/yum/source/FMWSW/WEBLOGIC/{{ jdk_installation_archive }}"
+JAVA_HOME : '{{ ORACLE_BASE }}/jdk1.8.0_181'
+
+mw_installer: 'fmw_12.2.1.3.0_infrastructure.jar'
+mw_url: "https://vm0pnyumxxw0001.twcable.com/yum/source/FMWSW/WEBLOGIC/{{ mw_installer }}"
+
+mw_soa_installer: 'fmw_12.2.1.3.0_soa.jar'
+mw_soa_url: "https://vm0pnyumxxw0001.twcable.com/yum/source/FMWSW/WEBLOGIC/{{ mw_soa_installer }}"
+
+mw_osb_installer: 'fmw_12.2.1.3.0_osb.jar'
+mw_osb_url: "https://vm0pnyumxxw0001.twcable.com/yum/source/FMWSW/WEBLOGIC/{{ mw_osb_installer }}"
+
+jrun : "{{ JAVA_HOME }}/bin/java -Xms1024m -Xmx1024m -Djava.io.tmpdir={{ STAGE_DIR }}"
+
+# SOA RCU related variables
+DB_HOST           : vm0dnansbla0001.twcable.com
+DB_PORT           : 1521
+#DB_SVC            : testdb
+DB_SVC            : pdb3
+DB_URL            : '{{ DB_HOST }}:{{ DB_PORT }}/{{ DB_SVC }}'
+RCU_URL           : '{{ DB_HOST }}:{{ DB_PORT }}:{{ DB_SVC }}'
+DB_USER           : sys
+DB_ROLE           : SYSDBA
+SYS_PASSWORD      : sys1234567890
+SOA_SCHEMA_PREFIX : SOA
+SCHEMA_PASSWORD   : sys1234567890
+
+SOA_WLHOME          : '{{ ORACLE_BASE }}/product/Oracle_Home/wlserver'
+SOA_DOMAIN_ROOT     : "{{ ORACLE_BASE }}/config/Domains"
+SOA_DOMAIN_NAME     : provsoa_domain
+SOA_DOMAIN_HOME     : "{{ SOA_DOMAIN_ROOT }}/{{ SOA_DOMAIN_NAME }}"
+SOA_LOG_FOLDER      : '{{ BASE_DIR }}/provusr/logs/soa'
+JDBC_URL            : "jdbc:oracle:thin:@{{ DB_URL }}"
+
+# OSB RCU related variables
+#DB_PORT           : 1521
+#DB_SVC           : fmwr01l
+#DB_URL            : '{{ DB_HOST }}:{{ DB_PORT }}/{{ DB_SVC }}'
+#RCU_URL           : '{{ DB_HOST }}:{{ DB_PORT }}:{{ DB_SVC }}'
+#DB_USER           : tempadmin
+#DB_ROLE           : SYSDBA
+#SYS_PASSWORD      : tempadmin
+OSB_SCHEMA_PREFIX : OSB
+#SCHEMA_PASSWORD   : tempadmin
+
+OSB_WLHOME        : '{{ ORACLE_BASE }}/product/Oracle_Home/wlserver'
+OSB_DOMAIN_ROOT   : "{{ ORACLE_BASE }}/config/Domains"
+OSB_DOMAIN_NAME   : provosb_domain
+OSB_LOG_FOLDER      : '{{ BASE_DIR }}/provusr/logs/osb'
+OSB_DOMAIN_HOME   : "{{ OSB_DOMAIN_ROOT }}/{{ OSB_DOMAIN_NAME }}"
+
+# Admin, Managed, JMS ports
+PORT_A :  11410
+#PORT_B :  11400
+PORT_B :  11400
+#PORT_1 :  8401
+#PORT_2 :  8402
+#PORT_3 :  8403
+PORT_J : 11500
+ADMIN_wPORT     : "{{ ADMIN }}:{{ PORT_A }}"
+SOA_ADMIN_wPORT : "{{ ADMIN }}:{{ PORT_A }}"
+OSB_ADMIN_wPORT : "{{ ADMIN }}:{{ PORT_B }}"
+
+MSERVER_PREFIX  : provsoa_ms
+## the keys of clusterData will be used to create clusters named '{{key}}Cluster'
+## the values will have the node assignment (1,2,3) added as the port for that manged node
+clusterData :
+  SOA:
+    name     : provsoa_domain
+    prefix   : provsoa
+    portBase : 11403
+    template : "{{ ORACLE_HOME }}/soa/common/templates/wls/oracle.soa_template.jar"
+    group    : SOA-MGD-SVRS
+  OSB:
+    name     : provosb_domain
+    prefix   : provosb
+    portBase : 11401
+    template : "{{ ORACLE_HOME }}/osb/common/templates/wls/oracle.osb_template.jar"
+    group    : OSB-MGD-SVRS
+# Bam : etc...
+
+WLS_USERNAME  : weblogic
+WLS_PASSWORD  : charter123
+SOA_NODEMGR_PORT  : 5556
+OSB_NODEMGR_PORT  : 5556
+
+ADMINSRVR_HOST   : "{{ NODE_1 }}"
+MSERVER_HOST1    : "{{ NODE_1 }}"
+MSERVER_HOST2    : "{{ NODE_2 }}"
+MSERVER_HOST3    : "{{ NODE_3 }}"
+
+MSERVER_PORT1   : 11401
+MSERVER_PORT2   : 11402
+MSERVER_PORT3   : 11403
+MSERVER_LIST    : '{{ NODE_1 }}:{{ MSERVER_PORT1 }},{{ NODE_2 }}:{{ MSERVER_PORT2 }},{{ NODE_3 }}:{{ MSERVER_PORT3 }}'
+
+#########################
+
+SOA_DOMAIN      : 'provsoa_domain'
+SOA_APP_HOME    : '{{ ORACLE_BASE }}/config/applications'
+SOA_APP_PATH    : '{{ SOA_APP_HOME }}/{{ SOA_DOMAIN }}'
+
+LOG_FOLDER  : '{{ ORACLE_BASE }}/logs'
+
+OSB_DOMAIN      : 'provosb_domain'
+OSB_APP_HOME    : '{{ ORACLE_BASE }}/config/applications'
+OSB_APP_PATH    : '{{ OSB_APP_HOME }}/{{ OSB_DOMAIN }}'
+
+LOG_FOLDER  : '{{ ORACLE_BASE }}/logs'
+
+JSSE_ENABLED     : true
+DEVELOPMENT_MODE : true
+WEBTIER_ENABLED  : false
+
+ADMIN_SERVER   : 'AdminServer'
+OSB_MSERVER2_SERVER : 'provosb_server2'
+OSB_MSERVER3_SERVER : 'provosb_server3'
+
+SOA_MSERVER2_SERVER : 'provsoa_server2'
+SOA_MSERVER3_SERVER : 'provsoa_server3'
+
+base_mins          : '-XX:PermSize=256m -Xms1024m'
+ADM_JAVA_ARGUMENTS : '{{ base_mins }} -XX:MaxPermSize=512m -Xmx1532m -Dweblogic.Stdout:{{ LOG_FOLDER }}/AdminServer.out -Dweblogic.Stderr:{{ LOG_FOLDER }}/AdminServer_err.out '
+OSB_JAVA_ARGUMENTS : '{{ base_mins }} -XX:MaxPermSize=512m -Xmx1024m '
+SOA_JAVA_ARGUMENTS : '{{ base_mins }} -XX:MaxPermSize=752m -Xmx1532m '
+BAM_JAVA_ARGUMENTS : '{{ base_mins }} -XX:MaxPermSize=512m -Xmx1532m '
+
+
+#REPOS_DBURL    : 'jdbc:oracle:thin:@192.168.128.136:1521/fmwr01l'
+
+#REPOS_DBUSER_PREFIX  : 'SOA'
+#REPOS_DBPASSWORD     : 'tempadmin'
+
+
+SOA_REPOS_DBUSER_PREFIX  : 'SOA'
+SOA_REPOS_DBPASSWORD     : sys1234567890
+#SOA_REPOS_DBPASSWORD     : 'tempadmin'
+
+OSB_REPOS_DBUSER_PREFIX  : 'OSB'
+OSB_REPOS_DBPASSWORD     : sys1234567890
+#OSB_REPOS_DBPASSWORD     : 'tempadmin'
+
+BPM_ENABLED : false
+BAM_ENABLED : false
+B2B_ENABLED : false
+ESS_ENABLED : false
+
+# Common paths and names
+
+#Domaincopy
+CONFIGURATION_HOME : '/charter/apps/esbdelv/fmw12.2.1/config/Domains'
+osb_domain_archive     : "{{ OSB_DOMAIN_NAME }}TmpArchive.zip"
+soa_domain_archive     : "{{ SOA_DOMAIN_NAME }}TmpArchive.zip"
+artifactory_url    : http://192.168.31.5:8081/artifactory/service-delivery-platform-local
+
+jFrogLeg : jFr0gg!e
