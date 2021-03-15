@@ -1,0 +1,1 @@
+﻿Get-ADPrincipalGroupMembership p2998490adm | Select *
