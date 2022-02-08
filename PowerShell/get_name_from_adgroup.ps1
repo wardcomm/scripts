@@ -1,0 +1,1 @@
+﻿get-ADGroupMember -identity UX-RG-FOA-ADMINS | select name
