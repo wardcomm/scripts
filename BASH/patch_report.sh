@@ -13,7 +13,7 @@ enhance=`yum updateinfo summary | grep 'Enhancement' | tail -1 | awk '{print $1}
 uptime=`uptime -p`
 env=`echo "${HOSTNAME: -3}" | cut -c -1`
 echo "Server Name,    Security Errata,        Bugfix,       Enhancement,        uptime" > /SRE/scripts/sec-up.csv
-echo $hostname,"       security"   $sec,   "   Bug"   $bug,"    enhancement"   $enhance ,"      uptime $uptime ">> /SRE/scripts/sec-up.csv
+echo $hostname,"       security"   $sec,   "   Bug"   $bug,"    enhancement"   $enhance ,"      uptime "$uptime ,>> /SRE/scripts/sec-up.csv
 echo $hostname, $sec, $bug,$enhance ,$uptime, $env > /SRE/scripts/security_data.csv
 echo "Patching Report for `date +"%B %Y"`" | mailx   -s "Patching Report on `date`" -a /SRE/scripts/sec-up.csv joseph.c.ward@charter.com #$email
     
