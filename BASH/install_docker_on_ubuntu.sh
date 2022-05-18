@@ -11,7 +11,7 @@ sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubun
  $(lsb_release -cs) stable"
 
 # Update and install the docker package
-sudo apt-get update
+sudo apt-get update 
 sudo apt-get install -y docker-ce docker-ce-cli containerd.Import
 
 # Start Docker and enable auto-start on boot
