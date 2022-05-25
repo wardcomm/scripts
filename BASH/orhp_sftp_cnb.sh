@@ -4,5 +4,4 @@ passhrase="pAvem5entbulgi1nessPoi'ntersma8sherstop;perla6unChpend-inggu[mminesSs
 
 #sftp   -i /REPO/cnb_private.key  oldrepub@mway.cnb.com:/oldrepub.fromcnb 
 sftp -b /REPO/scripts/BATCH/orhp_cnb_sftp_batch.bat  -i /REPO/cnb_private.key  oldrepub@mway.cnb.com:/oldrepub.fromcnb
-echo "sftp from cnb on `date +"%B %Y`" | mailx -s "sftp from cnb on `date`"  $email
-bye
+echo "sftp from cnb on" 'date +"%B %Y' | mailx -s "sftp from cnb on 'date' "  $email
