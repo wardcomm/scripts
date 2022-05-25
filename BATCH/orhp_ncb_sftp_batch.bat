@@ -1,0 +1,3 @@
+lpwd
+lls -t
+bye
