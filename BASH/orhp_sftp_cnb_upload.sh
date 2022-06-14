@@ -8,15 +8,15 @@ reply_email="joseph.ward@orhp.com"
 passhrase="pAvem5entbulgi1nessPoi'ntersma8sherstop;perla6unChpend-inggu[mminesSscarcecu>ddlygru?mbLecas\ually"
 source_loc="Applications"
 source_dir="/Environments/Production/Lockbox/Transport"
-today_date=(date +%m%d%y)
-email_date=(date +%B%Y)
+today_date=(`date +%m%d%y`)
+email_date=(`date +%B%Y`)
 TZ_PST="`TZ='America/Los_Angeles' date`"
 TZ_EST="`TZ='America/New_York' date`"
 location="//corp.orhp.com/Applications/Environments"
 directory="/Production/Lockbox/Transport"
 make_dir=(`mkdir -p /IFS`)
 # smb_command=('get 060922_Lookup7500.csv; exit')
-smb_command=('get 060922$file_name; exit')
+smb_command=('get $today_date$file_name; exit')
 smb_user="joward@corp.orhp.com"
 file_name="_Lookup7500.csv"
 clear
