@@ -16,7 +16,7 @@ location="//corp.orhp.com/Applications/Environments"
 directory="/Production/Lockbox/Transport"
 make_dir=(`mkdir -p /IFS`)
 # smb_command=('get 060922_Lookup7500.csv; exit')
-smb_command=('get $today_date$file_name; exit')
+smb_command=('get 060922$file_name; exit')
 smb_user="joward@corp.orhp.com"
 file_name="_Lookup7500.csv"
 clear
