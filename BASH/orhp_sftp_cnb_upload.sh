@@ -10,9 +10,14 @@ today_date=(date +%m%d%y)
 email_date=(date +%B%Y)
 TZ_PST="`TZ='America/Los_Angeles' date`"
 TZ_EST="`TZ='America/New_York' date`"
+location="//corp.orhp.com/Applications/Environments"
+directory="/Production/Lockbox/Transport"
 clear
 #smbclient //s1-FS02/Environments -c get $today_date* -U joward@corp.orhp.com -m SMB3 -D /Production/Lockbox/Transport
-smbclient //s1-FS02/Environments -c'get 060922_Lookup7500.csv; exit'  -U joward@corp.orhp.com -m SMB3 -D /Production/Lockbox/Transport
+#\\corp.orhp.com\Applications\Environments\Production\Lockbox\Transport
+#smbclient //s1-FS02/Environments -c'get 060922_Lookup7500.csv; exit'  -U joward@corp.orhp.com -m SMB3 -D /Production/Lockbox/Transport
+smbclient $location -c'get 060922_Lookup7500.csv; exit' -U joward@corp.orhp.com -m SMB3 -D $directory
+
 #sftp   -i /REPO/cnb_private.key  oldrepub@mway.cnb.com:/oldrepub.fromcnb 
 sftp -b /REPO/scripts/BATCH/orhp_cnb_sftp_batch.bat  -i /REPO/cnb_private.key  oldrepub@mway.cnb.com:/oldrepub.tocnb
 echo "sftp to cnb on $email_date $TZ_PST" | mailx -s "sftp from cnb on  $TZ_PST"  $email $cc1 $cc2 -r $reply_email.com
