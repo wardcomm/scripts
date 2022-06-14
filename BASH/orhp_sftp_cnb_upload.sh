@@ -17,7 +17,7 @@ directory="/Production/Lockbox/Transport"
 make_dir=(`mkdir -p /IFS`)
 # smb_command=('get 060922_Lookup7500.csv; exit')
 smb_command=('get $today_date_Lookup7500.csv; exit')
-
+smb_user="joward@corp.orhp.com"
 clear
 #smbclient //s1-FS02/Environments -c get $today_date* -U joward@corp.orhp.com -m SMB3 -D /Production/Lockbox/Transport
 #\\corp.orhp.com\Applications\Environments\Production\Lockbox\Transport
@@ -26,7 +26,7 @@ echo "make dir" && sleep 2
 $make_dir
 cd $make_dir
 echo "smb connection" && sleep 2
-smbclient $location -c $smb_command -U joward@corp.orhp.com -m SMB3 -D $directory
+smbclient $location -c $smb_command -U $smb_user -m SMB3 -D $directory
 
 #sftp   -i /REPO/cnb_private.key  oldrepub@mway.cnb.com:/oldrepub.fromcnb 
 echo "sftp session" && sleep 2
