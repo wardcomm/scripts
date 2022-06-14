@@ -1,4 +1,6 @@
 #!/bin/bash
+
+#variables
 email="joseph.ward@orhp.com"
 #cc1="kyla@orhp.com"
 #cc2="chamun@orhp.com"
@@ -15,16 +17,21 @@ directory="/Production/Lockbox/Transport"
 make_dir=(mkdir -p /IFS)
 # smb_command=('get 060922_Lookup7500.csv; exit')
 smb_command=('get $today_date_Lookup7500.csv; exit')
+
 clear
 #smbclient //s1-FS02/Environments -c get $today_date* -U joward@corp.orhp.com -m SMB3 -D /Production/Lockbox/Transport
 #\\corp.orhp.com\Applications\Environments\Production\Lockbox\Transport
 #smbclient //s1-FS02/Environments -c'get 060922_Lookup7500.csv; exit'  -U joward@corp.orhp.com -m SMB3 -D /Production/Lockbox/Transport
+echo "make dir" && sleep 2
 $make_dir
 cd $make_dir
+echo "smb connection" && sleep 2
 smbclient $location -c $smb_command -U joward@corp.orhp.com -m SMB3 -D $directory
 
 #sftp   -i /REPO/cnb_private.key  oldrepub@mway.cnb.com:/oldrepub.fromcnb 
+echo "sftp session" && sleep 2
 sftp -b /REPO/scripts/BATCH/orhp_cnb_sftp_batch.bat  -i /REPO/cnb_private.key  oldrepub@mway.cnb.com:/oldrepub.tocnb
+echo "email notification" && sleep 2
 echo "sftp to cnb on $email_date $TZ_PST" | mailx -s "sftp from cnb on  $TZ_PST"  $email $cc1 $cc2 -r $reply_email.com
 # smbclient  '\\corp.orhp.com\' -U joward@corp.orhp.com
 #smbclient -L \\s1-fs01\DFS\Departments\IT\chad_testing -U joward@corp.orhp.com
