@@ -14,7 +14,7 @@ TZ_PST="`TZ='America/Los_Angeles' date`"
 TZ_EST="`TZ='America/New_York' date`"
 location="//corp.orhp.com/Applications/Environments"
 directory="/Production/Lockbox/Transport"
-make_dir=(mkdir -p /IFS)
+make_dir=(`mkdir -p /IFS`)
 # smb_command=('get 060922_Lookup7500.csv; exit')
 smb_command=('get $today_date_Lookup7500.csv; exit')
 
