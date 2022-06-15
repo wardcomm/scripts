@@ -61,3 +61,8 @@ echo $today_date
 echo $today_file
 echo "----------"
 echo $file2test
+
+function clean() {
+    rm -rf /IFS
+}
+ clean
