@@ -11,6 +11,7 @@ source_dir="/Environments/Production/Lockbox/Transport"
 today_date=(`date +%m%d%y`)
 email_date=(`date +%B%Y`)
 file2test=(`echo $today_file | cut -c -6`)
+nameoffile=(`ls -lA /IFS | awk '{print $9}'`)
 TZ_PST="`TZ='America/Los_Angeles' date`"
 TZ_EST="`TZ='America/New_York' date`"
 location="//corp.orhp.com/Applications/Environments"
