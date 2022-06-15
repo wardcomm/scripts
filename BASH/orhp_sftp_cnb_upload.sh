@@ -8,6 +8,7 @@ reply_email="joseph.ward@orhp.com"
 passhrase="pAvem5entbulgi1nessPoi'ntersma8sherstop;perla6unChpend-inggu[mminesSscarcecu>ddlygru?mbLecas\ually"
 source_loc="Applications"
 source_dir="/Environments/Production/Lockbox/Transport"
+today_date=(date +%m%d%y)
 email_date=(`date +%B%Y`)
 file2test=(`echo $today_file | cut -c -6`)
 nameoffile=(`ls -lA /IFS | awk '{print $9}'`)
@@ -21,11 +22,14 @@ smb_command=('get $today_file; exit')
 smb_user="joward@corp.orhp.com"
 file_name="_Lookup7500.csv"
 today_file=($today_date"_Lookup7500.csv")
+today_date=()
+
 clear
 echo "VARIABLES"
 echo "----------"
 echo $today_file
 echo $email
+
 echo "script is below"
 #smbclient //s1-FS02/Environments -c get $today_date* -U joward@corp.orhp.com -m SMB3 -D /Production/Lockbox/Transport
 #\\corp.orhp.com\Applications\Environments\Production\Lockbox\Transport
