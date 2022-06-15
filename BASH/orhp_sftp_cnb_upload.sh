@@ -41,5 +41,6 @@ echo "sftp to cnb on $email_date $TZ_PST" | mailx -s "sftp from cnb on  $TZ_PST"
 #smbclient //s1-fs01.corp.orhp.com/Departments -U joward@corp.orhp.com -m SMB3 -D IT/chad_testing 
 #smbclient //s1-FS02/Environments -U joward@corp.orhp.com -m SMB3 -D /Production/Lockbox/Transport -c get $today_date_Lookup7500 /REPO
 #smbclient//s1-fs01.corp.orhp.com/$source_loc -U joward@corp.orhp.com -m SMB3 -D $source_dir
+cat /IFS
 echo $today_date
 echo $today_file
