@@ -22,6 +22,9 @@ smb_user="joward@corp.orhp.com"
 file_name="_Lookup7500.csv"
 today_file=($today_date"_Lookup7500.csv")
 clear
+echo "VARIABLES"
+echo "----------"
+echo $today_file=
 #smbclient //s1-FS02/Environments -c get $today_date* -U joward@corp.orhp.com -m SMB3 -D /Production/Lockbox/Transport
 #\\corp.orhp.com\Applications\Environments\Production\Lockbox\Transport
 #smbclient //s1-FS02/Environments -c'get 060922_Lookup7500.csv; exit'  -U joward@corp.orhp.com -m SMB3 -D /Production/Lockbox/Transport
