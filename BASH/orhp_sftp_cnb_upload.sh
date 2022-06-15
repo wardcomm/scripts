@@ -62,7 +62,7 @@ echo $today_file
 echo "----------"
 echo $file2test
 
-function clean() {
-    rm -rf /IFS/*
-}
- clean
+# function clean() {
+#     rm -rf /IFS/*
+# }
+#  clean
