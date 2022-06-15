@@ -29,7 +29,7 @@ echo "VARIABLES"
 echo "----------"
 echo $today_file
 echo $email
-
+echo "           "
 echo "script is below"
 #smbclient //s1-FS02/Environments -c get $today_date* -U joward@corp.orhp.com -m SMB3 -D /Production/Lockbox/Transport
 #\\corp.orhp.com\Applications\Environments\Production\Lockbox\Transport
@@ -44,6 +44,7 @@ smbclient $location -c "get $today_file; exit" -U $smb_user -m SMB3 -D $director
 #sftp   -i /REPO/cnb_private.key  oldrepub@mway.cnb.com:/oldrepub.fromcnb 
 echo "sftp session" && sleep 2
 sftp -b /REPO/scripts/BATCH/orhp_cnb_sftp_batch.bat  -i /REPO/cnb_private.key  oldrepub@mway.cnb.com:/oldrepub.tocnb
+
 echo "email notification" && sleep 2
 echo "SFTP TRANSFER TO CNB
 __________________________
