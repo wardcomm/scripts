@@ -34,7 +34,7 @@ smbclient $location -c "get $today_file; exit" -U $smb_user -m SMB3 -D $director
 echo "sftp session" && sleep 2
 sftp -b /REPO/scripts/BATCH/orhp_cnb_sftp_batch.bat  -i /REPO/cnb_private.key  oldrepub@mway.cnb.com:/oldrepub.tocnb
 echo "email notification" && sleep 2
-echo "sftp to cnb on \r\n $email_date $TZ_PST" | mailx -s "sftp from cnb on  $TZ_PST"  $email $cc1 $cc2 -r $reply_email.com
+echo "sftp to cnb on" \r\n "$email_date $TZ_PST" | mailx -s "sftp from cnb on  $TZ_PST"  $email $cc1 $cc2 -r $reply_email.com
 # smbclient  '\\corp.orhp.com\' -U joward@corp.orhp.com
 #smbclient -L \\s1-fs01\DFS\Departments\IT\chad_testing -U joward@corp.orhp.com
 #smbclient   //s1-fs01.corp.orhp.com/Departments/ -U joward@corp.orhp.com -m SMB3
