@@ -35,6 +35,7 @@ echo "sftp session" && sleep 2
 sftp -b /REPO/scripts/BATCH/orhp_cnb_sftp_batch.bat  -i /REPO/cnb_private.key  oldrepub@mway.cnb.com:/oldrepub.tocnb
 echo "email notification" && sleep 2
 echo "SFTP TRANSFER TO CNB
+__________________________
 $email_date
 $TZ_PST
 $today_file" | mailx -s "sftp from cnb on  $TZ_PST"  $email $cc1 $cc2 -r $reply_email
