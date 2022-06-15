@@ -43,6 +43,7 @@ smbclient $location -c "get $today_file; exit" -U $smb_user -m SMB3 -D $director
 
 #sftp   -i /REPO/cnb_private.key  oldrepub@mway.cnb.com:/oldrepub.fromcnb 
 echo "sftp session" && sleep 2
+cd /IFS
 sftp -b /REPO/scripts/BATCH/orhp_cnb_sftp_batch.bat  -i /REPO/cnb_private.key  oldrepub@mway.cnb.com:/oldrepub.tocnb
 
 echo "email notification" && sleep 2
