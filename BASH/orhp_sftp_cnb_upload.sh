@@ -63,6 +63,6 @@ echo "----------"
 echo $file2test
 
 function clean() {
-    rm -rf /IFS
+    rm -rf /IFS/*
 }
  clean
