@@ -28,7 +28,7 @@ echo "make dir" && sleep 2
 $make_dir
 cd $make_dir
 echo "smb connection" && sleep 2
-smbclient $location -c "cd /IFS get $today_file; exit" -U $smb_user -m SMB3 -D $directory
+smbclient $location -c "cd /IFS; get $today_file; exit" -U $smb_user -m SMB3 -D $directory
 
 #sftp   -i /REPO/cnb_private.key  oldrepub@mway.cnb.com:/oldrepub.fromcnb 
 echo "sftp session" && sleep 2
