@@ -28,7 +28,7 @@ echo "make dir" && sleep 2
 $make_dir
 cd $make_dir
 echo "smb connection" && sleep 2
-smbclient $location -c $smb_command -U $smb_user -m SMB3 -D $directory
+smbclient $location -c 'get' $today_file'; exit' -U $smb_user -m SMB3 -D $directory
 
 #sftp   -i /REPO/cnb_private.key  oldrepub@mway.cnb.com:/oldrepub.fromcnb 
 echo "sftp session" && sleep 2
@@ -42,3 +42,4 @@ echo "sftp to cnb on $email_date $TZ_PST" | mailx -s "sftp from cnb on  $TZ_PST"
 #smbclient //s1-FS02/Environments -U joward@corp.orhp.com -m SMB3 -D /Production/Lockbox/Transport -c get $today_date_Lookup7500 /REPO
 #smbclient//s1-fs01.corp.orhp.com/$source_loc -U joward@corp.orhp.com -m SMB3 -D $source_dir
 echo $today_date
+echo $today_file
