@@ -16,21 +16,24 @@ TZ_PST="`TZ='America/Los_Angeles' date`"
 TZ_EST="`TZ='America/New_York' date`"
 location="//corp.orhp.com/Applications/Environments"
 directory="/Production/Lockbox/Transport"
-make_dir=(`mkdir -p /IFS`)
+
 # smb_command=('get 060922_Lookup7500.csv; exit')
 smb_command=('get $today_file; exit')
 smb_user="svc_cnb_sftp@corp.orhp.com"
 file_name="_Lookup7500.csv"
-today_file=($today_date"_Lookup7500.csv")
+today_file=(/IFS/transport/$today_date"_Lookup7500.csv")
 today_date=()
+make_dir=(`mkdir -p /IFS`)
+make_transport(`mkdir -p /IFS/transport`)
 make_archive=(`mkdir -p /IFS/archive`)
 today_archive=(/IFS/archive/$today_date"_Lookup7500.csv")
 
 #code
 $make_dir
 $make_archive
-cd /IFS
+cd /IFS/transport
 smbclient $location -c "get $today_file; exit" -U $smb_user -m SMB3 -D $directory
+cd /IFS/transport
 sftp -b /REPO/scripts/BATCH/orhp_cnb_sftp_batch_upload.bat  -i /REPO/cnb_private.key  oldrepub@mway.cnb.com:/oldrepub.tocnb
 cp $today_file archive
 ###EMAIL SECTION
@@ -41,6 +44,10 @@ $today_file
 $TZ_PST
 __________________________" | mailx -s "sftp from cnb on  $TZ_PST"  $email $cc1 $cc2 -r $reply_email
 
+function clean() {
+    rm -rf /IFS/transport/*
+}
+ clean
 
 # #cp $today_file archive
 # if [[ -e "$today_archive" ]]; then
