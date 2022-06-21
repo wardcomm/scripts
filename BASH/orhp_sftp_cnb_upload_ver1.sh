@@ -22,7 +22,7 @@ smb_command=('get $today_file; exit')
 smb_user="svc_cnb_sftp@corp.orhp.com"
 file_name="_Lookup7500.csv"
 today_file=(/IFS/transport/$today_date"_Lookup7500.csv")
-today_date=()
+
 make_dir=(`mkdir -p /IFS`)
 make_transport=(`mkdir -p /IFS/transport`)
 make_archive=(`mkdir -p /IFS/archive`)
