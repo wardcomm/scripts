@@ -44,10 +44,10 @@ $today_file
 $TZ_PST
 __________________________" | mailx -s "sftp from cnb on  $TZ_PST"  $email $cc1 $cc2 -r $reply_email
 
-function clean() {
-    rm -rf /IFS/transport/*
-}
- clean
+# function clean() {
+#     rm -rf /IFS/transport/*
+# }
+#  clean
 
 # #cp $today_file archive
 # if [[ -e "$today_archive" ]]; then
