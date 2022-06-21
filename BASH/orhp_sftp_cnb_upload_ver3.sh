@@ -32,7 +32,7 @@ $make_archive
 cd /IFS
 smbclient $location -c "get $today_file; exit" -U $smb_user -m SMB3 -D $directory
 mkdir -p /IFS/mount
-sshfs -o allow_other,IdentityFile=/REPO/cnb_private.key oldrepub@mway.cnb.com:/oldrepub.tocnb:downloaded /IFS/mount
+sshfs -o allow_other,IdentityFile=/REPO/cnb_private.key oldrepub@mway.cnb.com:/oldrepub.tocnb/downloaded /IFS/mount
 cd /IFS
 cp -r $today_file /IFS/mount
 cp -r $today_file /IFS/archive 
