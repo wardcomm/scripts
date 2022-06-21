@@ -1,10 +1,4 @@
-#remote
-ls -t
-pwd
+lcd /IFS
 
-put
+put *
 
-#local
-lpwd
-lls -t
-bye
