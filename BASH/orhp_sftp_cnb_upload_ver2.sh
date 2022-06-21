@@ -30,7 +30,7 @@ $make_dir
 $make_archive
 cd /IFS
 smbclient $location -c "get $today_file; exit" -U $smb_user -m SMB3 -D $directory
-cp $today_file archive
+#cp $today_file archive
 if [[ -e "$today_archive" ]]; then
 echo "file exists"
 sleep 4
