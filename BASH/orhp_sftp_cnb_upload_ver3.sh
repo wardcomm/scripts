@@ -34,7 +34,8 @@ smbclient $location -c "get $today_file; exit" -U $smb_user -m SMB3 -D $director
 mkdir -p /IFS/mount
 sshfs -o allow_other,IdentityFile=/REPO/cnb_private.key oldrepub@mway.cnb.com:/oldrepub.tocnb:downloaded /IFS/mount
 cd /IFS
-cp -r $today_file /IFS/archive /IFS/mount
+cp -r $today_file /IFS/mount
+cp -r $today_file /IFS/archive 
 tree /IFS
 umount /IFS/mount
 tree /IFS 
