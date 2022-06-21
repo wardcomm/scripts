@@ -24,7 +24,7 @@ file_name="_Lookup7500.csv"
 today_file=(/IFS/transport/$today_date"_Lookup7500.csv")
 today_date=()
 make_dir=(`mkdir -p /IFS`)
-make_transport(`mkdir -p /IFS/transport`)
+make_transport=(`mkdir -p /IFS/transport`)
 make_archive=(`mkdir -p /IFS/archive`)
 today_archive=(/IFS/archive/$today_date"_Lookup7500.csv")
 
