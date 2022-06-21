@@ -25,21 +25,26 @@ today_file=($today_date"_Lookup7500.csv")
 today_date=()
 make_archive=(`mkdir -p /IFS/archive`)
 today_archive=(/IFS/archive/$today_date"_Lookup7500.csv")
+
 #code
 $make_dir
 $make_archive
 cd /IFS
 smbclient $location -c "get $today_file; exit" -U $smb_user -m SMB3 -D $directory
-#cp $today_file archive
-if [[ -e "$today_archive" ]]; then
-echo "file exists"
-sleep 4
-fi
-exit 0
-cp $today_file archive
-cd /IFS
 sftp -b /REPO/scripts/BATCH/orhp_cnb_sftp_batch.bat  -i /REPO/cnb_private.key  oldrepub@mway.cnb.com:/oldrepub.tocnb
 $today_file" | mailx -s "sftp from cnb on  $TZ_PST"  $email $cc1 $cc2 -r $reply_email
+cp $today_file archive
+
+# #cp $today_file archive
+# if [[ -e "$today_archive" ]]; then
+# echo "file exists"
+# sleep 4
+# fi
+# exit 0
+# cp $today_file archive
+# cd /IFS
+# sftp -b /REPO/scripts/BATCH/orhp_cnb_sftp_batch.bat  -i /REPO/cnb_private.key  oldrepub@mway.cnb.com:/oldrepub.tocnb
+# $today_file" | mailx -s "sftp from cnb on  $TZ_PST"  $email $cc1 $cc2 -r $reply_email
 
 
 
