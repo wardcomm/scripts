@@ -35,7 +35,9 @@ mkdir -p /IFS/mount
 sshfs -o allow_other,IdentityFile=/REPO/cnb_private.key oldrepub@mway.cnb.com:/oldrepub.tocnb:downloaded /IFS/mount
 cd /IFS
 cp -r $today_file /IFS/archive /IFS/mount
-umount /IFS/mount 
+tree /IFS
+umount /IFS/mount
+tree /IFS 
 # sftp -b /REPO/scripts/BATCH/orhp_cnb_sftp_batch_upload.bat  -i /REPO/cnb_private.key  oldrepub@mway.cnb.com:/oldrepub.tocnb
 $today_file" | mailx -s "sftp from cnb on  $TZ_PST"  $email $cc1 $cc2 -r $reply_email
 cp $today_file archive
