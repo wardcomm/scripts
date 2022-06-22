@@ -39,6 +39,7 @@ echo "============================="
 echo "Today_file $today_file"
 echo "Today_file location $today_file_location"
 echo "Today_archive $today_archive"
+echo "Today_archive_location $today_archive_location"
 echo "The Tree of IFS $tree_IFS"
 echo "The location $smb_user"
 echo "The location $location"
@@ -52,7 +53,7 @@ $make_archive
 cd /IFS/transport
 smbclient $location -c "get $today_file; exit" -U $smb_user -m SMB3 -D $directory
 
-if [[ -e "$today_archive" ]]; then
+if [[ -e "$today_archive_location" ]]; then
 echo "file exists"
 else
 
