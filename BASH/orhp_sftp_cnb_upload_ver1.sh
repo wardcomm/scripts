@@ -65,8 +65,9 @@ echo "SFTP TRANSFER TO CNB
 __________________________
 $email_date
 $today_file
+
 $TZ_PST
-__________________________" | mailx -s "sftp from cnb on  $TZ_PST"  $email $cc1 $cc2 -r $reply_email
+$TS_EST__________________________" | mailx -s "sftp from cnb on  $TZ_PST"  $email $cc1 $cc2 -r $reply_email
 fi
 
 # function clean() {
