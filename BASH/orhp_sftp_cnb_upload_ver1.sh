@@ -27,23 +27,27 @@ make_dir=(`mkdir -p /IFS`)
 make_transport=(`mkdir -p /IFS/transport`)
 make_archive=(`mkdir -p /IFS/archive`)
 today_archive=(/IFS/archive/$today_date"_Lookup7500.csv")
+clear
 
+#echo debug area
+echo "                             "
+echo "============================="
+echo "Today_file $today_file"
+echo "Today_archive $today_archive"
+
+echo "============================="
+echo "                             "
 #code
 $make_dir
+$make_transport
 $make_archive
 cd /IFS/transport
-#echo debug area
-
-echo "============================="
-echo " today_file $today_file"
-echo "today_archive $today_archive"
-
-echo "============================="
+smbclient $location -c "get $today_file; exit" -U $smb_user -m SMB3 -D $directory
 
 if [[ -e "$today_archive" ]]; then
 echo "file exists"
 else
-smbclient $location -c "get $today_file; exit" -U $smb_user -m SMB3 -D $directory
+
 cd /IFS/transport
 sftp -b /REPO/scripts/BATCH/orhp_cnb_sftp_batch_upload.bat  -i /REPO/cnb_private.key  oldrepub@mway.cnb.com:/oldrepub.tocnb
 cp $today_file archive
