@@ -31,7 +31,8 @@ make_dir=(`mkdir -p /IFS`)
 make_transport=(`mkdir -p /IFS/transport`)
 make_archive=(`mkdir -p /IFS/archive`)
 
-tree_IFS=('tree /IFS')
+list_IFS="$(ls -al /IFS)"
+
 clear
 
 #echo debug area
