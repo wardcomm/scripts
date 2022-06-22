@@ -14,7 +14,7 @@ file2test=(`echo $today_file | cut -c -6`)
 nameoffile=(`ls -lA /IFS | awk '{print $9}'`)
 TZ_PST="`TZ='America/Los_Angeles' date`"
 TZ_EST="`TZ='America/New_York' date`"
-TZ_UTC=(`date -u`)
+TZ_UTC="`TZ='UTC' date`"
 location="//corp.orhp.com/Applications/Environments"
 directory="/Production/Lockbox/Transport"
 
