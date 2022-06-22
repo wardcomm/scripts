@@ -14,6 +14,7 @@ file2test=(`echo $today_file | cut -c -6`)
 nameoffile=(`ls -lA /IFS | awk '{print $9}'`)
 TZ_PST="`TZ='America/Los_Angeles' date`"
 TZ_EST="`TZ='America/New_York' date`"
+TZ_UTC=(`date -u`)
 location="//corp.orhp.com/Applications/Environments"
 directory="/Production/Lockbox/Transport"
 
@@ -42,6 +43,7 @@ echo "Today_file $today_file"
 echo "Today_file location $today_file_location"
 echo "Today_archive $today_archive"
 echo "Today_archive_location $today_archive_location"
+echo "Today Date UTC         $TZ_UTC"
 echo "The Tree of IFS $tree_IFS"
 echo "The smb user $smb_user"
 echo "The location $location"
