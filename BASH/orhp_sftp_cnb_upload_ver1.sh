@@ -32,6 +32,9 @@ today_archive=(/IFS/archive/$today_date"_Lookup7500.csv")
 $make_dir
 $make_archive
 cd /IFS/transport
+if [[ -e "$today_archive" ]]; then
+echo "file exists"
+else
 smbclient $location -c "get $today_file; exit" -U $smb_user -m SMB3 -D $directory
 cd /IFS/transport
 sftp -b /REPO/scripts/BATCH/orhp_cnb_sftp_batch_upload.bat  -i /REPO/cnb_private.key  oldrepub@mway.cnb.com:/oldrepub.tocnb
@@ -43,6 +46,7 @@ $email_date
 $today_file
 $TZ_PST
 __________________________" | mailx -s "sftp from cnb on  $TZ_PST"  $email $cc1 $cc2 -r $reply_email
+fi
 
 # function clean() {
 #     rm -rf /IFS/transport/*
