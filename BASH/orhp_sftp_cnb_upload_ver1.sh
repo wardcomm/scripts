@@ -36,7 +36,8 @@ echo "============================="
 echo "Today_file $today_file"
 echo "Today_archive $today_archive"
 echo "The Tree of IFS $tree_IFS"
-
+echo "The location $location"
+echo "The location $location"
 echo "============================="
 echo "                             "
 #code
