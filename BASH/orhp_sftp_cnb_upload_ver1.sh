@@ -68,7 +68,7 @@ $email_date
 $today_file
 
 $TZ_PST
-$TS_EST
+$TZ_EST
 __________________________" | mailx -s "sftp from cnb on  $TZ_PST"  $email $cc1 $cc2 -r $reply_email
 fi
 
