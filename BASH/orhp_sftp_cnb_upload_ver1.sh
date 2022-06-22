@@ -32,7 +32,14 @@ today_archive=(/IFS/archive/$today_date"_Lookup7500.csv")
 $make_dir
 $make_archive
 cd /IFS/transport
-echo "$today_archive"
+#echo debug area
+
+echo"============================="
+echo " today_file $today_file"
+echo "today_archive $today_archive"
+
+echo"============================="
+
 if [[ -e "$today_archive" ]]; then
 echo "file exists"
 else
