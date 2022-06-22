@@ -16,17 +16,20 @@ TZ_PST="`TZ='America/Los_Angeles' date`"
 TZ_EST="`TZ='America/New_York' date`"
 location="//corp.orhp.com/Applications/Environments"
 directory="/Production/Lockbox/Transport"
-today_file=($today_date"_Lookup7500.csv")
+
 # smb_command=('get 060922_Lookup7500.csv; exit')
 smb_command=('get $today_file; exit')
 smb_user="svc_cnb_sftp@corp.orhp.com"
 file_name="_Lookup7500.csv"
-# today_file=(/IFS/transport/$today_date"_Lookup7500.csv")
+
+today_file_location=(/IFS/transport/$today_date"_Lookup7500.csv")
+today_file=($today_date"_Lookup7500.csv")
+today_archive=(/IFS/archive/$today_date"_Lookup7500.csv")
 
 make_dir=(`mkdir -p /IFS`)
 make_transport=(`mkdir -p /IFS/transport`)
 make_archive=(`mkdir -p /IFS/archive`)
-today_archive=(/IFS/archive/$today_date"_Lookup7500.csv")
+
 tree_IFS=('tree /IFS')
 clear
 
@@ -34,10 +37,12 @@ clear
 echo "                             "
 echo "============================="
 echo "Today_file $today_file"
+echo "Today_file location $today_file_location"
 echo "Today_archive $today_archive"
 echo "The Tree of IFS $tree_IFS"
+echo "The location $smb_user"
 echo "The location $location"
-echo "The location $location"
+echo "The location $directory"
 echo "============================="
 echo "                             "
 #code
