@@ -27,6 +27,7 @@ make_dir=(`mkdir -p /IFS`)
 make_transport=(`mkdir -p /IFS/transport`)
 make_archive=(`mkdir -p /IFS/archive`)
 today_archive=(/IFS/archive/$today_date"_Lookup7500.csv")
+tree_IFS=(`tree /IFS`)
 clear
 
 #echo debug area
@@ -34,6 +35,7 @@ echo "                             "
 echo "============================="
 echo "Today_file $today_file"
 echo "Today_archive $today_archive"
+echo "The Tree of IFS $tree_IFS"
 
 echo "============================="
 echo "                             "
