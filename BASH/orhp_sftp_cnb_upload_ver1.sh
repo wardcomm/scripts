@@ -34,11 +34,11 @@ $make_archive
 cd /IFS/transport
 #echo debug area
 
-echo"============================="
+echo "============================="
 echo " today_file $today_file"
 echo "today_archive $today_archive"
 
-echo"============================="
+echo "============================="
 
 if [[ -e "$today_archive" ]]; then
 echo "file exists"
