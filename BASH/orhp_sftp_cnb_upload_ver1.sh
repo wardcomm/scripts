@@ -16,7 +16,7 @@ TZ_PST="`TZ='America/Los_Angeles' date`"
 TZ_EST="`TZ='America/New_York' date`"
 location="//corp.orhp.com/Applications/Environments"
 directory="/Production/Lockbox/Transport"
-
+today_file=($today_date"_Lookup7500.csv")
 # smb_command=('get 060922_Lookup7500.csv; exit')
 smb_command=('get $today_file; exit')
 smb_user="svc_cnb_sftp@corp.orhp.com"
