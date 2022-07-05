@@ -16,14 +16,14 @@ TZ_PST="`TZ='America/Los_Angeles' date`"
 TZ_EST="`TZ='America/New_York' date`"
 TZ_UTC="`TZ='UTC' date`"
 location="//corp.orhp.com/Applications/Environments"
-directory="
+directory="/Production/Lockbox/Transport"
 
 # smb_command=('get 060922_Lookup7500.csv; exit')
 smb_command=('get $today_file; exit')
 smb_user="svc_cnb_sftp@corp.orhp.com"
 file_name="_Lookup7500.csv"
 
-today_date=(`date +%m%d5y`)
+today_date=(`date +%m%d%y`)
 today_file_location=(/IFS/transport/$today_date"_Lookup7500.csv")
 today_file=($today_date"_Lookup7500.csv")
 today_archive=(/IFS/archive/$today_date"_Lookup7500.csv")
@@ -40,6 +40,8 @@ clear
 #echo debug area
 echo "                             "
 echo "============================="
+echo "Email date $email_date       "
+echo "Today_date $today_date       "
 echo "Today_file $today_file"
 echo "Today_file location $today_file_location"
 echo "Today_archive $today_archive"
